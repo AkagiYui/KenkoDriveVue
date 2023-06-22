@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  这里是 HomeView
+  <n-gradient-text :size="36" type="info">
+    Live Forever
+  </n-gradient-text>
 </template>
