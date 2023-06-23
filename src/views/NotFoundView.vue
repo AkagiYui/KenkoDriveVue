@@ -1,0 +1,34 @@
+<script setup lang="ts">
+import { NResult, NButton, NCard } from "naive-ui";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+</script>
+
+<template>
+  <n-card style="height: 100vh">
+    <n-result
+      class="center"
+      status="error"
+      title="404 资源不存在"
+      size="huge"
+      description="需要帮助请联系管理员"
+    >
+      <template #footer>
+        <n-space justify="center">
+          <n-button @click="router.push('/')">回到首页</n-button>
+          <n-button @click="router.go(-1)" type="primary">返回</n-button>
+        </n-space>
+      </template>
+    </n-result>
+  </n-card>
+</template>
+
+<style>
+.center {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+}
+</style>
