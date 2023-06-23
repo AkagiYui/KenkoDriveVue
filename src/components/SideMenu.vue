@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { h, Component } from 'vue'
+import { h, type Component } from 'vue'
 import { RouterLink } from 'vue-router'
-import { NIcon } from 'naive-ui'
+import { NIcon, type MenuOption } from 'naive-ui'
 import {
   HomeOutline,
   CaretDownOutline,
