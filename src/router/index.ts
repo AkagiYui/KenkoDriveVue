@@ -9,11 +9,17 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: {
+        title: '主页',
+      },
     },
     {
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
+      meta: {
+        title: '登录',
+      },
     },
     {
       path: '/about',
@@ -21,38 +27,56 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
       meta: {
         title: '关于',
-      }
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue'),
+      meta: {
+        title: '个人信息',
+      },
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),
+      meta: {
+        title: '404',
+      },
     },
   ],
 })
 
 router.beforeEach((to, from) => {
   const config = useAppConfig()
-  if (!config.isLoggedIn && to.name !== 'login') {
-    return { name: 'login' }
-  }
+  // 未登录则跳转到登录页
+  // if (!config.isLoggedIn && to.name !== 'login') {
+  //   return { name: 'login' }
+  // }
+
   // 返回 false 以取消导航
   return true
 })
+
+// 显示加载条
 router.beforeEach(async (to) => {
-  // 显示加载条
   window.$loadingbar.start()
 })
+
 router.afterEach((to: any, from) => {
   if (to.name === 'not-found') {
     window.$loadingbar.error()
   } else {
     window.$loadingbar.finish()
   }
+
+  // 修改标题
   const baseTitle = 'Kenko Drive'
   const subTitle: string = to.meta?.title?.trim() || ''
   document.title = subTitle ? `${baseTitle} | ${subTitle}` : baseTitle
 })
+
 router.onError((error: any) => {
   window.$loadingbar.error()
   console.log(error)
