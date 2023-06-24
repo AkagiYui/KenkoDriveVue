@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { useCounterStore } from '@/stores/counter'
+import { useUserInfo } from '@/stores/user-info'
+import { storeToRefs } from 'pinia'
 
-const store = useCounterStore()
-
-window.$message.info('欢迎使用 Kenko Drive' + store.count)
+const { userName } = storeToRefs(useUserInfo())
 </script>
 
 <template>
-  <div>
-    这里是 HomeView
-    <n-button @click="store.count += 1">{{ store.count }}</n-button>
+  <div style="padding: 24px">
+    <n-h4>
+      晚上好，
+      <n-h1>{{ userName }}</n-h1>
+    </n-h4>
   </div>
 </template>

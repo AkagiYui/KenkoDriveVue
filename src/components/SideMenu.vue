@@ -18,7 +18,7 @@ import {
   AlbumsOutline,
   PaperPlaneOutline,
   TimeOutline,
-  PeopleOutline,
+  PeopleOutline, BulbOutline, LogInOutline,
 } from '@vicons/ionicons5'
 
 const collapsed = ref(false)
@@ -163,15 +163,23 @@ const menuOptions = [
     icon: renderIcon(HammerOutline),
     show: true,
     children: [
+
+      {
+        label: '登录页',
+        key: 'login',
+        path: '/login',
+        icon: renderIcon(LogInOutline),
+      },
       {
         label: '404页',
         key: '404',
         path: '/404',
       },
       {
-        label: '登录页',
-        key: 'login',
-        path: '/login',
+        label: '测试页',
+        key: 'test',
+        path: '/test',
+        icon: renderIcon(BulbOutline),
       },
     ],
   },
