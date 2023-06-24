@@ -17,7 +17,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'NotFound',
+      name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),
     },
   ],
@@ -31,5 +31,19 @@ router.beforeEach((to, from) => {
   // 返回 false 以取消导航
   return true
 })
-
+router.beforeEach(async (to) => {
+  // 显示加载条
+  window.$loadingbar.start()
+})
+router.afterEach((to: any) => {
+  if (to.name === 'not-found') {
+    window.$loadingbar.error()
+  } else {
+    window.$loadingbar.finish()
+  }
+})
+router.onError((error: any) => {
+  window.$loadingbar.error()
+  console.log(error)
+})
 export default router

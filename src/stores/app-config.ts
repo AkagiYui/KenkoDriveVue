@@ -4,10 +4,13 @@ import { defineStore } from 'pinia'
 export const useAppConfig = defineStore(
   'app-config',
   () => {
-    return {
-      isLoggedIn: ref(false),
-      isDarkMode: ref(false),
+    const isLoggedIn = ref(false)
+    const isDarkMode = ref(false)
+    const switchDarkMode = () => {
+      isDarkMode.value = !isDarkMode.value
     }
+
+    return { isLoggedIn, isDarkMode, switchDarkMode }
   },
   {
     persist: {

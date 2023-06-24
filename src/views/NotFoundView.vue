@@ -6,11 +6,11 @@ const router = useRouter();
 </script>
 
 <template>
-  <n-card style="height: 100vh">
+  <n-card class="page">
     <n-result
       class="center"
       status="error"
-      title="404 资源不存在"
+      title="404 页面不存在"
       size="huge"
       description="需要帮助请联系管理员"
     >
@@ -30,5 +30,10 @@ const router = useRouter();
   left: 50%;
   top: 42%;
   transform: translate(-50%, -50%);
+}
+</style>
+<style lang='stylus'>
+.page {
+  height: 100vh
 }
 </style>
