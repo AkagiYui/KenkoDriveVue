@@ -16,6 +16,14 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue'),
     },
     {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue'),
+      meta: {
+        title: '关于',
+      }
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),
@@ -35,12 +43,15 @@ router.beforeEach(async (to) => {
   // 显示加载条
   window.$loadingbar.start()
 })
-router.afterEach((to: any) => {
+router.afterEach((to: any, from) => {
   if (to.name === 'not-found') {
     window.$loadingbar.error()
   } else {
     window.$loadingbar.finish()
   }
+  const baseTitle = 'Kenko Drive'
+  const subTitle: string = to.meta?.title?.trim() || ''
+  document.title = subTitle ? `${baseTitle} | ${subTitle}` : baseTitle
 })
 router.onError((error: any) => {
   window.$loadingbar.error()
