@@ -6,7 +6,6 @@ import { NIcon, type MenuOption } from 'naive-ui'
 import {
   HomeOutline,
   CaretDownOutline,
-  ListOutline,
   SpeedometerOutline,
   FolderOpenOutline,
   SettingsOutline,
@@ -18,10 +17,15 @@ import {
   AlbumsOutline,
   PaperPlaneOutline,
   TimeOutline,
-  PeopleOutline, BulbOutline, LogInOutline,
+  PeopleOutline,
+  BulbOutline,
+  LogInOutline,
+  TrashOutline,
 } from '@vicons/ionicons5'
+import { useAppConfig } from '@/stores/app-config'
+import { storeToRefs } from 'pinia'
 
-const collapsed = ref(false)
+const { isMenuCollapsed } = storeToRefs(useAppConfig())
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -79,7 +83,7 @@ const menuOptions = [
   {
     label: '回收站',
     key: 'recycle',
-    icon: renderIcon(SpeedometerOutline),
+    icon: renderIcon(TrashOutline),
     disabled: true,
   },
 
@@ -107,7 +111,7 @@ const menuOptions = [
         label: '用户分析',
         key: 'user-analysis',
       },
-    ]
+    ],
   },
   {
     label: '用户管理',
@@ -163,7 +167,6 @@ const menuOptions = [
     icon: renderIcon(HammerOutline),
     show: true,
     children: [
-
       {
         label: '登录页',
         key: 'login',
@@ -211,15 +214,15 @@ function renderMenuLabel(option: MenuOption) {
     collapse-mode="width"
     :collapsed-width="64"
     :width="240"
-    :collapsed="collapsed"
+    :collapsed="isMenuCollapsed"
     show-trigger
-    @collapse="collapsed = true"
-    @expand="collapsed = false"
+    @collapse="isMenuCollapsed = true"
+    @expand="isMenuCollapsed = false"
     :native-scrollbar="false"
   >
     <n-menu
       style="height: 100%"
-      :collapsed="collapsed"
+      :collapsed="isMenuCollapsed"
       :collapsed-width="64"
       :collapsed-icon-size="22"
       :options="(menuOptions as any)"

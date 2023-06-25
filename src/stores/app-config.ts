@@ -6,11 +6,12 @@ export const useAppConfig = defineStore(
   () => {
     const isLoggedIn = ref(false)
     const isDarkMode = ref(false)
-    const switchDarkMode = () => {
-      isDarkMode.value = !isDarkMode.value
-    }
+    const isMenuCollapsed = ref(false)
+    const currentRouteName = ref('')
 
-    return { isLoggedIn, isDarkMode, switchDarkMode }
+    const toggleDarkMode = () => { isDarkMode.value = !isDarkMode.value }
+
+    return { isLoggedIn, isDarkMode, isMenuCollapsed, currentRouteName, toggleDarkMode }
   },
   {
     persist: {

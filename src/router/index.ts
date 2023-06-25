@@ -85,8 +85,20 @@ router.afterEach((to: any, from) => {
   document.title = subTitle ? `${baseTitle} | ${subTitle}` : baseTitle
 })
 
+router.afterEach(async (to: any) => {
+  // 修改当前路由名称
+  const config = useAppConfig()
+  config.currentRouteName = to.name
+})
+
 router.onError((error: any) => {
   window.$loadingbar.error()
   console.log(error)
+})
+
+router.isReady().then(() => {
+  // 初始化完成
+  const config = useAppConfig()
+  router.push({ name: config.currentRouteName ?? 'home' })
 })
 export default router

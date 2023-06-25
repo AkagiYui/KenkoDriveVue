@@ -4,45 +4,46 @@ import { useAppConfig } from '@/stores/app-config'
 import { WeatherMoon16Regular, WeatherSunny16Regular } from '@vicons/fluent'
 
 const { isDarkMode } = storeToRefs(useAppConfig())
+const { toggleDarkMode } = useAppConfig()
 </script>
 
 <template>
   <div style="padding: 24px">
-    <NSpace vertical>
-      <NCard title="个人信息">
-        <NSpace vertical>
-          <NImage
+    <n-space vertical>
+      <n-card title="个人信息">
+        <n-space vertical>
+          <n-image
             :show-toolbar="false"
             width="100"
             src="https://q1.qlogo.cn/g?b=qq&nk=1050314133&s=640"
           />
-          <NButton>更换头像</NButton>
-        </NSpace>
-      </NCard>
-      <NCard title="系统设置">
-        <NSpace style="display: flex">
-          <NButtonGroup>
+          <n-button>更换头像</n-button>
+        </n-space>
+      </n-card>
+      <n-card title="系统设置">
+        <n-space style="display: flex">
+          <n-button-group>
             <span style="align-self: center; margin-right: 10px">主题</span>
-            <NButton @click="isDarkMode = false" :type="!isDarkMode ? 'primary' : 'default'">
+            <n-button @click="toggleDarkMode" :type="!isDarkMode ? 'primary' : 'default'">
               <template #icon>
                 <NIcon>
                   <WeatherSunny16Regular />
                 </NIcon>
               </template>
               亮色
-            </NButton>
-            <NButton @click="isDarkMode = true" :type="isDarkMode ? 'primary' : 'default'">
+            </n-button>
+            <n-button @click="toggleDarkMode" :type="isDarkMode ? 'primary' : 'default'">
               <template #icon>
-                <NIcon>
+                <n-icon>
                   <WeatherMoon16Regular />
-                </NIcon>
+                </n-icon>
               </template>
               暗色
-            </NButton>
-          </NButtonGroup>
-        </NSpace>
-      </NCard>
-    </NSpace>
+            </n-button>
+          </n-button-group>
+        </n-space>
+      </n-card>
+    </n-space>
   </div>
 </template>
 
