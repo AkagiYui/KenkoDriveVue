@@ -4,7 +4,11 @@ import { useAppConfig } from '@/stores/app-config'
 import { WeatherMoon16Regular, WeatherSunny16Regular } from '@vicons/fluent'
 
 const { isDarkMode } = storeToRefs(useAppConfig())
-const { toggleDarkMode } = useAppConfig()
+const { toggleDarkMode, reset: resetConfig } = useAppConfig()
+const reset = () => {
+  resetConfig()
+  window.$message.success('已重置')
+}
 </script>
 
 <template>
@@ -20,7 +24,7 @@ const { toggleDarkMode } = useAppConfig()
           <n-button>更换头像</n-button>
         </n-space>
       </n-card>
-      <n-card title="系统设置">
+      <n-card title="外观">
         <n-space style="display: flex">
           <n-button-group>
             <span style="align-self: center; margin-right: 10px">主题</span>
@@ -41,6 +45,16 @@ const { toggleDarkMode } = useAppConfig()
               暗色
             </n-button>
           </n-button-group>
+        </n-space>
+      </n-card>
+      <n-card title="恢复">
+        <n-space vertical>
+          <n-popconfirm @positive-click="reset">
+            <template #trigger>
+              <n-button type="error">重置面板缓存</n-button>
+            </template>
+            是否要重置面板缓存？<br />该操作不会清除用户数据。
+          </n-popconfirm>
         </n-space>
       </n-card>
     </n-space>
