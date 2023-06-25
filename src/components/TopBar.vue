@@ -4,7 +4,7 @@ import { useUserInfo } from '@/stores/user-info'
 import { storeToRefs } from 'pinia'
 import getAssetsUrl from '@/utils/pub-use'
 import { CashOutline, LogOutOutline } from '@vicons/ionicons5'
-
+import QrcodeVue from 'qrcode.vue'
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { userName } = storeToRefs(useUserInfo())
 </script>
@@ -15,19 +15,31 @@ const { userName } = storeToRefs(useUserInfo())
     bordered
   >
     <n-space style="margin-left: 36px; display: flex; align-items: center; height: 36px">
-      <router-link to="/">
-        <n-space style="height: 36px">
-          <n-image
-            src="/favicon.svg"
-            width="36"
-            preview-disabled
-            :img-props="{
+      <n-popover trigger="hover" :show-arrow="false" title='网站二维码'>
+        <template #header>
+          <n-text strong depth="1">
+            网站二维码
+          </n-text>
+        </template>
+        <template #trigger>
+          <router-link to="/">
+            <n-space style="height: 36px">
+              <n-image
+                src="/favicon.svg"
+                width="36"
+                preview-disabled
+                :img-props="{
               alt: 'logo',
             }"
-          />
-          <n-h2> Kenko Drive</n-h2>
-        </n-space>
-      </router-link>
+              />
+              <n-h2> Kenko Drive</n-h2>
+            </n-space>
+          </router-link>
+        </template>
+        <qrcode-vue value="https://drive.akagiyui.com" :size="200" render-as="canvas" level="H" />
+      </n-popover>
+
+
     </n-space>
     <n-space style="margin-right: 24px; display: flex; align-items: center; height: 64px">
       <n-switch v-model:value="isDarkMode">

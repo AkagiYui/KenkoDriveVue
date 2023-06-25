@@ -11,7 +11,7 @@ import {
   SettingsOutline,
   DocumentTextOutline,
   InformationOutline,
-  HammerOutline,
+  FlaskOutline,
   HeartOutline,
   LockClosedOutline,
   AlbumsOutline,
@@ -21,6 +21,7 @@ import {
   BulbOutline,
   LogInOutline,
   TrashOutline,
+  PersonOutline,
 } from '@vicons/ionicons5'
 import { useAppConfig } from '@/stores/app-config'
 import { storeToRefs } from 'pinia'
@@ -33,7 +34,7 @@ function renderIcon(icon: Component) {
 
 const menuOptions = [
   {
-    label: '主页',
+    label: '总览',
     key: 'home',
     path: '/',
     icon: renderIcon(HomeOutline),
@@ -117,19 +118,22 @@ const menuOptions = [
     label: '用户管理',
     key: 'user-manage',
     icon: renderIcon(PeopleOutline),
-    disabled: true,
     children: [
       {
         label: '用户信息',
-        key: 'user-list',
+        key: 'users',
+        path: '/users',
+        icon: renderIcon(PersonOutline),
       },
       {
         label: '角色信息',
-        key: 'role-list',
+        key: 'role-info',
+        disabled: true,
       },
       {
         label: '权限信息',
-        key: 'permission-list',
+        key: 'permission-info',
+        disabled: true,
       },
     ],
   },
@@ -164,7 +168,7 @@ const menuOptions = [
   {
     label: '测试',
     key: 'test',
-    icon: renderIcon(HammerOutline),
+    icon: renderIcon(FlaskOutline),
     show: true,
     children: [
       {
@@ -221,10 +225,11 @@ function renderMenuLabel(option: MenuOption) {
     :native-scrollbar="false"
   >
     <n-menu
-      style="height: 100%"
+      style="height: 100%; width: 100%"
       :collapsed="isMenuCollapsed"
       :collapsed-width="64"
       :collapsed-icon-size="22"
+      :indent="22"
       :options="(menuOptions as any)"
       :render-label="renderMenuLabel"
       :expand-icon="expandIcon"
