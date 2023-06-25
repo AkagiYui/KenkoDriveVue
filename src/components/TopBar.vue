@@ -3,6 +3,7 @@ import { useAppConfig } from '@/stores/app-config'
 import { useUserInfo } from '@/stores/user-info'
 import { storeToRefs } from 'pinia'
 import getAssetsUrl from '@/utils/pub-use'
+import { CashOutline, LogOutOutline } from '@vicons/ionicons5'
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { userName } = storeToRefs(useUserInfo())
@@ -28,20 +29,21 @@ const { userName } = storeToRefs(useUserInfo())
         </n-space>
       </router-link>
     </n-space>
-    <n-space style="margin-right: 24px; display: flex; align-items: flex-start; height: 36px">
+    <n-space style="margin-right: 24px; display: flex; align-items: center; height: 64px">
       <n-switch v-model:value="isDarkMode">
         <template #checked-icon> 🌙</template>
         <template #unchecked-icon> ☀️</template>
         <template #checked> 测试阶段</template>
         <template #unchecked> 全局暗色</template>
       </n-switch>
-      <n-popover trigger="hover">
+      <n-popover trigger="hover" :show-arrow="false">
         <template #trigger>
-          <n-space style="display: flex; align-items: center;">
+          <n-space style="display: flex; align-items: center">
             <n-h4>{{ userName }}</n-h4>
-            <n-badge dot :show='true'>
+            <n-badge dot :show="true">
               <n-avatar
-                :size="40"
+                bordered
+                :size="46"
                 src="https://gravatar.loli.net/avatar/f481f2a9c66b7414da397c36868a2285"
                 :fallback-src="getAssetsUrl('default-avatar.jpg')"
                 :img-props="{
@@ -51,7 +53,22 @@ const { userName } = storeToRefs(useUserInfo())
             </n-badge>
           </n-space>
         </template>
-        <span>这是个人信息</span>
+        <n-space vertical justify="space-evenly">
+          <n-button text class="pop-button">
+            <template #icon>
+              <n-icon>
+                <CashOutline />
+              </n-icon>
+            </template>
+            查看个人信息
+          </n-button>
+          <n-button text class="pop-button" type="warning">
+            <template #icon>
+              <n-icon>
+                <LogOutOutline />
+              </n-icon>
+            </template>退出登录</n-button>
+        </n-space>
       </n-popover>
     </n-space>
   </n-layout-header>
@@ -60,5 +77,9 @@ const { userName } = storeToRefs(useUserInfo())
 <style scoped>
 a {
   text-decoration: none;
+}
+
+.pop-button {
+  width: 140px;
 }
 </style>
