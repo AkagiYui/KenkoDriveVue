@@ -19,33 +19,29 @@ const helloText = ref<string>('您好')
 // 找到最接近的时间点
 const updateHelloText = () => {
   const date = new Date()
-  const currentHour = date.getHours() + date.getMinutes() / 60;
+  const currentHour = date.getHours() + date.getMinutes() / 60
 
-  let closestTimeDiff = Infinity;
-  let closestHelloText = '';
+  let closestTimeDiff = Infinity
+  let closestHelloText = ''
 
   for (const [label, hours] of Object.entries(helloLabel)) {
     for (const hour of hours) {
-      const timeDiff = Math.abs(hour - currentHour);
+      const timeDiff = Math.abs(hour - currentHour)
       if (timeDiff < closestTimeDiff) {
-        closestTimeDiff = timeDiff;
-        closestHelloText = label;
+        closestTimeDiff = timeDiff
+        closestHelloText = label
       }
     }
   }
-  helloText.value = closestHelloText;
-  console.log(`currentHour: ${currentHour}, helloText: ${helloText.value}`);
-};
-
-// 每一分钟执行一次更新问候语的操作
-setInterval(() => {
-  updateHelloText();
-}, 60000);
-
+  helloText.value = closestHelloText
+  console.log(`currentHour: ${currentHour}, helloText: ${helloText.value}`)
+}
 
 onMounted(() => {
-  updateHelloText();
-});
+  updateHelloText()
+  // 每一分钟执行一次更新问候语的操作
+  setInterval(updateHelloText, 60000)
+})
 </script>
 
 <template>
