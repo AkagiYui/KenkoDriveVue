@@ -23,6 +23,7 @@ import {
   TrashOutline,
   PersonOutline,
   ShieldCheckmarkOutline,
+  TerminalOutline
 } from '@vicons/ionicons5'
 import { useAppConfig } from '@/stores/app-config'
 import { storeToRefs } from 'pinia'
@@ -102,15 +103,22 @@ const menuOptions = ref([
     label: '系统状态',
     key: 'system-status',
     icon: renderIcon(SpeedometerOutline),
-    disabled: true,
     children: [
+      {
+        label: '运行状态',
+        key: 'system',
+        path: '/system',
+        icon: renderIcon(TerminalOutline),
+      },
       {
         label: '文件分析',
         key: 'file-analysis',
+        disabled: true,
       },
       {
         label: '用户分析',
         key: 'user-analysis',
+        disabled: true,
       },
     ],
   },

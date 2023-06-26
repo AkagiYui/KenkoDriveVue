@@ -2,10 +2,8 @@ import ServiceStatus from '@/types/ServiceStatus'
 import { ExistException } from '@/types/ServiceException'
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:6677'
-
 const request = axios.create({
-  baseURL: BASE_URL,
+  baseURL: import.meta.env.BACKEND_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

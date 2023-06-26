@@ -6,3 +6,12 @@ declare interface Window {
   $loadingbar: LoadingBarInst
   $notify: NotificationApiInjection
 }
+
+interface ImportMetaEnv {
+  readonly BACKEND_URL: string;
+}
+
+// eslint-disable-next-line no-unused-vars
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

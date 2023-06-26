@@ -29,4 +29,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  define: {
+    'import.meta.env.BACKEND_URL': process.env['BACKEND_URL']
+      ? `'${process.env['BACKEND_URL']}'`
+      : `'http://localhost:6677'`,
+  },
 })

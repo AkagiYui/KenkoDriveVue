@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { useAppConfig } from '@/stores/app-config'
 
 const router = createRouter({
@@ -8,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
       meta: {
         title: '主页',
       },
@@ -43,6 +42,22 @@ const router = createRouter({
       component: () => import('../views/TestView.vue'),
       meta: {
         title: '测试',
+      },
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: () => import('../views/AdminViews/UsersView.vue'),
+      meta: {
+        title: '用户信息',
+      },
+    },
+    {
+      path: '/system',
+      name: 'system',
+      component: () => import('../views/AdminViews/SystemStatusView.vue'),
+      meta: {
+        title: '系统状态',
       },
     },
     {
