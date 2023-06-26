@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { h, type Component } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { NIcon, type MenuOption } from 'naive-ui'
@@ -14,7 +14,7 @@ import {
   FlaskOutline,
   HeartOutline,
   LockClosedOutline,
-  AlbumsOutline,
+  ImagesOutline,
   PaperPlaneOutline,
   TimeOutline,
   PeopleOutline,
@@ -22,17 +22,18 @@ import {
   LogInOutline,
   TrashOutline,
   PersonOutline,
+  ShieldCheckmarkOutline,
 } from '@vicons/ionicons5'
 import { useAppConfig } from '@/stores/app-config'
 import { storeToRefs } from 'pinia'
 
-const { isMenuCollapsed } = storeToRefs(useAppConfig())
+const { isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-const menuOptions = [
+const menuOptions = ref([
   {
     label: '总览',
     key: 'home',
@@ -60,7 +61,7 @@ const menuOptions = [
   {
     label: '相册',
     key: 'album',
-    icon: renderIcon(AlbumsOutline),
+    icon: renderIcon(ImagesOutline),
     disabled: true,
   },
   {
@@ -87,7 +88,6 @@ const menuOptions = [
     icon: renderIcon(TrashOutline),
     disabled: true,
   },
-
   {
     label: '设置',
     key: 'settings',
@@ -126,13 +126,9 @@ const menuOptions = [
         icon: renderIcon(PersonOutline),
       },
       {
-        label: '角色信息',
+        label: '角色权限',
         key: 'role-info',
-        disabled: true,
-      },
-      {
-        label: '权限信息',
-        key: 'permission-info',
+        icon: renderIcon(ShieldCheckmarkOutline),
         disabled: true,
       },
     ],
@@ -158,18 +154,20 @@ const menuOptions = [
   {
     key: 'divider-2',
     type: 'divider',
+    show: isDebugMode,
   },
   {
     label: '关于系统',
     key: 'about',
     path: '/about',
     icon: renderIcon(InformationOutline),
+    show: isDebugMode,
   },
   {
     label: '测试',
     key: 'test',
     icon: renderIcon(FlaskOutline),
-    show: true,
+    show: isDebugMode,
     children: [
       {
         label: '登录页',
@@ -190,7 +188,7 @@ const menuOptions = [
       },
     ],
   },
-]
+])
 
 function expandIcon() {
   return h(NIcon, null, { default: () => h(CaretDownOutline) })
@@ -230,7 +228,7 @@ function renderMenuLabel(option: MenuOption) {
       :collapsed-width="64"
       :collapsed-icon-size="22"
       :indent="22"
-      :options="(menuOptions as any)"
+      :options="menuOptions"
       :render-label="renderMenuLabel"
       :expand-icon="expandIcon"
       :value="useRoute().name as string"
