@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useAppConfig } from '@/stores/app-config'
 import { WeatherMoon16Regular, WeatherSunny16Regular } from '@vicons/fluent'
 
-const { isDarkMode } = storeToRefs(useAppConfig())
+const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { toggleDarkMode, reset: resetConfig } = useAppConfig()
 const reset = () => {
   resetConfig()
@@ -25,26 +25,32 @@ const reset = () => {
         </n-space>
       </n-card>
       <n-card title="外观">
-        <n-space style="display: flex">
-          <n-button-group>
-            <span style="align-self: center; margin-right: 10px">主题</span>
-            <n-button @click="toggleDarkMode" :type="!isDarkMode ? 'primary' : 'default'">
-              <template #icon>
-                <NIcon>
-                  <WeatherSunny16Regular />
-                </NIcon>
-              </template>
-              亮色
-            </n-button>
-            <n-button @click="toggleDarkMode" :type="isDarkMode ? 'primary' : 'default'">
-              <template #icon>
-                <n-icon>
-                  <WeatherMoon16Regular />
-                </n-icon>
-              </template>
-              暗色
-            </n-button>
-          </n-button-group>
+        <n-space vertical>
+          <n-space style="display: flex">
+            <n-button-group>
+              <span style="align-self: center; margin-right: 10px">主题</span>
+              <n-button @click="toggleDarkMode" :type="!isDarkMode ? 'primary' : 'default'">
+                <template #icon>
+                  <NIcon>
+                    <WeatherSunny16Regular />
+                  </NIcon>
+                </template>
+                亮色
+              </n-button>
+              <n-button @click="toggleDarkMode" :type="isDarkMode ? 'primary' : 'default'">
+                <template #icon>
+                  <n-icon>
+                    <WeatherMoon16Regular />
+                  </n-icon>
+                </template>
+                暗色
+              </n-button>
+            </n-button-group>
+          </n-space>
+          <n-space style='display: flex; align-items: center'>
+            <n-text>调试模式</n-text>
+            <n-switch :round="false" v-model:value="isDebugMode" />
+          </n-space>
         </n-space>
       </n-card>
       <n-card title="恢复">

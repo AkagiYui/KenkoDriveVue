@@ -5,8 +5,11 @@ import { storeToRefs } from 'pinia'
 import getAssetsUrl from '@/utils/pub-use'
 import { CashOutline, LogOutOutline } from '@vicons/ionicons5'
 import QrcodeVue from 'qrcode.vue'
-const { isDarkMode } = storeToRefs(useAppConfig())
+
+const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { userName } = storeToRefs(useUserInfo())
+
+const host = window.location.origin
 </script>
 
 <template>
@@ -15,11 +18,9 @@ const { userName } = storeToRefs(useUserInfo())
     bordered
   >
     <n-space style="margin-left: 36px; display: flex; align-items: center; height: 36px">
-      <n-popover trigger="hover" :show-arrow="false" title='网站二维码'>
+      <n-popover trigger="hover" title="网站二维码" :disabled='!isDebugMode'>
         <template #header>
-          <n-text strong depth="1">
-            网站二维码
-          </n-text>
+          <n-text strong depth="1"> 网站二维码，扫码立即体验 </n-text>
         </template>
         <template #trigger>
           <router-link to="/">
@@ -29,20 +30,18 @@ const { userName } = storeToRefs(useUserInfo())
                 width="36"
                 preview-disabled
                 :img-props="{
-              alt: 'logo',
-            }"
+                  alt: 'logo',
+                }"
               />
               <n-h2> Kenko Drive</n-h2>
             </n-space>
           </router-link>
         </template>
-        <qrcode-vue value="https://drive.akagiyui.com" :size="200" render-as="canvas" level="H" />
+        <qrcode-vue :value="host" :size="200" render-as="canvas" level="H" />
       </n-popover>
-
-
     </n-space>
     <n-space style="margin-right: 24px; display: flex; align-items: center; height: 64px">
-      <n-switch v-model:value="isDarkMode">
+      <n-switch v-if='isDebugMode' v-model:value="isDarkMode">
         <template #checked-icon> 🌙</template>
         <template #unchecked-icon> ☀️</template>
         <template #checked> 测试阶段</template>
@@ -79,7 +78,9 @@ const { userName } = storeToRefs(useUserInfo())
               <n-icon>
                 <LogOutOutline />
               </n-icon>
-            </template>退出登录</n-button>
+            </template>
+            退出登录
+          </n-button>
         </n-space>
       </n-popover>
     </n-space>

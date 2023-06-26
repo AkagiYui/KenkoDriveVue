@@ -17,6 +17,7 @@
 - [Vue.js 官方文档](https://cn.vuejs.org/)
 - [Vue Router 官方文档](https://router.vuejs.org/)
 - [Naive UI 官方文档](https://www.naiveui.com/)
+- [GitHub: qrcode.vue](https://github.com/scopewu/qrcode.vue/blob/main/README-zh_cn.md)
 - [GitHub: BililiveRecorder-WebUI](https://github.com/BililiveRecorder/BililiveRecorder-WebUI)
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)
 - [CSDN: Pinia使用方法及持久化存储](https://blog.csdn.net/m0_53808238/article/details/129751966)
