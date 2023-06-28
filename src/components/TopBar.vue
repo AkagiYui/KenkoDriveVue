@@ -1,15 +1,29 @@
 <script setup lang="ts">
+import QrcodeVue from 'qrcode.vue'
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useAppConfig } from '@/stores/app-config'
 import { useUserInfo } from '@/stores/user-info'
-import { storeToRefs } from 'pinia'
 import getAssetsUrl from '@/utils/pub-use'
-import { CashOutline, LogOutOutline } from '@vicons/ionicons5'
-import QrcodeVue from 'qrcode.vue'
+import renderIcon from '@/utils/render-icon'
+import { LogOutOutline, PersonCircleOutline } from '@vicons/ionicons5'
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { userName } = storeToRefs(useUserInfo())
 
 const host = window.location.origin
+const options = ref([
+  {
+    label: '个人信息',
+    key: 'info',
+    icon: renderIcon(PersonCircleOutline),
+  },
+  {
+    label: '退出登录',
+    key: 'logout',
+    icon: renderIcon(LogOutOutline),
+  },
+])
 </script>
 
 <template>
@@ -18,9 +32,9 @@ const host = window.location.origin
     bordered
   >
     <n-space style="margin-left: 36px; display: flex; align-items: center; height: 36px">
-      <n-popover trigger="hover" title="网站二维码" :disabled='!isDebugMode'>
+      <n-popover trigger="hover" title="网站二维码" :disabled="!isDebugMode">
         <template #header>
-          <n-text strong depth="1"> 网站二维码，扫码立即体验 </n-text>
+          <n-text strong depth="1"> 网站二维码，扫码立即体验</n-text>
         </template>
         <template #trigger>
           <router-link to="/">
@@ -41,48 +55,28 @@ const host = window.location.origin
       </n-popover>
     </n-space>
     <n-space style="margin-right: 24px; display: flex; align-items: center; height: 64px">
-      <n-switch v-if='isDebugMode' v-model:value="isDarkMode">
+      <n-switch v-if="isDebugMode" v-model:value="isDarkMode">
         <template #checked-icon> 🌙</template>
         <template #unchecked-icon> ☀️</template>
         <template #checked> 测试阶段</template>
         <template #unchecked> 全局暗色</template>
       </n-switch>
-      <n-popover trigger="hover" :show-arrow="false">
-        <template #trigger>
-          <n-space style="display: flex; align-items: center">
-            <n-h4>{{ userName }}</n-h4>
-            <n-badge dot :show="true">
-              <n-avatar
-                bordered
-                :size="46"
-                src="https://gravatar.loli.net/avatar/f481f2a9c66b7414da397c36868a2285"
-                :fallback-src="getAssetsUrl('default-avatar.jpg')"
-                :img-props="{
-                  alt: 'avatar',
-                }"
-              />
-            </n-badge>
-          </n-space>
-        </template>
-        <n-space vertical justify="space-evenly">
-          <n-button text class="pop-button">
-            <template #icon>
-              <n-icon>
-                <CashOutline />
-              </n-icon>
-            </template>
-            查看个人信息
-          </n-button>
-          <n-button text class="pop-button" type="warning">
-            <template #icon>
-              <n-icon>
-                <LogOutOutline />
-              </n-icon>
-            </template>
-            退出登录
-          </n-button>
+      <n-dropdown trigger="hover" :options="options">
+        <n-space style="display: flex; align-items: center">
+          <n-h4>{{ userName }}</n-h4>
+          <n-badge dot :show="true">
+            <n-avatar
+              bordered
+              :size="46"
+              src="https://gravatar.loli.net/avatar/f481f2a9c66b7414da397c36868a2285"
+              :fallback-src="getAssetsUrl('default-avatar.jpg')"
+              :img-props="{
+                alt: 'avatar',
+              }"
+            />
+          </n-badge>
         </n-space>
-      </n-popover>
+      </n-dropdown>
     </n-space>
   </n-layout-header>
 </template>

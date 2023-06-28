@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { h, type Component } from 'vue'
+import { h, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { NIcon, type MenuOption } from 'naive-ui'
+import { storeToRefs } from 'pinia'
+import { useAppConfig } from '@/stores/app-config'
+import renderIcon from '@/utils/render-icon'
 import {
   HomeOutline,
   CaretDownOutline,
@@ -23,16 +25,10 @@ import {
   TrashOutline,
   PersonOutline,
   ShieldCheckmarkOutline,
-  TerminalOutline
+  TerminalOutline,
 } from '@vicons/ionicons5'
-import { useAppConfig } from '@/stores/app-config'
-import { storeToRefs } from 'pinia'
 
 const { isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
-
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) })
-}
 
 const menuOptions = ref([
   {
