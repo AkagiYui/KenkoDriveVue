@@ -9,7 +9,8 @@ const { userName } = storeToRefs(useUserInfo())
 const helloLabel = {
   '早上好': [6, 7, 8, 9, 10],
   '中午了': [11.5, 12, 13],
-  '下午好': [14, 15, 16, 17],
+  '下午好': [14, 15, 16, 17, 18],
+  '晚上好': [18.5, 19, 20, 21, 22],
   '夜深了': [23, 0, 1, 2, 3, 4, 5],
 }
 
@@ -47,7 +48,7 @@ onMounted(() => {
 <template>
   <div style="padding: 24px">
     <n-h4>
-      {{ helloText ?? '您好' }}，
+      {{ helloText }}，
       <n-h1>{{ userName }}</n-h1>
     </n-h4>
   </div>
