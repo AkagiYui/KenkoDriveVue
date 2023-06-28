@@ -26,3 +26,4 @@
 - [CSDN: 去掉router-link文字的下划线](https://blog.csdn.net/weixin_52418790/article/details/117361939)
 - [CSDN: vue3+vite如何引入本地静态图片](https://blog.csdn.net/weixin_57399180/article/details/128191707)
 - [CSDN: 什么是弹性（display: flex）布局 ？](https://blog.csdn.net/weixin_41044151/article/details/114071215)
+- [JS 性能利器！Web Worker](https://yby.zone/note/frontend/js-worker.html)

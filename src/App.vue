@@ -17,15 +17,35 @@ const customizedLocale = createLocale(
   },
   zhCN,
 )
+
 function resize() {
-  vh100.value = window.innerHeight;
+  vh100.value = window.innerHeight
 }
+
 onMounted(() => {
-  window.addEventListener('resize', resize);
-});
+  window.addEventListener('resize', resize)
+
+  // 如果是生产环境，启动更新检测
+  if (import.meta.env.PROD) {
+    const worker = new Worker(new URL('./updateChecker.ts', import.meta.url), {
+      type: 'module',
+    })
+
+    worker.postMessage({ url: `${window.location.protocol}//${window.location.host}` })
+    worker.onmessage = (e) => {
+      if (e.data === 1) {
+        window.$notify.warning({
+          content: '检测到版本更新',
+          meta: '请刷新页面',
+          keepAliveOnHover: true,
+        })
+      }
+    }
+  }
+})
 onUnmounted(() => {
-  window.removeEventListener('resize', resize);
-});
+  window.removeEventListener('resize', resize)
+})
 </script>
 
 <template>
