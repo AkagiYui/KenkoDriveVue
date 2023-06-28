@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import getAssetsUrl from '@/utils/pub-use'
-import QrcodeVue from 'qrcode.vue'
+import QrCode from '@/components/QrCode.vue'
 
 const owner = 'AkagiYui'
 const frontendRepoUrl = 'https://github.com/AkagiYui/KenkoDriveVue'
@@ -38,7 +38,7 @@ const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
           </n-space>
         </p>
       </div>
-      <qrcode-vue :value="frontendRepoUrl" :size="180" render-as="svg" level="H" />
+      <QrCode :value="frontendRepoUrl" :size="180" />
     </n-space>
     <n-space>
       <div style='width: 400px'>
@@ -68,7 +68,7 @@ const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
           </n-space>
         </p>
       </div>
-      <qrcode-vue :value="backendRepoUrl" :size="180" render-as="svg" level="H" />
+      <QrCode :value="backendRepoUrl" :size="180" />
     </n-space>
     <n-image :src="getAssetsUrl('ji.jpg')" width="600" />
   </div>

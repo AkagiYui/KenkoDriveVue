@@ -105,7 +105,7 @@ const menuOptions = ref([
     icon: renderIcon(SpeedometerOutline),
     children: [
       {
-        label: '运行状态',
+        label: '运行信息',
         key: 'system',
         path: '/system',
         icon: renderIcon(TerminalOutline),

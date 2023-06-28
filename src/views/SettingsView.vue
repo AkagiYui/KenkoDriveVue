@@ -31,9 +31,9 @@ const reset = () => {
               <span style="align-self: center; margin-right: 10px">主题</span>
               <n-button @click="toggleDarkMode" :type="!isDarkMode ? 'primary' : 'default'">
                 <template #icon>
-                  <NIcon>
+                  <n-icon>
                     <WeatherSunny16Regular />
-                  </NIcon>
+                  </n-icon>
                 </template>
                 亮色
               </n-button>
