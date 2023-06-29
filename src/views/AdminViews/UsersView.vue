@@ -5,9 +5,11 @@ import { h, onBeforeMount, reactive, ref, nextTick } from 'vue'
 import { NButton, NInput, NProgress, NTooltip, NText } from 'naive-ui'
 import { changeColor } from 'seemly'
 import { useThemeVars, type DropdownOption, type PaginationProps } from 'naive-ui'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const themeVars = useThemeVars()
 
+const isLoading = ref(false)
 /** 分页器 */
 const pagination = reactive({
   /** 当前页，从 1 开始 */
@@ -105,6 +107,7 @@ const tableColumns = [
 const tableData = ref<User[]>([])
 /** 获取表格数据 */
 const getData = () => {
+  isLoading.value = true
   getUsers(pagination.page - 1, pagination.pageSize)
     .then((res) => {
       let data: Page<User> = res.data
@@ -114,7 +117,9 @@ const getData = () => {
     .catch((e) => {
       window.$message.error('数据获取失败')
       console.error(e)
-    })
+    }).finally(
+    () => (isLoading.value = false),
+  )
 }
 
 onBeforeMount(() => {
@@ -149,24 +154,28 @@ const rowProps = (row: User) => {
     },
   }
 }
+const toDeleteUser = () => {
+  deleteUser(selectRow.value.id)
+    .then(() => {
+      getData()
+      window.$message.success('删除成功')
+    })
+    .catch((e) => {
+      window.$message.error('删除失败')
+      console.error(e)
+    })
+}
 const onMenuClick = (x: string) => {
   switch (x) {
     case 'edit':
       window.$message.info('编辑')
       break
     case 'delete':
-      deleteUser(selectRow.value.id)
-        .then(() => {
-          getData()
-          window.$message.success('删除成功')
-        })
-        .catch((e) => {
-          window.$message.error('删除失败')
-          console.error(e)
-        })
+      showDeleteConfirmModal.value = true
       break
   }
 }
+const showDeleteConfirmModal = ref(false)
 </script>
 
 <template>
@@ -183,7 +192,7 @@ const onMenuClick = (x: string) => {
               </template>
               刷新
             </n-button>
-            <n-button tertiary type="primary">
+            <n-button tertiary type="primary" @click="ppp = true">
               <template #icon>
                 <n-icon>
                   <AddOutline />
@@ -209,8 +218,18 @@ const onMenuClick = (x: string) => {
         @update:page="onPageChange"
         @update:page-size="onPageSizeChange"
         :row-props="rowProps"
+        :loading='isLoading'
       />
     </n-space>
+    <ConfirmModal
+      v-model:show="showDeleteConfirmModal"
+      @positive-click="
+        () => {
+          toDeleteUser()
+          showDeleteConfirmModal = false
+        }
+      "
+    />
     <n-dropdown
       placement="bottom-start"
       trigger="manual"
