@@ -34,10 +34,9 @@ onMounted(() => {
     worker.postMessage({ url: `${window.location.protocol}//${window.location.host}` })
     worker.onmessage = (e) => {
       if (e.data === 1) {
-        window.$notify.warning({
-          content: '检测到版本更新',
-          meta: '请刷新页面',
-          keepAliveOnHover: true,
+        window.$message.warning('发现新版本，请刷新页面',{
+          duration: 0,
+          closable: true
         })
       }
     }

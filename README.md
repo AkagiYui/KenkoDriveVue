@@ -26,4 +26,7 @@
 - [CSDN: 去掉router-link文字的下划线](https://blog.csdn.net/weixin_52418790/article/details/117361939)
 - [CSDN: vue3+vite如何引入本地静态图片](https://blog.csdn.net/weixin_57399180/article/details/128191707)
 - [CSDN: 什么是弹性（display: flex）布局 ？](https://blog.csdn.net/weixin_41044151/article/details/114071215)
+- [CSDN：vue3.2props设置默认值【defineProps】](https://blog.csdn.net/qq_45487080/article/details/123841563)
 - [JS 性能利器！Web Worker](https://yby.zone/note/frontend/js-worker.html)
+- [博客园：TypeScript（接口—泛型）](https://www.cnblogs.com/jing-zhe/p/13061969.html)
+- [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
