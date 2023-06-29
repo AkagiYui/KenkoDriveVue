@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from '@vicons/ionicons5'
-import { getAllUser } from '@/api/user'
-import { h, onBeforeMount, reactive, ref } from 'vue'
-import { NButton, NInput, NProgress, NTooltip } from 'naive-ui'
+import { deleteUser, getUsers } from '@/api/user'
+import { h, onBeforeMount, reactive, ref, nextTick } from 'vue'
+import { NButton, NInput, NProgress, NTooltip, NText } from 'naive-ui'
 import { changeColor } from 'seemly'
-import { useThemeVars } from 'naive-ui'
+import { useThemeVars, type DropdownOption, type PaginationProps } from 'naive-ui'
 
 const themeVars = useThemeVars()
 
@@ -24,7 +24,7 @@ const pagination = reactive({
   /** 总记录数 */
   itemCount: 0,
   /** 总记录数显示文本 */
-  prefix: (p) => `共 ${p.itemCount} 项`,
+  prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
 /** 页码改变事件 */
 const onPageChange = (page: number) => {
@@ -51,17 +51,16 @@ const tableColumns = [
   {
     title: '邮箱',
     key: 'email',
-    width: '160',
   },
   {
     title: '配额',
     key: 'capacity',
-    minWidth: '240px',
-    render(row) {
+    minWidth: '200px',
+    render(row: User) {
       return h(
         NTooltip,
         {
-          placement: 'bottom'
+          placement: 'bottom',
         },
         {
           trigger: () =>
@@ -75,7 +74,7 @@ const tableColumns = [
                 percentage: 20,
               },
               {
-                default: '20%',
+                default: () => '20%',
               },
             ),
           default: () => '20G / 100G',
@@ -87,44 +86,87 @@ const tableColumns = [
     title: '状态',
     key: 'isDisabled',
     width: '100px',
-    render(row) {
+    render(row: User) {
       return h(
         NButton,
         {
           strong: true,
           tertiary: true,
-          disable: row.switching,
           size: 'small',
-          type: row.isActive ? 'success' : 'error',
-          onClick: () => (row.isActive = !row.isActive),
+          type: row.disabled ? 'success' : 'error',
+          onClick: () => (row.disabled = !row.disabled),
         },
-        { default: () => (row.isActive ? '已启用' : '已禁用') },
+        { default: () => (row.disabled ? '已启用' : '已禁用') },
       )
     },
   },
 ]
 /** 表格数据 */
-const tableData = ref<Object[]>([])
+const tableData = ref<User[]>([])
 /** 获取表格数据 */
 const getData = () => {
-  getAllUser()
+  getUsers(pagination.page - 1, pagination.pageSize)
     .then((res) => {
-      let data = res.data
-      tableData.value = data as Object[]
-      pagination.itemCount = data.length as number
+      let data: Page<User> = res.data
+      tableData.value = data.list
+      pagination.itemCount = data.total
     })
     .catch((e) => {
       window.$message.error('数据获取失败')
       console.error(e)
-    })
-    .finally(() => {
-      console.log()
     })
 }
 
 onBeforeMount(() => {
   getData()
 })
+
+const showDropdown = ref(false)
+const x = ref(0)
+const y = ref(0)
+const selectRow = ref<User>(null)
+const options = ref<DropdownOption[]>([
+  {
+    label: '编辑',
+    key: 'edit',
+  },
+  {
+    label: () => h(NText, { type: 'error' }, () => '删除'),
+    key: 'delete',
+  },
+])
+const rowProps = (row: User) => {
+  return {
+    onContextmenu: (e: MouseEvent) => {
+      e.preventDefault()
+      showDropdown.value = false
+      nextTick().then(() => {
+        selectRow.value = row
+        showDropdown.value = true
+        x.value = e.clientX
+        y.value = e.clientY
+      })
+    },
+  }
+}
+const onMenuClick = (x: string) => {
+  switch (x) {
+    case 'edit':
+      window.$message.info('编辑')
+      break
+    case 'delete':
+      deleteUser(selectRow.value.id)
+        .then(() => {
+          getData()
+          window.$message.success('删除成功')
+        })
+        .catch((e) => {
+          window.$message.error('删除失败')
+          console.error(e)
+        })
+      break
+  }
+}
 </script>
 
 <template>
@@ -164,11 +206,26 @@ onBeforeMount(() => {
         :columns="tableColumns"
         :data="tableData"
         :pagination="pagination"
-        :loading="false"
         @update:page="onPageChange"
         @update:page-size="onPageSizeChange"
+        :row-props="rowProps"
       />
     </n-space>
+    <n-dropdown
+      placement="bottom-start"
+      trigger="manual"
+      :x="x"
+      :y="y"
+      :options="options"
+      :show="showDropdown"
+      :on-clickoutside="() => (showDropdown = false)"
+      @select="
+        (x: string) => {
+          showDropdown = false
+          onMenuClick(x)
+        }
+      "
+    />
   </div>
 </template>
 
