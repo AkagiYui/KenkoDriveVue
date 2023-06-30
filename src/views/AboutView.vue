@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import getAssetsUrl from '@/utils/pub-use'
 import QrCode from '@/components/QrCode.vue'
+const frontendVersion = APP_VERSION
 
 const owner = 'AkagiYui'
 const frontendRepoUrl = 'https://github.com/AkagiYui/KenkoDriveVue'
@@ -14,7 +15,7 @@ const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
       <div style='width: 400px'>
         <n-h3 prefix="bar"
           >Kenko Drive Vue 前端
-          <n-tag type="info"> 版本号</n-tag>
+          <n-tag type="info">{{frontendVersion}}</n-tag>
         </n-h3>
         <p>
           Github:

@@ -33,5 +33,6 @@ export default defineConfig({
     'import.meta.env.BACKEND_URL': process.env['BACKEND_URL']
       ? `'${process.env['BACKEND_URL']}'`
       : `'http://localhost:6677'`,
+    APP_VERSION: JSON.stringify(process.env.npm_package_version)
   },
 })
