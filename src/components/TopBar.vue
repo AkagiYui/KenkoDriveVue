@@ -63,11 +63,10 @@ const options = ref([
       </n-switch>
       <n-dropdown trigger="hover" :options="options" placement="bottom-end">
         <n-space style="display: flex; align-items: center">
-          <n-h4>{{ userName }}</n-h4>
+          <n-h4 style="margin: 0">{{ userName }}</n-h4>
           <n-badge dot :show="true">
             <n-avatar
-              bordered
-              :size="46"
+              :size="32"
               src="https://gravatar.loli.net/avatar/f481f2a9c66b7414da397c36868a2285"
               :fallback-src="getAssetsUrl('default-avatar.jpg')"
               :img-props="{
