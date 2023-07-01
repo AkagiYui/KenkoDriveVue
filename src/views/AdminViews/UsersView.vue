@@ -124,7 +124,7 @@ onBeforeMount(() => {
 const showDropdown = ref(false)
 const x = ref(0)
 const y = ref(0)
-const selectRow = ref<User>(null)
+const selectRow = ref<User | null>(null)
 const options = ref<DropdownOption[]>([
   {
     label: '编辑',
@@ -155,6 +155,7 @@ const onMenuClick = (x: string) => {
       window.$message.info('编辑')
       break
     case 'delete':
+      if (!selectRow.value) return
       deleteUser(selectRow.value.id)
         .then(() => {
           getData()
