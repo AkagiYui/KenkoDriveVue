@@ -28,3 +28,7 @@
 - [JS 性能利器！Web Worker](https://yby.zone/note/frontend/js-worker.html)
 - [博客园：TypeScript（接口—泛型）](https://www.cnblogs.com/jing-zhe/p/13061969.html)
 - [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
+
+## 活跃数据
+
+![Alt](https://repobeats.axiom.co/api/embed/01a8984fbd9998e1b780dce7af875e5f71ba157f.svg "Repobeats analytics image")
