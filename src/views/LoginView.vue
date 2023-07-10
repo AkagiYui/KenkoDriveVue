@@ -53,7 +53,7 @@ const { isDarkMode } = storeToRefs(useAppConfig())
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* 设置遮罩颜色和透明度 */
   /* 遮罩动画 */
-  animation: fadeOut 1s ease-in-out;
+  animation: fadeOut 0.2s ease-in-out;
 }
 
 @keyframes fadeOut {
