@@ -18,7 +18,7 @@ const customizedLocale = createLocale(
 )
 
 // 用于控制banner的显示
-const banner = ref(import.meta.env.DEV)
+const banner = ref(import.meta.env.DEV && false)
 
 onMounted(() => {
 
