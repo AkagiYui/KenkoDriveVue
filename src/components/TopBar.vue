@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import QrcodeVue from 'qrcode.vue'
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppConfig } from '@/stores/app-config'
@@ -7,6 +6,7 @@ import { useUserInfo } from '@/stores/user-info'
 import getAssetsUrl from '@/utils/pub-use'
 import renderIcon from '@/utils/render-icon'
 import { LogOutOutline, PersonCircleOutline } from '@vicons/ionicons5'
+import QrCode from '@/components/QrCode.vue'
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { userName } = storeToRefs(useUserInfo())
@@ -51,7 +51,7 @@ const options = ref([
             </n-space>
           </router-link>
         </template>
-        <qrcode-vue :value="host" :size="200" render-as="canvas" level="H" />
+        <QrCode :value="host" :size="200" />
       </n-popover>
     </n-space>
     <n-space style="margin-right: 24px; display: flex; align-items: center; height: 64px">
