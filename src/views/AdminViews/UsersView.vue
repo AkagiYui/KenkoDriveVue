@@ -117,9 +117,8 @@ const getData = () => {
     .catch((e) => {
       window.$message.error('数据获取失败')
       console.error(e)
-    }).finally(
-    () => (isLoading.value = false),
-  )
+    })
+    .finally(() => (isLoading.value = false))
 }
 
 onBeforeMount(() => {
@@ -129,7 +128,7 @@ onBeforeMount(() => {
 const showDropdown = ref(false)
 const x = ref(0)
 const y = ref(0)
-const selectRow = ref<User>(null)
+const selectRow = ref<User | null>(null)
 const options = ref<DropdownOption[]>([
   {
     label: '编辑',
@@ -152,7 +151,15 @@ const rowProps = (row: User) => {
         y.value = e.clientY
       })
     },
+    ondblclick: (e: MouseEvent) => {
+      e.preventDefault()
+      selectRow.value = row
+      onEditUser()
+    },
   }
+}
+const onEditUser = () => {
+  window.$message.info('编辑：' + selectRow.value.nickname)
 }
 const toDeleteUser = () => {
   deleteUser(selectRow.value.id)
@@ -168,18 +175,117 @@ const toDeleteUser = () => {
 const onMenuClick = (x: string) => {
   switch (x) {
     case 'edit':
-      window.$message.info('编辑')
+      onEditUser()
       break
     case 'delete':
+      if (!selectRow.value) return
       showDeleteConfirmModal.value = true
       break
   }
 }
 const showDeleteConfirmModal = ref(false)
+
+/** 模态框信息 */
+const modalData = ref({ name: '', number: '', className: '' })
+/** 模态框表单校验规则 */
+const rules = {
+  number: {
+    required: true,
+    message: '请输入学号',
+    min: 3,
+    trigger: ['input', 'blur'],
+  },
+  name: {
+    required: true,
+    min: 2,
+    message: '请输入姓名',
+    trigger: ['input', 'blur'],
+  },
+
+  className: {
+    required: true,
+    min: 3,
+    message: '请输入班级',
+    trigger: ['input', 'blur'],
+  },
+}
 </script>
 
 <template>
   <div style="padding: 12px">
+    <!-- 确认删除模态框 -->
+    <ConfirmModal
+      v-model:show="showDeleteConfirmModal"
+      @positive-click="
+        () => {
+          toDeleteUser()
+          showDeleteConfirmModal = false
+        }
+      "
+    />
+
+    <!-- 新增删除模态框 -->
+    <NModal
+      :show="false"
+      preset="card"
+      :style="{
+        width: '400px',
+      }"
+      :title="true ? '新增用户' : '修改信息'"
+      :bordered="false"
+      :mask-closable="false"
+      @after-leave="() => {}"
+    >
+      <NSpace vertical>
+        <NForm
+          :model="modalData"
+          ref="modalFormRef"
+          :rules="rules"
+          label-placement="left"
+          label-width="auto"
+        >
+          <NFormItem path="number" label="用户名">
+            <NInput clearable placeholder="输入用户名" v-model:value="modalData.number" />
+          </NFormItem>
+          <NFormItem path="number" label="密码">
+            <NInput clearable placeholder="输入密码" v-model:value="modalData.number" />
+          </NFormItem>
+          <NFormItem path="number" label="确认密码">
+            <NInput clearable placeholder="" v-model:value="modalData.number" />
+          </NFormItem>
+          <NFormItem path="name" label="昵称">
+            <NInput clearable placeholder="输入昵称" v-model:value="modalData.name" />
+          </NFormItem>
+          <NFormItem path="className" label="邮箱">
+            <NInput clearable placeholder="输入邮箱" v-model:value="modalData.className" />
+          </NFormItem>
+        </NForm>
+      </NSpace>
+      <template #action>
+        <NSpace justify="end" style="width: 100%">
+          <NButton @click="true ? addData() : updateData()" :type="true ? 'success' : 'warning'">
+            {{ true ? '确定' : '修改' }}
+          </NButton>
+        </NSpace>
+      </template>
+    </NModal>
+
+    <!-- 表格右键菜单 -->
+    <n-dropdown
+      placement="bottom-start"
+      trigger="manual"
+      :x="x"
+      :y="y"
+      :options="options"
+      :show="showDropdown"
+      :on-clickoutside="() => (showDropdown = false)"
+      @select="
+        (x: string) => {
+          showDropdown = false
+          onMenuClick(x)
+        }
+      "
+    />
     <n-space vertical>
       <n-form :show-label="false" inline :show-feedback="false">
         <n-formItem path="学号">
@@ -200,11 +306,14 @@ const showDeleteConfirmModal = ref(false)
               </template>
               新增
             </n-button>
-            <NInput placeholder="搜索">
-              <template #prefix>
-                <n-icon :component="SearchOutline" />
-              </template>
-            </NInput>
+            <n-input-group>
+              <n-input>
+                <template #prefix>
+                  <n-icon :component="SearchOutline" />
+                </template>
+              </n-input>
+              <n-button type="primary" ghost> 搜索 </n-button>
+            </n-input-group>
           </n-space>
         </n-formItem>
       </n-form>
@@ -218,33 +327,9 @@ const showDeleteConfirmModal = ref(false)
         @update:page="onPageChange"
         @update:page-size="onPageSizeChange"
         :row-props="rowProps"
-        :loading='isLoading'
+        :loading="isLoading"
       />
     </n-space>
-    <ConfirmModal
-      v-model:show="showDeleteConfirmModal"
-      @positive-click="
-        () => {
-          toDeleteUser()
-          showDeleteConfirmModal = false
-        }
-      "
-    />
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="x"
-      :y="y"
-      :options="options"
-      :show="showDropdown"
-      :on-clickoutside="() => (showDropdown = false)"
-      @select="
-        (x: string) => {
-          showDropdown = false
-          onMenuClick(x)
-        }
-      "
-    />
   </div>
 </template>
 

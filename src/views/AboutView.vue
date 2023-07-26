@@ -1,21 +1,32 @@
 <script setup lang="ts">
 import getAssetsUrl from '@/utils/pub-use'
 import QrCode from '@/components/QrCode.vue'
+import { onBeforeMount, ref } from 'vue'
+import { getBackendVersion } from '@/api/server'
+
 const frontendVersion = APP_VERSION
 
 const owner = 'AkagiYui'
 const frontendRepoUrl = 'https://github.com/AkagiYui/KenkoDriveVue'
 const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
+
+const backendVersion = ref<string>('')
+
+onBeforeMount(() => {
+  getBackendVersion().then((res) => {
+    backendVersion.value = res.data
+  })
+})
 </script>
 
 <template>
   <div style="padding: 24px">
     <n-h2>关于</n-h2>
     <n-space>
-      <div style='width: 400px'>
+      <div style="width: 400px">
         <n-h3 prefix="bar"
           >Kenko Drive Vue 前端
-          <n-tag type="info">{{frontendVersion}}</n-tag>
+          <n-tag type="info">{{ frontendVersion }}</n-tag>
         </n-h3>
         <p>
           Github:
@@ -42,10 +53,10 @@ const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
       <QrCode :value="frontendRepoUrl" :size="180" />
     </n-space>
     <n-space>
-      <div style='width: 400px'>
+      <div style="width: 400px">
         <n-h3 prefix="bar"
           >Kenko Drive SpringBoot 后端
-          <n-tag type="info"> 版本号</n-tag>
+          <n-tag v-if='backendVersion !== ""' type="info">{{ backendVersion }}</n-tag>
         </n-h3>
         <p>
           Github:
@@ -61,8 +72,8 @@ const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
         <p>
           <n-space>
             <n-button tag="a" target="_blank" :href="`${backendRepoUrl}/issues`">
-              问题反馈</n-button
-            >
+              问题反馈
+            </n-button>
             <n-button tag="a" target="_blank" :href="`${backendRepoUrl}/releases`">
               发布日志
             </n-button>
