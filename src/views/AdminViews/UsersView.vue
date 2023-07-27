@@ -159,9 +159,11 @@ const rowProps = (row: User) => {
   }
 }
 const onEditUser = () => {
+  if (!selectRow.value) return
   window.$message.info('编辑：' + selectRow.value.nickname)
 }
 const toDeleteUser = () => {
+  if (!selectRow.value) return
   deleteUser(selectRow.value.id)
     .then(() => {
       getData()

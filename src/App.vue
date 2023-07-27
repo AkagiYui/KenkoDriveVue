@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import TopBar from '@/components/TopBar.vue'
-import SideMenu from '@/components/SideMenu.vue'
 import Message from '@/components/MessageApi.vue'
 import { zhCN, dateZhCN, darkTheme, createLocale } from 'naive-ui'
 import { useAppConfig } from '@/stores/app-config'
+import { ref, onMounted } from 'vue'
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const customizedLocale = createLocale(
@@ -21,7 +19,6 @@ const customizedLocale = createLocale(
 const banner = ref(import.meta.env.DEV && false)
 
 onMounted(() => {
-
   // 如果是生产环境，启动更新检测
   if (import.meta.env.PROD) {
     const worker = new Worker(new URL('./updateChecker.ts', import.meta.url), {
@@ -59,20 +56,12 @@ onMounted(() => {
     <div class="container">
       <div class="banner" v-show="banner">
         我未来可能是一个广告位，或者是一个banner
-        <n-button type="error" @click="banner = false">
-          关闭
-        </n-button>
+        <n-button type="error" @click="banner = false"> 关闭 </n-button>
       </div>
       <n-layout class="main">
         <top-bar />
         <n-layout position="absolute" style="top: 64px" has-sider>
-          <side-menu />
-          <n-layout content-style="height: 100%;" id="app-layout" :style="{}">
-            <n-scrollbar :class="{ 'block-scrollbar': false }">
-              <n-back-top :right="50" />
-              <router-view />
-            </n-scrollbar>
-          </n-layout>
+          <router-view />
         </n-layout>
       </n-layout>
     </div>
