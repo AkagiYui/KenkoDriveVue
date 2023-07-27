@@ -9,6 +9,7 @@ export const useAppConfig = defineStore(
     const isMenuCollapsed = ref(false)
     const currentRouteName = ref('home')
     const isDebugMode = ref(false)
+    const expandedMenuKeys = ref<string[]>([])
 
     const toggleDarkMode = () => {
       isDarkMode.value = !isDarkMode.value
@@ -19,6 +20,7 @@ export const useAppConfig = defineStore(
       isMenuCollapsed.value = false
       currentRouteName.value = ''
       isDebugMode.value = false
+      expandedMenuKeys.value = []
     }
 
     return {
@@ -29,6 +31,7 @@ export const useAppConfig = defineStore(
       toggleDarkMode,
       reset,
       isDebugMode,
+      expandedMenuKeys,
     }
   },
   {

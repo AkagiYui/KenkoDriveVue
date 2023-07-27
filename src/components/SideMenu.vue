@@ -4,6 +4,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { NIcon, type MenuOption } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { useAppConfig } from '@/stores/app-config'
+const { expandedMenuKeys } = storeToRefs(useAppConfig())
 import renderIcon from '@/utils/render-icon'
 import {
   HomeOutline,
@@ -26,6 +27,7 @@ import {
   PersonOutline,
   ShieldCheckmarkOutline,
   TerminalOutline,
+  KeyOutline,
 } from '@vicons/ionicons5'
 
 const { isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
@@ -92,68 +94,71 @@ const menuOptions = ref([
     icon: renderIcon(SettingsOutline),
   },
   {
-    key: 'divider-1',
-    type: 'divider',
-  },
-  {
-    label: '系统状态',
-    key: 'system-status',
-    icon: renderIcon(SpeedometerOutline),
+    label: '管理员',
+    key: 'admin',
+    icon: renderIcon(KeyOutline),
     children: [
       {
-        label: '运行信息',
-        key: 'system',
-        path: '/system',
-        icon: renderIcon(TerminalOutline),
+        label: '系统状态',
+        key: 'system-status',
+        icon: renderIcon(SpeedometerOutline),
+        children: [
+          {
+            label: '运行信息',
+            key: 'system',
+            path: '/system',
+            icon: renderIcon(TerminalOutline),
+          },
+          {
+            label: '文件分析',
+            key: 'file-analysis',
+            disabled: true,
+          },
+          {
+            label: '用户分析',
+            key: 'user-analysis',
+            disabled: true,
+          },
+        ],
       },
       {
-        label: '文件分析',
-        key: 'file-analysis',
+        label: '用户管理',
+        key: 'user-manage',
+        icon: renderIcon(PeopleOutline),
+        children: [
+          {
+            label: '用户信息',
+            key: 'users',
+            path: '/users',
+            icon: renderIcon(PersonOutline),
+          },
+          {
+            label: '角色权限',
+            key: 'role-info',
+            icon: renderIcon(ShieldCheckmarkOutline),
+            disabled: true,
+          },
+        ],
+      },
+      {
+        label: '文件管理',
+        key: 'file-manage',
+        icon: renderIcon(FolderOpenOutline),
         disabled: true,
       },
       {
-        label: '用户分析',
-        key: 'user-analysis',
+        label: '分享管理',
+        key: 'share-manage',
+        icon: renderIcon(PaperPlaneOutline),
+        disabled: true,
+      },
+      {
+        label: '系统设置',
+        key: 'system-setting',
+        icon: renderIcon(SettingsOutline),
         disabled: true,
       },
     ],
-  },
-  {
-    label: '用户管理',
-    key: 'user-manage',
-    icon: renderIcon(PeopleOutline),
-    children: [
-      {
-        label: '用户信息',
-        key: 'users',
-        path: '/users',
-        icon: renderIcon(PersonOutline),
-      },
-      {
-        label: '角色权限',
-        key: 'role-info',
-        icon: renderIcon(ShieldCheckmarkOutline),
-        disabled: true,
-      },
-    ],
-  },
-  {
-    label: '文件管理',
-    key: 'file-manage',
-    icon: renderIcon(FolderOpenOutline),
-    disabled: true,
-  },
-  {
-    label: '分享管理',
-    key: 'share-manage',
-    icon: renderIcon(PaperPlaneOutline),
-    disabled: true,
-  },
-  {
-    label: '系统设置',
-    key: 'system-setting',
-    icon: renderIcon(SettingsOutline),
-    disabled: true,
   },
   {
     key: 'divider-2',
@@ -194,11 +199,11 @@ const menuOptions = ref([
   },
 ])
 
-function expandIcon() {
+const expandIcon = () => {
   return h(NIcon, null, { default: () => h(CaretDownOutline) })
 }
 
-function renderMenuLabel(option: MenuOption) {
+const renderMenuLabel = (option: MenuOption) => {
   if (option.path && !option.disabled) {
     return h(
       RouterLink,
@@ -236,6 +241,8 @@ function renderMenuLabel(option: MenuOption) {
       :render-label="renderMenuLabel"
       :expand-icon="expandIcon"
       :value="useRoute().name as string"
+      :expanded-keys="expandedMenuKeys"
+      @update:expanded-keys='expandedMenuKeys = $event'
     />
   </n-layout-sider>
 </template>
