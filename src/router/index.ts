@@ -6,11 +6,61 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('../views/HomeView.vue'),
+      name: 'console',
+      component: () => import('../views/ConsoleView.vue'),
       meta: {
-        title: '主页',
+        title: '控制台',
       },
+      children: [
+        {
+          path: '/',
+          name: 'home',
+          component: () => import('../views/HomeView.vue'),
+          meta: {
+            title: '主页',
+          },
+        },
+        {
+          path: '/about',
+          name: 'about',
+          component: () => import('../views/AboutView.vue'),
+          meta: {
+            title: '关于',
+          },
+        },
+        {
+          path: '/settings',
+          name: 'settings',
+          component: () => import('../views/SettingsView.vue'),
+          meta: {
+            title: '设置',
+          },
+        },
+        {
+          path: '/test',
+          name: 'test',
+          component: () => import('../views/TestView.vue'),
+          meta: {
+            title: '测试',
+          },
+        },
+        {
+          path: '/users',
+          name: 'users',
+          component: () => import('../views/AdminViews/UsersView.vue'),
+          meta: {
+            title: '用户信息',
+          },
+        },
+        {
+          path: '/system',
+          name: 'system',
+          component: () => import('../views/AdminViews/SystemStatusView.vue'),
+          meta: {
+            title: '系统状态',
+          },
+        },
+      ],
     },
     {
       path: '/login',
@@ -18,46 +68,6 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue'),
       meta: {
         title: '登录',
-      },
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
-      meta: {
-        title: '关于',
-      },
-    },
-    {
-      path: '/settings',
-      name: 'settings',
-      component: () => import('../views/SettingsView.vue'),
-      meta: {
-        title: '设置',
-      },
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/TestView.vue'),
-      meta: {
-        title: '测试',
-      },
-    },
-    {
-      path: '/users',
-      name: 'users',
-      component: () => import('../views/AdminViews/UsersView.vue'),
-      meta: {
-        title: '用户信息',
-      },
-    },
-    {
-      path: '/system',
-      name: 'system',
-      component: () => import('../views/AdminViews/SystemStatusView.vue'),
-      meta: {
-        title: '系统状态',
       },
     },
     {

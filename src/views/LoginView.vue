@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAppConfig } from '@/stores/app-config'
 import { storeToRefs } from 'pinia'
-
+import TopBar from '@/components/TopBar.vue'
 const { isDarkMode } = storeToRefs(useAppConfig())
 </script>
 
