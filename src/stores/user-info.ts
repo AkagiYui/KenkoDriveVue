@@ -20,8 +20,12 @@ export const useUserInfo = defineStore(
       requestToken.value = token
       tokenExpireTime.value = Date.now() + 1000 * 60 * 60 * 2 // 2小时
     }
+    const deleteToken = () => {
+        requestToken.value = ''
+        tokenExpireTime.value = 0
+    }
 
-    return { userName, requestToken, isLoggedIn, setToken, tokenExpireTime }
+    return { userName, requestToken, isLoggedIn, setToken, tokenExpireTime, deleteToken }
   },
   {
     persist: {

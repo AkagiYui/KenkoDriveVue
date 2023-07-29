@@ -10,6 +10,7 @@ import QrCode from '@/components/QrCode.vue'
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { userName, isLoggedIn } = storeToRefs(useUserInfo())
+const { deleteToken } = useUserInfo()
 
 const host = window.location.origin
 const options = ref([
@@ -24,6 +25,17 @@ const options = ref([
     icon: renderIcon(LogOutOutline),
   },
 ])
+const onSelect = (key: string) => {
+  switch (key) {
+    case 'info':
+      console.log('info')
+      break
+    case 'logout':
+      deleteToken()
+      window.location.reload()
+      break
+  }
+}
 </script>
 
 <template>
@@ -61,7 +73,7 @@ const options = ref([
         <template #checked> 测试阶段</template>
         <template #unchecked> 全局暗色</template>
       </n-switch>
-      <n-dropdown v-if="isLoggedIn" trigger="hover" :options="options" placement="bottom-end">
+      <n-dropdown v-if="isLoggedIn" trigger="hover" :options="options" placement="bottom-end" @select="onSelect">
         <n-space style="display: flex; align-items: center">
           <n-h4 style="margin: 0">{{ userName }}</n-h4>
           <n-badge dot :show="true">

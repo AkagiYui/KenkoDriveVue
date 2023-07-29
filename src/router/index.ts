@@ -90,6 +90,7 @@ router.beforeEach((to, from) => {
   }
   // 已登录则取消路由
   if (config.isLoggedIn && to.name === 'login') {
+    window.$message.success('您已登录')
     return from.name ? false : { name: 'home' }
   }
 
@@ -127,8 +128,9 @@ router.onError((error: any) => {
 })
 
 router.isReady().then(() => {
-  // 初始化完成
-  const config = useAppConfig()
-  router.push({ name: config.currentRouteName ?? 'home' })
+  // 初始化完成，跳转到历史路由
+  // 路由到一个不存在的路由时，在跳转到404View后，路由还会发生一次变化，导致后退按钮要点击两次才能返回上一个路由
+  // const config = useAppConfig()
+  // router.replace({ name: config.currentRouteName ?? 'home' })
 })
 export default router
