@@ -10,12 +10,7 @@ export const useUserInfo = defineStore(
   },
   {
     persist: {
-      enabled: true,
-      strategies: [
-        {
-          storage: localStorage,
-        },
-      ],
+      storage: localStorage,
     },
   },
 )

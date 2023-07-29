@@ -6,7 +6,7 @@
 
 - [ ] feat: 国际化
 - [ ] feat: 无障碍图标
-
+- [ ] fix: 路由到一个不存在的路由时，在跳转到404View后，路由还会发生一次变化，导致后退按钮要点击两次才能返回上一个路由
 
 ## 鸣谢
 
@@ -15,8 +15,12 @@
 - [Vue Router 官方文档](https://router.vuejs.org/)
 - [Naive UI 官方文档](https://www.naiveui.com/)
 - [Vite 官方文档](https://cn.vitejs.dev/)
+- [适用于 Pinia 的持久化存储插件](https://prazdevs.github.io/pinia-plugin-persistedstate/zh/)
+- [JS 性能利器！Web Worker](https://yby.zone/note/frontend/js-worker.html)
+- [博客园：TypeScript（接口—泛型）](https://www.cnblogs.com/jing-zhe/p/13061969.html)
 - [GitHub: qrcode.vue](https://github.com/scopewu/qrcode.vue/blob/main/README-zh_cn.md)
 - [GitHub: BililiveRecorder-WebUI](https://github.com/BililiveRecorder/BililiveRecorder-WebUI)
+- [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)
 - [知乎: Vue3 Vite3 多环境配置 - 基于 vite 创建 vue3 全家桶项目(续篇）](https://zhuanlan.zhihu.com/p/571017133)
 - [CSDN: Pinia使用方法及持久化存储](https://blog.csdn.net/m0_53808238/article/details/129751966)
@@ -25,9 +29,7 @@
 - [CSDN: 什么是弹性（display: flex）布局 ？](https://blog.csdn.net/weixin_41044151/article/details/114071215)
 - [CSDN：vue3.2props设置默认值【defineProps】](https://blog.csdn.net/qq_45487080/article/details/123841563)
 - [CSDN: vue怎么获取package.json中的版本号](https://blog.csdn.net/weixin_52335582/article/details/126529422)
-- [JS 性能利器！Web Worker](https://yby.zone/note/frontend/js-worker.html)
-- [博客园：TypeScript（接口—泛型）](https://www.cnblogs.com/jing-zhe/p/13061969.html)
-- [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
+- [CSDN: 路由跳转push和replace的区别](https://blog.csdn.net/ourring/article/details/130605265)
 
 ## 活跃数据
 

@@ -36,12 +36,7 @@ export const useAppConfig = defineStore(
   },
   {
     persist: {
-      enabled: true,
-      strategies: [
-        {
-          storage: localStorage,
-        },
-      ],
+      storage: localStorage,
     },
   },
 )
