@@ -15,3 +15,19 @@ export function getUsers(index: number, size: number, filter?: string) {
 export function deleteUser(id: string) {
   return Request.delete(`/user/${id}`)
 }
+
+/** 获取token */
+export function getToken(username: string, password: string) {
+  return Request.post(
+    '/user/token',
+    {
+      username: username,
+      password: password,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    },
+  )
+}

@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 export const useAppConfig = defineStore(
   'app-config',
   () => {
-    const isLoggedIn = ref(false)
     const isDarkMode = ref(false)
     const isMenuCollapsed = ref(false)
     const currentRouteName = ref('home')
@@ -15,7 +14,6 @@ export const useAppConfig = defineStore(
       isDarkMode.value = !isDarkMode.value
     }
     const reset = () => {
-      isLoggedIn.value = false
       isDarkMode.value = false
       isMenuCollapsed.value = false
       currentRouteName.value = ''
@@ -24,7 +22,6 @@ export const useAppConfig = defineStore(
     }
 
     return {
-      isLoggedIn,
       isDarkMode,
       isMenuCollapsed,
       currentRouteName,

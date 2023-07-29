@@ -9,7 +9,7 @@ import { LogOutOutline, PersonCircleOutline } from '@vicons/ionicons5'
 import QrCode from '@/components/QrCode.vue'
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
-const { userName } = storeToRefs(useUserInfo())
+const { userName, isLoggedIn } = storeToRefs(useUserInfo())
 
 const host = window.location.origin
 const options = ref([
@@ -61,7 +61,7 @@ const options = ref([
         <template #checked> 测试阶段</template>
         <template #unchecked> 全局暗色</template>
       </n-switch>
-      <n-dropdown trigger="hover" :options="options" placement="bottom-end">
+      <n-dropdown v-if='isLoggedIn' trigger="hover" :options="options" placement="bottom-end">
         <n-space style="display: flex; align-items: center">
           <n-h4 style="margin: 0">{{ userName }}</n-h4>
           <n-badge dot :show="true">

@@ -10,15 +10,23 @@ const request = axios.create({
   },
 })
 
-request.interceptors.request.use((config) => {
-  window.$loadingbar.start()
-  return config
-})
+request.interceptors.request.use(
+  (config) => {
+    window.$loadingbar.start()
+    return config
+  },
+  function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error)
+  },
+)
 
 request.interceptors.response.use(
   (response) => {
+    // 2xx 范围内的状态码都会触发该函数。
     const code: number = response.data['code']
     if (code !== ServiceStatus.SUCCESS) {
+      // 发生业务错误
       window.$loadingbar.error()
       console.error('response error', response.data)
       switch (code) {
@@ -35,13 +43,14 @@ request.interceptors.response.use(
     return response
   },
   (error) => {
+    // 超出 2xx 范围的状态码都会触发该函数。
     window.$loadingbar.error()
-    console.log('response error', error)
 
     if (error.code === 'ECONNABORTED') {
       throw new Error('请求超时')
     }
-    throw new Error('网络错误')
+    console.log('response error', error)
+    return Promise.reject(error)
   },
 )
 

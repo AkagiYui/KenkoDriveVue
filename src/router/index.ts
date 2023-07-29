@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAppConfig } from '@/stores/app-config'
+import { useUserInfo } from '@/stores/user-info'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -82,11 +83,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from) => {
-  const config = useAppConfig()
+  const config = useUserInfo()
   // 未登录则跳转到登录页
-  // if (!config.isLoggedIn && to.name !== 'login') {
-  //   return { name: 'login' }
-  // }
+  if (!config.isLoggedIn && to.name !== 'login') {
+    return { name: 'login' }
+  }
+  // 已登录则取消路由
+  if (config.isLoggedIn && to.name === 'login') {
+    return from.name ? false : { name: 'home' }
+  }
 
   // 返回 false 以取消导航
   return true
