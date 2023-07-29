@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { h, ref, onBeforeMount } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { ref, onBeforeMount } from 'vue'
+import { useRouter } from 'vue-router'
 import { type FormInst } from 'naive-ui'
 
 import { useAppConfig } from '@/stores/app-config'

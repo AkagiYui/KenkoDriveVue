@@ -5,23 +5,23 @@
 import { type PiniaPluginContext } from 'pinia'
 
 export interface PersistStrategy {
-  key?: string;
-  storage?: Storage;
-  paths?: string[];
+  key?: string
+  storage?: Storage
+  paths?: string[]
 }
 
 export interface PersistOptions {
-  enabled: true;
-  strategies?: PersistStrategy[];
+  enabled: true
+  strategies?: PersistStrategy[]
 }
 
-type Store = PiniaPluginContext['store'];
-type PartialState = Partial<Store['$state']>;
+type Store = PiniaPluginContext['store']
+type PartialState = Partial<Store['$state']>
 
 declare module 'pinia' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface DefineStoreOptionsBase<S, Store> {
-    persist?: PersistOptions;
+    persist?: PersistOptions
   }
 }
 
@@ -43,12 +43,16 @@ export const updateStorage = (strategy: PersistStrategy, store: Store) => {
 
 export default ({ options, store }: PiniaPluginContext): void => {
   if (options.persist?.enabled) {
-    const defaultStrategy: PersistStrategy[] = [{
-      key: store.$id,
-      storage: sessionStorage,
-    }]
+    const defaultStrategy: PersistStrategy[] = [
+      {
+        key: store.$id,
+        storage: sessionStorage,
+      },
+    ]
 
-    const strategies = options.persist?.strategies?.length ? options.persist?.strategies : defaultStrategy
+    const strategies = options.persist?.strategies?.length
+      ? options.persist?.strategies
+      : defaultStrategy
 
     strategies.forEach((strategy) => {
       const storage = strategy.storage || sessionStorage

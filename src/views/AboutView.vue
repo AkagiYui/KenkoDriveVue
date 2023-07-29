@@ -56,7 +56,7 @@ onBeforeMount(() => {
       <div style="width: 400px">
         <n-h3 prefix="bar"
           >Kenko Drive SpringBoot 后端
-          <n-tag v-if='backendVersion !== ""' type="info">{{ backendVersion }}</n-tag>
+          <n-tag v-if="backendVersion !== ''" type="info">{{ backendVersion }}</n-tag>
         </n-h3>
         <p>
           Github:

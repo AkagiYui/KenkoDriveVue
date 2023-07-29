@@ -61,7 +61,7 @@ const options = ref([
         <template #checked> 测试阶段</template>
         <template #unchecked> 全局暗色</template>
       </n-switch>
-      <n-dropdown v-if='isLoggedIn' trigger="hover" :options="options" placement="bottom-end">
+      <n-dropdown v-if="isLoggedIn" trigger="hover" :options="options" placement="bottom-end">
         <n-space style="display: flex; align-items: center">
           <n-h4 style="margin: 0">{{ userName }}</n-h4>
           <n-badge dot :show="true">

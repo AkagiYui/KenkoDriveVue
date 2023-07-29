@@ -242,7 +242,7 @@ const renderMenuLabel = (option: MenuOption) => {
       :expand-icon="expandIcon"
       :value="useRoute().name as string"
       :expanded-keys="expandedMenuKeys"
-      @update:expanded-keys='expandedMenuKeys = $event'
+      @update:expanded-keys="expandedMenuKeys = $event"
     />
   </n-layout-sider>
 </template>

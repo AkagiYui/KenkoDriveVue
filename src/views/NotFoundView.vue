@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { NResult, NButton, NCard } from "naive-ui";
-import { useRouter } from "vue-router";
+import { NResult, NButton, NCard } from 'naive-ui'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const router = useRouter();
   transform: translate(-50%, -50%);
 }
 </style>
-<style lang='stylus'>
+<style>
 .page {
   height: 100vh
 }

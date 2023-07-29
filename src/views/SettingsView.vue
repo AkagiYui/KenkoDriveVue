@@ -47,7 +47,7 @@ const reset = () => {
               </n-button>
             </n-button-group>
           </n-space>
-          <n-space style='display: flex; align-items: center'>
+          <n-space style="display: flex; align-items: center">
             <n-text>调试模式</n-text>
             <n-switch :round="false" v-model:value="isDebugMode" />
           </n-space>
