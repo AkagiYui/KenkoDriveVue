@@ -3,7 +3,7 @@ import { useUserInfo } from '@/stores/user-info'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 
-const { userName } = storeToRefs(useUserInfo())
+const { nickname } = storeToRefs(useUserInfo())
 
 // 每个问候语对应的时间点
 const helloLabel = {
@@ -50,7 +50,7 @@ onMounted(() => {
   <div style="padding: 24px">
     <n-h4>
       {{ helloText }}，
-      <n-h1>{{ userName }}</n-h1>
+      <n-h1>{{ nickname }}</n-h1>
     </n-h4>
   </div>
 </template>

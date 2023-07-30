@@ -9,7 +9,7 @@ import { storeToRefs } from 'pinia'
 import { getToken } from '@/api/user'
 
 const { isDarkMode } = storeToRefs(useAppConfig())
-const { requestToken, isLoggedIn } = storeToRefs(useUserInfo())
+const { isLoggedIn } = storeToRefs(useUserInfo())
 const { setToken } = useUserInfo()
 const route = useRouter()
 
@@ -54,13 +54,11 @@ const onLogin = () => {
     }
     getToken(loginForm.value.username, loginForm.value.password)
       .then((res) => {
-        console.trace('login success')
+        setToken(res.data.token)
         route.replace('/') // 跳转到首页，使用replace以避免产生历史记录
         loginForm.value.username = ''
         loginForm.value.password = ''
         loginForm.value.repeatPassword = ''
-        requestToken.value = res.data.token
-        setToken(res.data.token)
       })
       .catch((err) => {
         const code = err.response?.status

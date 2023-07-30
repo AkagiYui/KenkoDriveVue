@@ -31,3 +31,13 @@ export function getToken(username: string, password: string) {
     },
   )
 }
+
+/** 获取用户信息 */
+export function getUserInfo() {
+  return Request.get('/user/info')
+}
+
+/** 获取用户头像*/
+export function getUserAvatar() {
+  return Request.get(`/user/avatar`, { responseType: 'blob' })
+}

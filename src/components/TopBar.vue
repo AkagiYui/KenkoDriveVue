@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useAppConfig } from '@/stores/app-config'
 import { useUserInfo } from '@/stores/user-info'
@@ -9,9 +9,12 @@ import { LogOutOutline, PersonCircleOutline } from '@vicons/ionicons5'
 import QrCode from '@/components/QrCode.vue'
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
-const { userName, isLoggedIn } = storeToRefs(useUserInfo())
-const { deleteToken } = useUserInfo()
+const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
+const { deleteToken, renewAvatar } = useUserInfo()
 
+onMounted(() => {
+  renewAvatar()
+})
 const host = window.location.origin
 const options = ref([
   {
@@ -75,11 +78,11 @@ const onSelect = (key: string) => {
       </n-switch>
       <n-dropdown v-if="isLoggedIn" trigger="hover" :options="options" placement="bottom-end" @select="onSelect">
         <n-space style="display: flex; align-items: center">
-          <n-h4 style="margin: 0">{{ userName }}</n-h4>
+          <n-h4 style="margin: 0">{{ nickname }}</n-h4>
           <n-badge dot :show="true">
             <n-avatar
               :size="32"
-              src="https://gravatar.loli.net/avatar/f481f2a9c66b7414da397c36868a2285"
+              :src="avatarUrl"
               :fallback-src="getAssetsUrl('default-avatar.jpg')"
               :img-props="{
                 alt: 'avatar',

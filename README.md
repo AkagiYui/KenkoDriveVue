@@ -29,6 +29,7 @@
 - [CSDN：vue3.2props设置默认值【defineProps】](https://blog.csdn.net/qq_45487080/article/details/123841563)
 - [CSDN: vue怎么获取package.json中的版本号](https://blog.csdn.net/weixin_52335582/article/details/126529422)
 - [CSDN: 路由跳转push和replace的区别](https://blog.csdn.net/ourring/article/details/130605265)
+- [CSDN: axios请求文件流以及显示](https://blog.csdn.net/weixin_45936690/article/details/115325297)
 
 ## 活跃数据
 
