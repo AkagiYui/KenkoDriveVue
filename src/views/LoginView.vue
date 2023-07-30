@@ -31,13 +31,13 @@ const rules = {
   },
   password: {
     required: true,
-    min: 6,
+    min: 5,
     message: '请输入密码',
     trigger: ['input', 'blur'],
   },
   repeatPassword: {
     required: true,
-    min: 6,
+    min: 5,
     message: '请再次输入密码',
     trigger: ['input', 'blur'],
   },

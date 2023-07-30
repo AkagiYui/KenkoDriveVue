@@ -90,6 +90,7 @@ export const useUserInfo = defineStore(
   {
     persist: {
       storage: localStorage,
+      paths: ['requestToken', 'tokenExpireTime']
     },
   },
 )

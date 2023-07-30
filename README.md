@@ -6,6 +6,8 @@
 
 - [ ] feat: 国际化
 - [ ] feat: 无障碍图标
+- [ ] feat: 图片裁剪[vue-cropper](https://github.com/xyxiao001/vue-cropper)
+- [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
 
 ## 鸣谢
 

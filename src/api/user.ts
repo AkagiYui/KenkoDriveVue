@@ -41,3 +41,23 @@ export function getUserInfo() {
 export function getUserAvatar() {
   return Request.get(`/user/avatar`, { responseType: 'blob' })
 }
+
+/** 上传用户头像 */
+export function uploadUserAvatar(file: File) {
+  // 判断文件大小
+  if (file.size > 1024 * 1024 * 5) {
+    return Promise.reject('文件大小不能超过5MB')
+  }
+  // 判断文件类型
+  if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
+    return Promise.reject('文件类型必须是图片')
+  }
+
+  const formData = new FormData()
+  formData.append('avatar', file)
+  return Request.post('/user/avatar', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}
