@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useAppConfig } from '@/stores/app-config'
 import { useUserInfo } from '@/stores/user-info'
@@ -10,11 +11,9 @@ import QrCode from '@/components/QrCode.vue'
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
-const { deleteToken, renewAvatar } = useUserInfo()
+const { deleteToken } = useUserInfo()
+const router = useRouter()
 
-onMounted(() => {
-  renewAvatar()
-})
 const host = window.location.origin
 const options = ref([
   {
@@ -31,7 +30,7 @@ const options = ref([
 const onSelect = (key: string) => {
   switch (key) {
     case 'info':
-      console.log('info')
+      router.replace('/settings')
       break
     case 'logout':
       deleteToken()

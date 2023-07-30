@@ -11,6 +11,7 @@ const router = createRouter({
       component: () => import('../views/ConsoleView.vue'),
       meta: {
         title: '控制台',
+        requiresAuth: true,
       },
       children: [
         {
@@ -92,6 +93,11 @@ router.beforeEach((to, from) => {
   if (config.isLoggedIn && to.name === 'login') {
     window.$message.success('您已登录')
     return from.name ? false : { name: 'home' }
+  }
+  // 需要登录的页面
+  if (to.meta.requiresAuth && !config.isLoggedIn) {
+    window.$message.error('请先登录')
+    return { name: 'login' }
   }
 
   // 返回 false 以取消导航

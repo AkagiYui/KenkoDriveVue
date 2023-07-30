@@ -1,6 +1,8 @@
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import { getUserAvatar, getUserInfo } from '@/api/user'
+import type { AxiosResponse } from 'axios'
 
 export const useUserInfo = defineStore(
   'user-info',
@@ -28,7 +30,6 @@ export const useUserInfo = defineStore(
       tokenExpireTime.value = Date.now() + 1000 * 60 * 60 * 2 // 2小时
 
       renewUserInfo() // 获取用户信息
-      renewAvatar() // 获取用户头像
     }
     const deleteToken = () => {
       requestToken.value = ''
@@ -46,19 +47,27 @@ export const useUserInfo = defineStore(
     }
     const renewAvatar = () => {
       if (!isLoggedIn.value) return
-      getUserAvatar().then((res) => {
+      getUserAvatar().then((res: AxiosResponse) => {
         const data = res.data
         setAvatar(data)
       })
     }
     const renewUserInfo = () => {
       if (!isLoggedIn.value) return
-      getUserInfo().then((res) => {
+      const router = useRouter()
+      getUserInfo().then((res: AxiosResponse) => {
+        renewAvatar()
         const data = res.data
         username.value = data.username
         userId.value = data.id
         email.value = data.email
         nickname.value = data.nickname
+      }).catch((err) => {
+        const code = err.response.status
+        if (code === 401) {
+          deleteToken()
+          router.replace('/login')
+        }
       })
     }
 
