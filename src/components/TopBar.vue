@@ -78,7 +78,7 @@ const onSelect = (key: string) => {
       <n-dropdown v-if="isLoggedIn" trigger="hover" :options="options" placement="bottom-end" @select="onSelect">
         <n-space style="display: flex; align-items: center">
           <n-h4 style="margin: 0">{{ nickname }}</n-h4>
-          <n-badge dot :show="true">
+          <n-badge dot :show="isDebugMode">
             <n-avatar
               :size="32"
               :src="avatarUrl"
