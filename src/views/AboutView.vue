@@ -17,16 +17,63 @@ onBeforeMount(() => {
     backendVersion.value = res.data
   })
 })
+
+const showRoadMap = ref(false)
+
+class OneVersion {
+  constructor(public version: string, public date: string, public content: string) {}
+}
+
+const road: OneVersion[] = []
+// 从assets/changelog.json中读取更新日志
+const changelogFileUrl = getAssetsUrl('changelog.json')
+fetch(changelogFileUrl)
+  .then((res) => res.json())
+  .then((res) => {
+    for (const version in res) {
+      if (Object.prototype.hasOwnProperty.call(res, version)) {
+        const versionStr = res[version].version
+        const date = res[version].date
+        const content = res[version].content
+        road.push(new OneVersion(versionStr, date, content))
+      }
+    }
+    road.sort((a, b) => {
+      // 根据时间倒序
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
+    })
+  })
 </script>
 
 <template>
+  <n-drawer v-model:show="showRoadMap" :width="480">
+    <n-drawer-content title="更新日志" :native-scrollbar="false">
+      <n-timeline size="large">
+        <n-timeline-item
+          type="success"
+          v-for="item in road"
+          :key="item.version"
+          :time="item.date"
+          :title="item.version"
+          :content="item.content"
+        />
+      </n-timeline>
+    </n-drawer-content>
+  </n-drawer>
   <div style="padding: 24px">
     <n-h2>关于</n-h2>
     <n-space>
       <div style="width: 400px">
         <n-h3 prefix="bar"
           >Kenko Drive Vue 前端
-          <n-tag type="info">{{ frontendVersion }}</n-tag>
+          <n-popover trigger="hover">
+            <template #trigger>
+              <n-tag type="info" @click="showRoadMap = !showRoadMap" style="cursor: pointer"
+                >{{ frontendVersion }}
+              </n-tag>
+            </template>
+            <span>{{ road[0]?.content }}</span>
+          </n-popover>
         </n-h3>
         <p>
           Github:
