@@ -1,0 +1,9 @@
+{
+    admin off
+}
+
+:80 {
+    root * /www
+    file_server
+    try_files {path} /
+}
