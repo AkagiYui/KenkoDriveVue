@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 // import piniaPersist from '@/utils/pinia-plugin-persist'
 import piniaPersist from 'pinia-plugin-persistedstate'
 import './vfonts/Lato.css'
+import 'normalize.css/normalize.css'
 
 import App from './App.vue'
 import router from './router'
