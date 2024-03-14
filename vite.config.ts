@@ -6,12 +6,16 @@ import vueJsx from "@vitejs/plugin-vue-jsx"
 import AutoImport from "unplugin-auto-import/vite"
 import Components from "unplugin-vue-components/vite"
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
+import MsClarity from "vite-plugin-ms-clarity"
 
 // eslint-disable-next-line no-undef
 const env = process.env
 
-// https://vitejs.dev/config/
-export default defineConfig({
+/** @type {import('vite').UserConfig} */
+const config = {
+  preview: {
+    host: "0.0.0.0",
+  },
   plugins: [
     vue(),
     vueJsx(),
@@ -38,9 +42,15 @@ export default defineConfig({
     },
   },
   define: {
-    "import.meta.env.BACKEND_URL": env["BACKEND_URL"]
-      ? `'${env["BACKEND_URL"]}'`
-      : "'http://localhost:6677'",
-    APP_VERSION: JSON.stringify(env.npm_package_version),
+    __APP_VERSION__: JSON.stringify(env.npm_package_version),
   },
-})
+}
+
+if (env.NODE_ENV === "production") {
+  config.plugins.push(
+    // 微软 Clarity 分析
+    MsClarity({ id: env.VITE_CLARITY_ID as string, enableInDevMode: false }),
+  )
+}
+
+export default defineConfig(config)

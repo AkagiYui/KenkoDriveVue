@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const BASE_URL = import.meta.env.BACKEND_URL
-const version = APP_VERSION
+const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL
+const version = __APP_VERSION__
 </script>
 
 <template>

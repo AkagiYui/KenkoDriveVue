@@ -18,7 +18,7 @@ interface ImportMeta {
 }
 
 /** 项目版本号 */
-declare const APP_VERSION: string
+declare const __APP_VERSION__: string
 
 declare module "*.vue" {
   import type { DefineComponent } from "vue"

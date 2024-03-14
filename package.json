@@ -53,6 +53,7 @@
     "unplugin-auto-import": "^0.16.4",
     "unplugin-vue-components": "^0.25.1",
     "vite": "^5.1.2",
+    "vite-plugin-ms-clarity": "^1.0.0",
     "vue-tsc": "^1.6.5"
   }
 }

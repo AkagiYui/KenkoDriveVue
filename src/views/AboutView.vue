@@ -4,7 +4,7 @@ import QrCode from "@/components/QrCode.vue"
 import { onBeforeMount, ref } from "vue"
 import { getBackendVersion } from "@/api/server"
 
-const frontendVersion = APP_VERSION
+const frontendVersion = __APP_VERSION__
 
 const owner = "AkagiYui"
 const frontendRepoUrl = "https://github.com/AkagiYui/KenkoDriveVue"
