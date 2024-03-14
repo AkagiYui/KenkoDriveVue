@@ -1,15 +1,29 @@
 /* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution')
+require("@rushstack/eslint-patch/modern-module-resolution")
 
-module.exports = {
+const config = {
   root: true,
-  'extends': [
-    'plugin:vue/vue3-essential',
-    'eslint:recommended',
-    '@vue/eslint-config-typescript',
-    '@vue/eslint-config-prettier/skip-formatting'
+  extends: [
+    "plugin:vue/vue3-essential",
+    "eslint:recommended", // 使用推荐的规则
+    "@vue/eslint-config-typescript",
+    "@vue/eslint-config-prettier/skip-formatting",
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
-  }
+    ecmaVersion: "latest",
+  },
+  rules: {
+    semi: ["warn", "never"], // 分号
+    indent: ["error", 2], // 缩进
+    quotes: ["error", "double"], // 引号
+
+    "no-unused-vars": "warn", // 禁止未使用过的变量
+    "no-undef": "warn", // 禁止未声明的变量
+    "no-var": "error", // 禁止使用 var
+
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+  },
 }
+
+module.exports = config

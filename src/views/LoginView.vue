@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue'
-import { useRouter } from 'vue-router'
-import { type FormInst } from 'naive-ui'
+import { ref, onBeforeMount } from "vue"
+import { useRouter } from "vue-router"
+import { type FormInst } from "naive-ui"
 
-import { useAppConfig } from '@/stores/app-config'
-import { useUserInfo } from '@/stores/user-info'
-import { storeToRefs } from 'pinia'
-import { getToken } from '@/api/user'
+import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
+import { storeToRefs } from "pinia"
+import { getToken } from "@/api/user"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { isLoggedIn } = storeToRefs(useUserInfo())
@@ -15,9 +15,9 @@ const route = useRouter()
 
 onBeforeMount(() => {
   // 如果已经登录，跳转到首页
-  console.log('isLoggedIn: ', isLoggedIn.value)
+  console.log("isLoggedIn: ", isLoggedIn.value)
   if (isLoggedIn.value) {
-    route.push('/')
+    route.push("/")
   }
 })
 
@@ -25,27 +25,27 @@ const modalFormRef = ref<FormInst | null>(null)
 const rules = {
   username: {
     required: true,
-    message: '请输入用户名',
+    message: "请输入用户名",
     min: 3,
-    trigger: ['input', 'blur'],
+    trigger: ["input", "blur"],
   },
   password: {
     required: true,
     min: 5,
-    message: '请输入密码',
-    trigger: ['input', 'blur'],
+    message: "请输入密码",
+    trigger: ["input", "blur"],
   },
   repeatPassword: {
     required: true,
     min: 5,
-    message: '请再次输入密码',
-    trigger: ['input', 'blur'],
+    message: "请再次输入密码",
+    trigger: ["input", "blur"],
   },
 }
 const loginForm = ref({
-  username: '',
-  password: '',
-  repeatPassword: '',
+  username: "",
+  password: "",
+  repeatPassword: "",
 })
 const onLogin = () => {
   modalFormRef.value?.validate((errors) => {
@@ -55,15 +55,15 @@ const onLogin = () => {
     getToken(loginForm.value.username, loginForm.value.password)
       .then((res) => {
         setToken(res.data.token)
-        route.replace('/') // 跳转到首页，使用replace以避免产生历史记录
-        loginForm.value.username = ''
-        loginForm.value.password = ''
-        loginForm.value.repeatPassword = ''
+        route.replace("/") // 跳转到首页，使用replace以避免产生历史记录
+        loginForm.value.username = ""
+        loginForm.value.password = ""
+        loginForm.value.repeatPassword = ""
       })
       .catch((err) => {
         const code = err.response?.status
         if (code === 401) {
-          window.$message.error('用户名或密码错误')
+          window.$message.error("用户名或密码错误")
         } else {
           console.error(err)
         }
@@ -84,9 +84,17 @@ const onLogin = () => {
       pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
     >
       <n-tab-pane name="signin" tab="登录">
-        <n-form :show-require-mark="false" :model="loginForm" :rules="rules" ref="modalFormRef">
+        <n-form
+          :show-require-mark="false"
+          :model="loginForm"
+          :rules="rules"
+          ref="modalFormRef"
+        >
           <n-form-item-row path="username" label="账号">
-            <n-input v-model:value="loginForm.username" placeholder="用户名/邮箱/手机号" />
+            <n-input
+              v-model:value="loginForm.username"
+              placeholder="用户名/邮箱/手机号"
+            />
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
             <n-input
@@ -96,7 +104,9 @@ const onLogin = () => {
             />
           </n-form-item-row>
         </n-form>
-        <n-button type="primary" block secondary strong @click="onLogin"> 登录</n-button>
+        <n-button type="primary" block secondary strong @click="onLogin">
+          登录
+        </n-button>
       </n-tab-pane>
       <n-tab-pane name="signup" tab="注册">
         <n-form :show-require-mark="false" :model="loginForm" :rules="rules">
@@ -122,7 +132,7 @@ const onLogin = () => {
 
 <style scoped>
 .overlay::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 100%;
@@ -149,7 +159,7 @@ const onLogin = () => {
 }
 
 .background {
-  background-image: url('http://api.cloud.189.cn/guns/img/recommendedPosition/20230621190400_webDUANWU.jpg');
+  background-image: url("http://api.cloud.189.cn/guns/img/recommendedPosition/20230621190400_webDUANWU.jpg");
   background-size: cover;
   background-position: center top;
   opacity: 1;

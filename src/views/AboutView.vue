@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import getAssetsUrl from '@/utils/pub-use'
-import QrCode from '@/components/QrCode.vue'
-import { onBeforeMount, ref } from 'vue'
-import { getBackendVersion } from '@/api/server'
+import getAssetsUrl from "@/utils/pub-use"
+import QrCode from "@/components/QrCode.vue"
+import { onBeforeMount, ref } from "vue"
+import { getBackendVersion } from "@/api/server"
 
 const frontendVersion = APP_VERSION
 
-const owner = 'AkagiYui'
-const frontendRepoUrl = 'https://github.com/AkagiYui/KenkoDriveVue'
-const backendRepoUrl = 'https://github.com/AkagiYui/KenkoDrive'
+const owner = "AkagiYui"
+const frontendRepoUrl = "https://github.com/AkagiYui/KenkoDriveVue"
+const backendRepoUrl = "https://github.com/AkagiYui/KenkoDrive"
 
-const backendVersion = ref<string>('')
+const backendVersion = ref<string>("")
 
 onBeforeMount(() => {
   getBackendVersion().then((res) => {
@@ -21,12 +21,16 @@ onBeforeMount(() => {
 const showRoadMap = ref(false)
 
 class OneVersion {
-  constructor(public version: string, public date: string, public content: string) {}
+  constructor(
+    public version: string,
+    public date: string,
+    public content: string,
+  ) {}
 }
 
 const road: OneVersion[] = []
 // 从assets/changelog.json中读取更新日志
-const changelogFileUrl = getAssetsUrl('changelog.json')
+const changelogFileUrl = getAssetsUrl("changelog.json")
 fetch(changelogFileUrl)
   .then((res) => res.json())
   .then((res) => {
@@ -68,7 +72,10 @@ fetch(changelogFileUrl)
           >Kenko Drive Vue 前端
           <n-popover trigger="hover">
             <template #trigger>
-              <n-tag type="info" @click="showRoadMap = !showRoadMap" style="cursor: pointer"
+              <n-tag
+                type="info"
+                @click="showRoadMap = !showRoadMap"
+                style="cursor: pointer"
                 >{{ frontendVersion }}
               </n-tag>
             </template>
@@ -83,15 +90,25 @@ fetch(changelogFileUrl)
         </p>
         <p>
           Copyright (C) 2023
-          <n-a :href="`https://github.com/${owner}`" target="_blank">{{ owner }}</n-a>
+          <n-a :href="`https://github.com/${owner}`" target="_blank">{{
+            owner
+          }}</n-a>
         </p>
         <p>MIT License</p>
         <p>
           <n-space>
-            <n-button tag="a" target="_blank" :href="`${frontendRepoUrl}/issues`">
+            <n-button
+              tag="a"
+              target="_blank"
+              :href="`${frontendRepoUrl}/issues`"
+            >
               问题反馈
             </n-button>
-            <n-button tag="a" target="_blank" :href="`${frontendRepoUrl}/releases`">
+            <n-button
+              tag="a"
+              target="_blank"
+              :href="`${frontendRepoUrl}/releases`"
+            >
               发布日志
             </n-button>
           </n-space>
@@ -103,7 +120,9 @@ fetch(changelogFileUrl)
       <div style="width: 400px">
         <n-h3 prefix="bar"
           >Kenko Drive SpringBoot 后端
-          <n-tag v-if="backendVersion !== ''" type="info">{{ backendVersion }}</n-tag>
+          <n-tag v-if="backendVersion !== ''" type="info">{{
+            backendVersion
+          }}</n-tag>
         </n-h3>
         <p>
           Github:
@@ -113,15 +132,25 @@ fetch(changelogFileUrl)
         </p>
         <p>
           Copyright (C) 2023
-          <n-a :href="`https://github.com/${owner}`" target="_blank">{{ owner }}</n-a>
+          <n-a :href="`https://github.com/${owner}`" target="_blank">{{
+            owner
+          }}</n-a>
         </p>
         <p>MIT License</p>
         <p>
           <n-space>
-            <n-button tag="a" target="_blank" :href="`${backendRepoUrl}/issues`">
+            <n-button
+              tag="a"
+              target="_blank"
+              :href="`${backendRepoUrl}/issues`"
+            >
               问题反馈
             </n-button>
-            <n-button tag="a" target="_blank" :href="`${backendRepoUrl}/releases`">
+            <n-button
+              tag="a"
+              target="_blank"
+              :href="`${backendRepoUrl}/releases`"
+            >
               发布日志
             </n-button>
           </n-space>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NResult, NButton, NCard } from 'naive-ui'
-import { useRouter } from 'vue-router'
+import { NResult, NButton, NCard } from "naive-ui"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 </script>
@@ -34,6 +34,6 @@ const router = useRouter()
 </style>
 <style>
 .page {
-  height: 100vh
+  height: 100vh;
 }
 </style>

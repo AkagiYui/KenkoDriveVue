@@ -1,83 +1,99 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAppConfig } from '@/stores/app-config'
-import { useUserInfo } from '@/stores/user-info'
+import { createRouter, createWebHistory } from "vue-router"
+import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'console',
-      component: () => import('../views/ConsoleView.vue'),
+      path: "/",
+      name: "console",
+      component: () => import("../views/ConsoleView.vue"),
       meta: {
-        title: '控制台',
+        title: "控制台",
         requiresAuth: true,
       },
       children: [
         {
-          path: '/',
-          name: 'home',
-          component: () => import('../views/HomeView.vue'),
+          path: "/",
+          name: "home",
+          component: () => import("../views/HomeView.vue"),
           meta: {
-            title: '主页',
+            title: "主页",
           },
         },
         {
-          path: '/about',
-          name: 'about',
-          component: () => import('../views/AboutView.vue'),
+          path: "/about",
+          name: "about",
+          component: () => import("../views/AboutView.vue"),
           meta: {
-            title: '关于',
+            title: "关于",
           },
         },
         {
-          path: '/settings',
-          name: 'settings',
-          component: () => import('../views/SettingsView.vue'),
+          path: "/settings",
+          name: "settings",
+          component: () => import("../views/SettingsView.vue"),
           meta: {
-            title: '设置',
+            title: "设置",
           },
         },
         {
-          path: '/test',
-          name: 'test',
-          component: () => import('../views/TestView.vue'),
+          path: "/test",
+          name: "test",
+          component: () => import("../views/TestView.vue"),
           meta: {
-            title: '测试',
+            title: "测试",
           },
         },
         {
-          path: '/users',
-          name: 'users',
-          component: () => import('../views/AdminViews/UsersView.vue'),
+          path: "/users",
+          name: "users",
+          component: () => import("../views/AdminViews/UsersView.vue"),
           meta: {
-            title: '用户信息',
+            title: "用户信息",
           },
         },
         {
-          path: '/system',
-          name: 'system',
-          component: () => import('../views/AdminViews/SystemStatusView.vue'),
+          path: "/roles",
+          name: "roles",
+          component: () => import("../views/AdminViews/RolesView.vue"),
           meta: {
-            title: '系统状态',
+            title: "角色权限",
+          },
+        },
+        {
+          path: "/system",
+          name: "system",
+          component: () => import("../views/AdminViews/SystemStatusView.vue"),
+          meta: {
+            title: "系统状态",
+          },
+        },
+        {
+          path: "/announcements",
+          name: "announcements",
+          component: () => import("../views/AdminViews/AnnouncementsView.vue"),
+          meta: {
+            title: "公告管理",
           },
         },
       ],
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      path: "/login",
+      name: "login",
+      component: () => import("../views/LoginView.vue"),
       meta: {
-        title: '登录',
+        title: "登录",
       },
     },
     {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: () => import('../views/NotFoundView.vue'),
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: () => import("../views/NotFoundView.vue"),
       meta: {
-        title: '404',
+        title: "404",
       },
     },
   ],
@@ -86,18 +102,18 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const config = useUserInfo()
   // 未登录则跳转到登录页
-  if (!config.isLoggedIn && to.name !== 'login') {
-    return { name: 'login' }
+  if (!config.isLoggedIn && to.name !== "login") {
+    return { name: "login" }
   }
   // 已登录则取消路由
-  if (config.isLoggedIn && to.name === 'login') {
-    window.$message.success('您已登录')
-    return from.name ? false : { name: 'home' }
+  if (config.isLoggedIn && to.name === "login") {
+    window.$message.success("您已登录")
+    return from.name ? false : { name: "home" }
   }
   // 需要登录的页面
   if (to.meta.requiresAuth && !config.isLoggedIn) {
-    window.$message.error('请先登录')
-    return { name: 'login' }
+    window.$message.error("请先登录")
+    return { name: "login" }
   }
 
   // 返回 false 以取消导航
@@ -105,20 +121,20 @@ router.beforeEach((to, from) => {
 })
 
 // 显示加载条
-router.beforeEach(async (to) => {
+router.beforeEach(async () => {
   window.$loadingbar.start()
 })
 
-router.afterEach((to: any, from) => {
-  if (to.name === 'not-found') {
+router.afterEach((to: any) => {
+  if (to.name === "not-found") {
     window.$loadingbar.error()
   } else {
     window.$loadingbar.finish()
   }
 
   // 修改标题
-  const baseTitle = 'Kenko Drive'
-  const subTitle: string = to.meta?.title?.trim() || ''
+  const baseTitle = "Kenko Drive"
+  const subTitle: string = to.meta?.title?.trim() || ""
   document.title = subTitle ? `${baseTitle} | ${subTitle}` : baseTitle
 })
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLoadingBar, useDialog, useMessage, useNotification } from 'naive-ui'
+import { useLoadingBar, useDialog, useMessage, useNotification } from "naive-ui"
 window.$loadingbar = useLoadingBar()
 window.$dialog = useDialog()
 window.$message = useMessage()

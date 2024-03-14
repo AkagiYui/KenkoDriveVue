@@ -1,23 +1,14 @@
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import { deleteUser, getUsers, updateUserDisabled } from "@/api/user"
-import {
-  h,
-  onBeforeMount,
-  reactive,
-  ref,
-  nextTick,
-  type RendererElement,
-  type RendererNode,
-  type VNode,
-} from "vue"
+import { h, onBeforeMount, reactive, ref, nextTick } from "vue"
 import { NButton, NInput, NProgress, NTooltip, NText, NSpace } from "naive-ui"
+import { changeColor } from "seemly"
 import {
   useThemeVars,
   type DropdownOption,
   type PaginationProps,
 } from "naive-ui"
-import { changeColor } from "seemly"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 
 const themeVars = useThemeVars()
@@ -53,10 +44,7 @@ const onPageSizeChange = (pageSize: number) => {
   getData()
 }
 
-const renderTooltip = (
-  trigger: VNode<RendererNode, RendererElement, { [key: string]: any }>,
-  content: string,
-) => {
+const renderTooltip = (trigger, content) => {
   return h(NTooltip, null, {
     trigger: () => trigger,
     default: () => content,
@@ -66,22 +54,22 @@ const renderTooltip = (
 /** 表格列 */
 const tableColumns = [
   {
-    title: "用户名",
-    key: "username",
+    title: "标题",
+    key: "title",
   },
   {
-    title: "昵称",
-    key: "nickname",
+    title: "发布时间",
+    key: "createTime",
   },
   {
-    title: "邮箱",
+    title: "发布者",
     key: "email",
   },
   {
-    title: "配额",
+    title: "内容",
     key: "capacity",
     minWidth: "200px",
-    render(row: User) {
+    render(row: Announcement) {
       return h(
         NTooltip,
         {
@@ -90,21 +78,13 @@ const tableColumns = [
         {
           trigger: () =>
             h(
-              NProgress,
+              NText,
+              {},
               {
-                type: "line",
-                "indicator-placement": "outside",
-                color: themeVars.value.successColor,
-                "rail-color": changeColor(themeVars.value.successColor, {
-                  alpha: 0.2,
-                }),
-                percentage: 20,
-              },
-              {
-                default: () => "20%",
+                default: () => row.content,
               },
             ),
-          default: () => "20G / 100G",
+          default: () => row.content,
         },
       )
     },
@@ -120,7 +100,7 @@ const tableColumns = [
           },
           { default: () => "状态" },
         ),
-        "禁用后，用户将无法登录系统",
+        "禁用后，用户将无法看到该公告",
       )
     },
     key: "isDisabled",
@@ -145,14 +125,14 @@ const tableColumns = [
               })
           },
         },
-        { default: () => (!row.disabled ? "已启用" : "已禁用") },
+        { default: () => (!row.disabled ? "已发布" : "已隐藏") },
       )
     },
   },
   {
     title: "操作",
     key: "actions",
-    width: "220px",
+    width: "140px",
     render(row: User) {
       return h(
         NSpace,
@@ -168,20 +148,6 @@ const tableColumns = [
                 onClick: () => onEditUser(),
               },
               { default: () => "编辑" },
-            ),
-            h(
-              NButton,
-              {
-                size: "small",
-                type: "warning",
-                secondary: true,
-                onClick: () => {
-                  selectRow.value = row
-                  if (!selectRow.value) return
-                  showResetPasswordModal.value = true
-                },
-              },
-              { default: () => "重置密码" },
             ),
             h(
               NButton,
@@ -311,49 +277,6 @@ const rules = {
     trigger: ["input", "blur"],
   },
 }
-
-// 是否显示重置密码模态框
-const showResetPasswordModal = ref(false)
-// 重置密码模态框数据
-const resetPasswordData = ref({ password: "", confirmPassword: "" })
-// 重置密码模态框表单校验规则
-const resetPasswordRules = {
-  password: {
-    required: true,
-    message: "请输入新密码",
-    min: 1,
-    trigger: ["input", "blur"],
-  },
-  confirmPassword: [
-    {
-      required: true,
-      message: "请再次输入新密码",
-      min: 1,
-      trigger: ["input", "blur"],
-    },
-    {
-      validator: (_: any, value: string) => {
-        if (value !== resetPasswordData.value.password) {
-          return new Error("两次输入的密码不一致")
-        }
-        return true
-      },
-      trigger: ["input", "blur"],
-    },
-  ],
-}
-const resetPassword = () => {
-  const formRef = ref()
-  formRef.value?.validate().then((valid: any) => {
-    if (valid) {
-      console.log("resetPasswordData: ", resetPasswordData.value)
-      showResetPasswordModal.value = false
-    }
-  })
-}
-const afterResetPasswordModalLeave = () => {
-  resetPasswordData.value = { password: "", confirmPassword: "" }
-}
 </script>
 
 <template>
@@ -368,53 +291,7 @@ const afterResetPasswordModalLeave = () => {
         }
       "
     />
-    <!-- 重置密码模态框 -->
-    <NModal
-      :show="showResetPasswordModal"
-      preset="card"
-      closable="true"
-      @close="() => (showResetPasswordModal = false)"
-      @after-leave="afterResetPasswordModalLeave"
-      :title="`重置密码 (${selectRow?.username})`"
-      bordered
-      :mask-closable="false"
-      :style="{
-        width: '400px',
-      }"
-    >
-      <NSpace vertical>
-        <NForm
-          :model="resetPasswordData"
-          ref="resetPasswordFormRef"
-          :rules="resetPasswordRules"
-          label-placement="left"
-          label-width="auto"
-        >
-          <NFormItem path="password" label="新密码">
-            <NInput
-              clearable
-              placeholder="输入新密码"
-              v-model:value="resetPasswordData.password"
-              type="password"
-            />
-          </NFormItem>
-          <NFormItem path="confirmPassword" label="确认密码">
-            <NInput
-              clearable
-              placeholder="再次输入新密码"
-              v-model:value="resetPasswordData.confirmPassword"
-              type="password"
-            />
-          </NFormItem>
-        </NForm>
-        <NSpace justify="end">
-          <NButton type="error" @click="() => (showResetPasswordModal = false)"
-            >取消</NButton
-          >
-          <NButton type="primary" @click="resetPassword">确定</NButton>
-        </NSpace>
-      </NSpace>
-    </NModal>
+
     <!-- 新增删除模态框 -->
     <NModal
       :show="false"
@@ -471,7 +348,7 @@ const afterResetPasswordModalLeave = () => {
       <template #action>
         <NSpace justify="end" style="width: 100%">
           <NButton
-            @click="console.log('todo')"
+            @click="true ? addData() : updateData()"
             :type="true ? 'success' : 'warning'"
           >
             {{ true ? "确定" : "修改" }}
@@ -511,7 +388,7 @@ const afterResetPasswordModalLeave = () => {
             <n-button
               tertiary
               type="primary"
-              @click="console.log('todo')"
+              @click="ppp = true"
               :disabled="true"
             >
               <template #icon>

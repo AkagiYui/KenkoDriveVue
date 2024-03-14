@@ -1,122 +1,138 @@
-<!DOCTYPE html>
-<html lang='zh-CN'>
-<head>
-  <meta charset='UTF-8'>
-  <link rel='icon' href='/favicon.ico'>
-  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <meta name='color-scheme' content='dark light'>
-  <title>Kenko Drive</title>
-  <style>
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Kenko Drive</title>
+    <style>
       #loading {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          width: 80px;
-          height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        height: 80px;
       }
 
       .loading-container {
-          width: 100%;
-          height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       .loading-container > #loading > svg {
-          stroke: #18a058;
+        stroke: #18a058;
       }
 
       .loading-message {
-          font-size: 16px;
-          margin-top: 20px;
+        font-size: 16px;
+        margin-top: 20px;
       }
 
       @keyframes spin {
-          to {
-              transform: rotate(360deg);
-          }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .animate-spin {
-          animation: spin 0.4s linear infinite;
+        animation: spin 0.4s linear infinite;
       }
 
       body {
-          margin: 0;
+        margin: 0;
       }
 
       /*深色*/
       @media (prefers-color-scheme: dark) {
-          .loading-container {
-              background-color: #121212;
-          }
+        .loading-container {
+          background-color: #121212;
+        }
 
-          .loading-message {
-              color: #b0b0b0;
-          }
+        .loading-message {
+          color: #b0b0b0;
+        }
       }
 
       /*浅色*/
       @media (prefers-color-scheme: light) {
-          .loading-container {
-              background-color: #ffffff;
-          }
+        .loading-container {
+          background-color: #ffffff;
+        }
 
-          .loading-message {
-              color: #505050;
-          }
+        .loading-message {
+          color: #505050;
+        }
       }
 
       .loading-container-dark {
-          background-color: #121212;
+        background-color: #121212;
       }
       .loading-container-light {
-          background-color: #ffffff;
+        background-color: #ffffff;
       }
       .loading-message-dark {
-          color: #b0b0b0;
+        color: #b0b0b0;
       }
       .loading-message-light {
-          color: #505050;
+        color: #505050;
       }
-  </style>
-  <script>
-    if (window.matchMedia('(prefers-color-scheme)').media === 'not all') {
-      console.log('浏览器不支持prefers-color-scheme')
-    }
-    // 读取localStorage中的app-config的isDarkMode字段，如果不存在则默认为undefined，即使用系统的颜色模式
-    const appConfig = localStorage.getItem('app-config')
-    const isDarkMode = appConfig ? JSON.parse(appConfig).isDarkMode : undefined
-  </script>
-</head>
-<body>
-<div id='app'>
-  <div class='loading-container' id='loading-container'>
-    <div id='loading'>
-      <svg fill='#ccc' class='animate-spin' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'>
-        <circle fill='none' stroke-width='16' stroke-linecap='round' cx='100' cy='100' r='92' stroke-dasharray='491'
-                stroke-dashoffset='246'></circle>
-      </svg>
-      <span class='loading-message' id='loading-message'>加载中...</span>
-      <script>
-        // 如果读取到配置，则使用配置中的颜色模式
-        if (isDarkMode !== undefined) {
-          const loadingContainer = document.getElementById("loading-container");
-          const loadingMessage = document.getElementById("loading-message");
-          if (isDarkMode === true) {
-            loadingContainer.classList.add('loading-container-dark')
-            loadingMessage.classList.add('loading-message-dark')
-          } else {
-            loadingContainer.classList.add('loading-container-light')
-            loadingMessage.classList.add('loading-message-light')
-          }
-        }
-      </script>
+    </style>
+    <script>
+      if (window.matchMedia("(prefers-color-scheme)").media === "not all") {
+        console.log("浏览器不支持prefers-color-scheme")
+      }
+      // 读取localStorage中的app-config的isDarkMode字段，如果不存在则默认为undefined，即使用系统的颜色模式
+      const appConfig = localStorage.getItem("app-config")
+      const isDarkMode = appConfig
+        ? JSON.parse(appConfig).isDarkMode
+        : undefined
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="loading-container" id="loading-container">
+        <div id="loading">
+          <svg
+            fill="#ccc"
+            class="animate-spin"
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              fill="none"
+              stroke-width="16"
+              stroke-linecap="round"
+              cx="100"
+              cy="100"
+              r="92"
+              stroke-dasharray="491"
+              stroke-dashoffset="246"
+            ></circle>
+          </svg>
+          <span class="loading-message" id="loading-message">加载中...</span>
+          <script>
+            // 如果读取到配置，则使用配置中的颜色模式
+            if (isDarkMode !== undefined) {
+              const loadingContainer =
+                document.getElementById("loading-container")
+              const loadingMessage = document.getElementById("loading-message")
+              if (isDarkMode === true) {
+                loadingContainer.classList.add("loading-container-dark")
+                loadingMessage.classList.add("loading-message-dark")
+              } else {
+                loadingContainer.classList.add("loading-container-light")
+                loadingMessage.classList.add("loading-message-light")
+              }
+            }
+          </script>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-<script type='module' src='/src/main.ts'></script>
-</body>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

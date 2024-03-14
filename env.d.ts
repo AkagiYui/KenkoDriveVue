@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+/* eslint-disable no-undef */
 declare interface Window {
   $message: MessageApiInjection
   $dialog: DialogApiInjection
@@ -8,7 +9,7 @@ declare interface Window {
 }
 
 interface ImportMetaEnv {
-  readonly BACKEND_URL: string;
+  readonly BACKEND_URL: string
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -17,10 +18,10 @@ interface ImportMeta {
 }
 
 /** 项目版本号 */
-declare const APP_VERSION: string;
+declare const APP_VERSION: string
 
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue'
+declare module "*.vue" {
+  import type { DefineComponent } from "vue"
   const vueComponent: DefineComponent<{}, {}, any>
   export default vueComponent
 }

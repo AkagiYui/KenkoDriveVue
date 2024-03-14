@@ -1,25 +1,43 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useAppConfig } from '@/stores/app-config'
-import { useUserInfo } from '@/stores/user-info'
-import { WeatherMoon16Regular, WeatherSunny16Regular } from '@vicons/fluent'
-import { type UploadCustomRequestOptions, type UploadFileInfo } from 'naive-ui'
-import { uploadUserAvatar } from '@/api/user'
+import { ref, onBeforeMount } from "vue"
+import { storeToRefs } from "pinia"
+import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
+import { WeatherMoon16Regular, WeatherSunny16Regular } from "@vicons/fluent"
+import { type UploadCustomRequestOptions, type UploadFileInfo } from "naive-ui"
+import { uploadUserAvatar } from "@/api/user"
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { toggleDarkMode, reset: resetConfig } = useAppConfig()
 const { avatarUrl, username, nickname, email } = storeToRefs(useUserInfo())
 const { renewAvatar } = useUserInfo()
+const personalInfo = ref({
+  nickname: "",
+  email: "",
+})
+const rules = {
+  nickname: {
+    required: false,
+    message: "请输入昵称",
+    min: 3,
+    trigger: ["input", "blur"],
+    type: "email",
+  },
+}
+
+onBeforeMount(() => {
+  personalInfo.value.nickname = nickname.value
+  personalInfo.value.email = email.value
+})
 
 const reset = () => {
   resetConfig()
-  window.$message.success('已重置')
+  window.$message.success("已重置")
 }
 
 const avatarFileList = ref<UploadFileInfo[]>([])
 const uploadAvatar = (fileList: UploadFileInfo[]) => {
-  console.log('fileList: ', fileList)
+  console.log("fileList: ", fileList)
   const fileInfo = fileList[0] ?? null
   const file = fileInfo?.file ?? null
   if (!file) {
@@ -27,16 +45,16 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
   }
   uploadUserAvatar(file)
     .then((res) => {
-      window.$message.success('头像上传成功')
+      window.$message.success("头像上传成功")
       renewAvatar()
     })
     .catch((err) => {
-      window.$message.error('头像上传失败')
-      console.log('err: ', err)
+      window.$message.error("头像上传失败")
+      console.log("err: ", err)
     })
     .finally(() => {
       // 移除元素
-      fileInfo.status = 'finished'
+      fileInfo.status = "finished"
       avatarFileList.value = []
     })
 }
@@ -57,7 +75,9 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
             @update:file-list="uploadAvatar"
           >
             <n-space vertical>
-              <n-upload-dragger style="margin: 0; padding: 0; height: 100px; width: 100px">
+              <n-upload-dragger
+                style="margin: 0; padding: 0; height: 100px; width: 100px"
+              >
                 <n-image
                   object-fit="fill"
                   preview-disabled
@@ -73,10 +93,28 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
             </n-space>
           </n-upload>
 
-          <n-space vertical>
-            <n-text>用户名：{{ username }}</n-text>
-            <n-text>昵称：{{ nickname }}</n-text>
-            <n-text>邮箱：{{ email }}</n-text>
+          <n-space>
+            <n-space vertical>
+              <n-input-group>
+                <n-input-group-label class="info-label"
+                  >用户名</n-input-group-label
+                >
+                <n-input :value="username" disabled />
+              </n-input-group>
+              <n-input-group>
+                <n-input-group-label class="info-label"
+                  >昵称</n-input-group-label
+                >
+                <n-input v-model:value="personalInfo.nickname" />
+              </n-input-group>
+              <n-input-group>
+                <n-input-group-label class="info-label"
+                  >邮箱</n-input-group-label
+                >
+                <n-input v-model:value="personalInfo.email" />
+              </n-input-group>
+            </n-space>
+            <n-button style="height: 100%">保存</n-button>
           </n-space>
         </n-space>
       </n-card>
@@ -86,7 +124,10 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
           <n-space style="display: flex">
             <n-button-group>
               <span style="align-self: center; margin-right: 10px">主题</span>
-              <n-button @click="toggleDarkMode" :type="!isDarkMode ? 'primary' : 'default'">
+              <n-button
+                @click="toggleDarkMode"
+                :type="!isDarkMode ? 'primary' : 'default'"
+              >
                 <template #icon>
                   <n-icon>
                     <WeatherSunny16Regular />
@@ -94,7 +135,10 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 </template>
                 亮色
               </n-button>
-              <n-button @click="toggleDarkMode" :type="isDarkMode ? 'primary' : 'default'">
+              <n-button
+                @click="toggleDarkMode"
+                :type="isDarkMode ? 'primary' : 'default'"
+              >
                 <template #icon>
                   <n-icon>
                     <WeatherMoon16Regular />
@@ -124,4 +168,9 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.info-label {
+  width: 70px;
+  text-align: center;
+}
+</style>

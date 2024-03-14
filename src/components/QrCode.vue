@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import QrcodeVue from 'qrcode.vue'
+import { ref, watch } from "vue"
+import QrcodeVue from "qrcode.vue"
 
 const props = withDefaults(
   defineProps<{

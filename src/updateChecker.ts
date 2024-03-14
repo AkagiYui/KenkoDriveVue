@@ -5,11 +5,11 @@ let interval: number // 轮询的定时器
 /** 获取当前最新的时间戳 */
 async function getTimeTag() {
   const response = await fetch(url, {
-    method: 'HEAD',
-    cache: 'no-cache',
+    method: "HEAD",
+    cache: "no-cache",
   })
   // 以响应体的etag或者last-modified为时间戳
-  return response.headers.get('etag') || response.headers.get('last-modified')
+  return response.headers.get("etag") || response.headers.get("last-modified")
 }
 
 /** 判断Tag是否发生变化 */
@@ -25,8 +25,8 @@ async function judge() {
 
 self.onmessage = function (e) {
   const data = e.data
-  if ('url' in data) {
-    url = data['url']
+  if ("url" in data) {
+    url = data["url"]
     // 立即执行函数，记录首次请求的时间戳，以便与后面轮询得出的时间戳进行对比
     ;(async function () {
       previousTimeTag = await getTimeTag()

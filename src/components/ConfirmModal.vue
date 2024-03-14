@@ -9,12 +9,12 @@ withDefaults(
 const emit = defineEmits<{
   positiveClick?: []
   negativeClick?: []
-  'update:show'?: [value: boolean]
+  "update:show"?: [value: boolean]
 }>()
 
 const onNegativeClick = () => {
-  emit('update:show', false)
-  emit('negativeClick')
+  emit("update:show", false)
+  emit("negativeClick")
 }
 </script>
 

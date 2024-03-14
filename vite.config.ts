@@ -1,11 +1,14 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url"
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import { defineConfig } from "vite"
+import vue from "@vitejs/plugin-vue"
+import vueJsx from "@vitejs/plugin-vue-jsx"
+import AutoImport from "unplugin-auto-import/vite"
+import Components from "unplugin-vue-components/vite"
+import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
+
+// eslint-disable-next-line no-undef
+const env = process.env
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,9 +17,14 @@ export default defineConfig({
     vueJsx(),
     AutoImport({
       imports: [
-        'vue',
+        "vue",
         {
-          'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'],
+          "naive-ui": [
+            "useDialog",
+            "useMessage",
+            "useNotification",
+            "useLoadingBar",
+          ],
         },
       ],
     }),
@@ -26,13 +34,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   define: {
-    'import.meta.env.BACKEND_URL': process.env['BACKEND_URL']
-      ? `'${process.env['BACKEND_URL']}'`
-      : `'http://localhost:6677'`,
-    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    "import.meta.env.BACKEND_URL": env["BACKEND_URL"]
+      ? `'${env["BACKEND_URL"]}'`
+      : "'http://localhost:6677'",
+    APP_VERSION: JSON.stringify(env.npm_package_version),
   },
 })

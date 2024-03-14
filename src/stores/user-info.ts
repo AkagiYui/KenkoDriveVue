@@ -1,22 +1,22 @@
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { defineStore } from 'pinia'
-import { getUserAvatar, getUserInfo } from '@/api/user'
-import type { AxiosResponse } from 'axios'
+import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
+import { defineStore } from "pinia"
+import { getUserAvatar, getUserInfo } from "@/api/user"
+import type { AxiosResponse } from "axios"
 
 export const useUserInfo = defineStore(
-  'user-info',
+  "user-info",
   () => {
-    const requestToken = ref('')
+    const requestToken = ref("")
     const tokenExpireTime = ref(0) // 不可用 Date 类型，否则无法持久化
-    const userId = ref('')
-    const username = ref('')
-    const nickname = ref('')
-    const email = ref('')
-    const avatarUrl = ref('')
+    const userId = ref("")
+    const username = ref("")
+    const nickname = ref("")
+    const email = ref("")
+    const avatarUrl = ref("")
 
     const isLoggedIn = computed(() => {
-      if (requestToken.value !== '') {
+      if (requestToken.value !== "") {
         if (Date.now() < tokenExpireTime.value) {
           return true
         }
@@ -32,16 +32,18 @@ export const useUserInfo = defineStore(
       renewUserInfo() // 获取用户信息
     }
     const deleteToken = () => {
-      requestToken.value = ''
+      requestToken.value = ""
       tokenExpireTime.value = 0
-      userId.value = ''
-      username.value = ''
-      nickname.value = ''
-      email.value = ''
-      avatarUrl.value = ''
+      userId.value = ""
+      username.value = ""
+      nickname.value = ""
+      email.value = ""
+      avatarUrl.value = ""
     }
     const setAvatar = (imageData: ArrayBuffer) => {
-      const imageUrl = URL.createObjectURL(new Blob([imageData], { type: 'imageType' }))
+      const imageUrl = URL.createObjectURL(
+        new Blob([imageData], { type: "imageType" }),
+      )
       URL.revokeObjectURL(avatarUrl.value)
       avatarUrl.value = imageUrl
     }
@@ -55,20 +57,22 @@ export const useUserInfo = defineStore(
     const renewUserInfo = () => {
       if (!isLoggedIn.value) return
       const router = useRouter()
-      getUserInfo().then((res: AxiosResponse) => {
-        renewAvatar()
-        const data = res.data
-        username.value = data.username
-        userId.value = data.id
-        email.value = data.email
-        nickname.value = data.nickname
-      }).catch((err) => {
-        const code = err.response.status
-        if (code === 401) {
-          deleteToken()
-          router.replace('/login')
-        }
-      })
+      getUserInfo()
+        .then((res: AxiosResponse) => {
+          renewAvatar()
+          const data = res.data
+          username.value = data.username
+          userId.value = data.id
+          email.value = data.email
+          nickname.value = data.nickname
+        })
+        .catch((err) => {
+          const code = err.response.status
+          if (code === 401) {
+            deleteToken()
+            router.replace("/login")
+          }
+        })
     }
 
     return {
@@ -90,7 +94,7 @@ export const useUserInfo = defineStore(
   {
     persist: {
       storage: localStorage,
-      paths: ['requestToken', 'tokenExpireTime']
+      paths: ["requestToken", "tokenExpireTime"],
     },
   },
 )

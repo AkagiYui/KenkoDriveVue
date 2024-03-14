@@ -1,12 +1,12 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
+import { ref } from "vue"
+import { defineStore } from "pinia"
 
 export const useAppConfig = defineStore(
-  'app-config',
+  "app-config",
   () => {
     const isDarkMode = ref(false)
     const isMenuCollapsed = ref(false)
-    const currentRouteName = ref('home')
+    const currentRouteName = ref("home")
     const isDebugMode = ref(false)
     const expandedMenuKeys = ref<string[]>([])
 
@@ -16,7 +16,7 @@ export const useAppConfig = defineStore(
     const reset = () => {
       isDarkMode.value = false
       isMenuCollapsed.value = false
-      currentRouteName.value = ''
+      currentRouteName.value = ""
       isDebugMode.value = false
       expandedMenuKeys.value = []
     }
