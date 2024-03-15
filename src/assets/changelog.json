@@ -63,5 +63,10 @@
     "version": "0.1.12",
     "date": "2023-08-31",
     "content": "添加首屏加载动画，添加Normalize.css"
+  },
+  {
+    "version": "0.2.0",
+    "date": "2024-03-15",
+    "content": "优化代码样式，添加公告页面，添加Umami统计，添加Clarity统计"
   }
 ]
