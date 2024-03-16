@@ -29,6 +29,7 @@
 - [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)
 - [知乎: Vue3 Vite3 多环境配置 - 基于 vite 创建 vue3 全家桶项目(续篇）](https://zhuanlan.zhihu.com/p/571017133)
+- [哔哩哔哩: console.log导致的内存泄露](https://www.bilibili.com/video/BV16x4y117F7)
 - [CSDN: Pinia使用方法及持久化存储](https://blog.csdn.net/m0_53808238/article/details/129751966)
 - [CSDN: 去掉router-link文字的下划线](https://blog.csdn.net/weixin_52418790/article/details/117361939)
 - [CSDN: vue3+vite如何引入本地静态图片](https://blog.csdn.net/weixin_57399180/article/details/128191707)
@@ -39,6 +40,7 @@
 - [CSDN: axios请求文件流以及显示](https://blog.csdn.net/weixin_45936690/article/details/115325297)
 - [CSDN: vue 默认margin:8px](https://blog.csdn.net/AinUser/article/details/106254235)
 - [CSDN: 前端判断当前系统主题](https://blog.csdn.net/u013367867/article/details/124687719)
+- [CSDN: ESLint语法检查--indent（缩进）规则](https://blog.csdn.net/pengjunlee/article/details/97750755)
 
 ## 活跃数据
 

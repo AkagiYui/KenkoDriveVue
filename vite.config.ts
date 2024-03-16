@@ -10,6 +10,7 @@ import MsClarity from "vite-plugin-ms-clarity"
 
 // eslint-disable-next-line no-undef
 const env = process.env
+const isProd = env.NODE_ENV === "production"
 
 /** @type {import('vite').UserConfig} */
 const config = {
@@ -44,9 +45,19 @@ const config = {
   define: {
     __APP_VERSION__: JSON.stringify(env.npm_package_version),
   },
+  build: {
+    minify: isProd ? "terser" : "esbuild" as "esbuild" | "terser",
+    terserOptions: {
+      compress: {
+        keep_infinity: true, // 保持 Infinity 不变，否则会被当成 1/0，在Chrome中可能出现性能问题
+        drop_console: true, // 删除 console
+        drop_debugger: true, // 删除 debugger
+      },
+    },
+  }
 }
 
-if (env.NODE_ENV === "production") {
+if (isProd) {
   // 微软 Clarity 分析
   if (!env.VITE_CLARITY_ID) {
     console.warn("Clarity ID is not set, Clarity will be disabled.")
