@@ -15,15 +15,6 @@ const personalInfo = ref({
   nickname: "",
   email: "",
 })
-const rules = {
-  nickname: {
-    required: false,
-    message: "请输入昵称",
-    min: 3,
-    trigger: ["input", "blur"],
-    type: "email",
-  },
-}
 
 onBeforeMount(() => {
   personalInfo.value.nickname = nickname.value
@@ -44,7 +35,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
     return
   }
   uploadUserAvatar(file)
-    .then((res) => {
+    .then(() => {
       window.$message.success("头像上传成功")
       renewAvatar()
     })

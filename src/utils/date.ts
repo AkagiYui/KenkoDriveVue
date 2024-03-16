@@ -3,7 +3,7 @@ export function unmarshalDate(date: string | Date) {
     return date
   }
 
-  const parts = date.split(/[-T:.+]/)
+  const parts: number[] = date.split(/[-T:.+]/).map((part) => parseInt(part, 10))
   // 注意：JavaScript中的月份从0开始，所以需要将月份减1
   return new Date(
     parts[0],

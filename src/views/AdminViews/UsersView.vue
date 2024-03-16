@@ -81,7 +81,7 @@ const tableColumns = [
     title: "配额",
     key: "capacity",
     minWidth: "200px",
-    render(row: User) {
+    render() {
       return h(
         NTooltip,
         {
@@ -372,7 +372,7 @@ const afterResetPasswordModalLeave = () => {
     <NModal
       :show="showResetPasswordModal"
       preset="card"
-      closable="true"
+      closable:="true"
       :title="`重置密码 (${selectRow?.username})`"
       bordered
       :mask-closable="false"

@@ -342,7 +342,6 @@ const rules = {
         <NSpace justify="end" style="width: 100%">
           <NButton
             :type="true ? 'success' : 'warning'"
-            @click="true ? addData() : updateData()"
           >
             {{ true ? "确定" : "修改" }}
           </NButton>
@@ -382,7 +381,6 @@ const rules = {
               tertiary
               type="primary"
               :disabled="true"
-              @click="ppp = true"
             >
               <template #icon>
                 <n-icon>

@@ -7,9 +7,9 @@ withDefaults(
 )
 
 const emit = defineEmits<{
-  positiveClick?: []
-  negativeClick?: []
-  "update:show"?: [value: boolean]
+  (e: "positiveClick"): void
+  (e: "negativeClick"): void
+  (e: "update:show", value: boolean): void
 }>()
 
 const onNegativeClick = () => {
