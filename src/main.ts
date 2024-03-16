@@ -1,6 +1,7 @@
 import { createApp } from "vue"
 import { createPinia } from "pinia"
 import piniaPersist from "pinia-plugin-persistedstate"
+import VueDOMPurifyHTML from "vue-dompurify-html"
 import "./vfonts/Lato.css"
 import "normalize.css/normalize.css"
 
@@ -13,6 +14,7 @@ pinia.use(piniaPersist)
 const app = createApp(App)
 app.use(pinia)
 app.use(router)
+app.use(VueDOMPurifyHTML)
 
 // Catch unhandled errors.
 app.config.errorHandler = (err) => {
