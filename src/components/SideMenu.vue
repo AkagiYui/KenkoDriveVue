@@ -236,9 +236,9 @@ const renderMenuLabel = (option: MenuOption) => {
     :width="240"
     :collapsed="isMenuCollapsed"
     show-trigger
+    :native-scrollbar="false"
     @collapse="isMenuCollapsed = true"
     @expand="isMenuCollapsed = false"
-    :native-scrollbar="false"
   >
     <n-menu
       style="height: 100%; width: 100%"

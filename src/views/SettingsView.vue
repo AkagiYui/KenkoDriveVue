@@ -66,8 +66,8 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
       <n-card title="个人信息">
         <n-space>
           <n-upload
-            accept="image/*"
             v-model:file-list="avatarFileList"
+            accept="image/*"
             :max="1"
             :show-file-list="false"
             :show-cancel-button="false"
@@ -125,8 +125,8 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
             <n-button-group>
               <span style="align-self: center; margin-right: 10px">主题</span>
               <n-button
-                @click="toggleDarkMode"
                 :type="!isDarkMode ? 'primary' : 'default'"
+                @click="toggleDarkMode"
               >
                 <template #icon>
                   <n-icon>
@@ -136,8 +136,8 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 亮色
               </n-button>
               <n-button
-                @click="toggleDarkMode"
                 :type="isDarkMode ? 'primary' : 'default'"
+                @click="toggleDarkMode"
               >
                 <template #icon>
                   <n-icon>
@@ -150,7 +150,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
           </n-space>
           <n-space style="display: flex; align-items: center">
             <n-text>调试模式</n-text>
-            <n-switch :round="false" v-model:value="isDebugMode" />
+            <n-switch v-model:value="isDebugMode" :round="false" />
           </n-space>
         </n-space>
       </n-card>

@@ -54,9 +54,9 @@ fetch(changelogFileUrl)
     <n-drawer-content title="更新日志" :native-scrollbar="false">
       <n-timeline size="large">
         <n-timeline-item
-          type="success"
           v-for="item in road"
           :key="item.version"
+          type="success"
           :time="item.date"
           :title="item.version"
           :content="item.content"
@@ -74,8 +74,8 @@ fetch(changelogFileUrl)
             <template #trigger>
               <n-tag
                 type="info"
-                @click="showRoadMap = !showRoadMap"
                 style="cursor: pointer"
+                @click="showRoadMap = !showRoadMap"
                 >{{ frontendVersion }}
               </n-tag>
             </template>

@@ -47,10 +47,14 @@ const config = {
 }
 
 if (env.NODE_ENV === "production") {
-  config.plugins.push(
-    // 微软 Clarity 分析
-    MsClarity({ id: env.VITE_CLARITY_ID as string, enableInDevMode: false }),
-  )
+  // 微软 Clarity 分析
+  if (!env.VITE_CLARITY_ID) {
+    console.warn("Clarity ID is not set, Clarity will be disabled.")
+  } else {
+    config.plugins.push(
+      MsClarity({ id: env.VITE_CLARITY_ID as string, enableInDevMode: false }),
+    )
+  }
 }
 
 export default defineConfig(config)

@@ -17,7 +17,7 @@ const router = useRouter()
       <template #footer>
         <n-space justify="center">
           <n-button @click="router.replace('/')">回到首页</n-button>
-          <n-button @click="router.go(-1)" type="primary">返回</n-button>
+          <n-button type="primary" @click="router.go(-1)">返回</n-button>
         </n-space>
       </template>
     </n-result>

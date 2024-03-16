@@ -246,41 +246,41 @@ const rules = {
     >
       <NSpace vertical>
         <NForm
-          :model="modalData"
           ref="modalFormRef"
+          :model="modalData"
           :rules="rules"
           label-placement="left"
           label-width="auto"
         >
           <NFormItem path="number" label="用户名">
             <NInput
+              v-model:value="modalData.number"
               clearable
               placeholder="输入用户名"
-              v-model:value="modalData.number"
             />
           </NFormItem>
           <NFormItem path="number" label="密码">
             <NInput
+              v-model:value="modalData.number"
               clearable
               placeholder="输入密码"
-              v-model:value="modalData.number"
             />
           </NFormItem>
           <NFormItem path="number" label="确认密码">
-            <NInput clearable placeholder="" v-model:value="modalData.number" />
+            <NInput v-model:value="modalData.number" clearable placeholder="" />
           </NFormItem>
           <NFormItem path="name" label="昵称">
             <NInput
+              v-model:value="modalData.name"
               clearable
               placeholder="输入昵称"
-              v-model:value="modalData.name"
             />
           </NFormItem>
           <NFormItem path="className" label="邮箱">
             <NInput
+              v-model:value="modalData.className"
               clearable
               placeholder="输入邮箱"
-              v-model:value="modalData.className"
             />
           </NFormItem>
         </NForm>
@@ -288,8 +288,8 @@ const rules = {
       <template #action>
         <NSpace justify="end" style="width: 100%">
           <NButton
-            @click="true ? addData() : updateData()"
             :type="true ? 'success' : 'warning'"
+            @click="true ? addData() : updateData()"
           >
             {{ true ? "确定" : "修改" }}
           </NButton>
@@ -351,10 +351,10 @@ const rules = {
         :columns="tableColumns"
         :data="tableData"
         :pagination="pagination"
-        @update:page="onPageChange"
-        @update:page-size="onPageSizeChange"
         :row-props="rowProps"
         :loading="isLoading"
+        @update:page="onPageChange"
+        @update:page-size="onPageSizeChange"
       />
     </n-space>
   </div>

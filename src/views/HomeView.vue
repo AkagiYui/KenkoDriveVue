@@ -72,7 +72,7 @@ onBeforeMount(() => {
       <n-h1>{{ nickname }}</n-h1>
     </n-h4>
 
-    <n-list bordered v-show="announcements.length > 0">
+    <n-list v-show="announcements.length > 0" bordered>
       <n-list-item
         v-for="announcement in announcements"
         :key="announcement.title"

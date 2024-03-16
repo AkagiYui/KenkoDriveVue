@@ -6,7 +6,7 @@ type DisplayAnnouncement = {
   userNickname: string
 }
 
-type Announcement = {
+interface Announcement {
   title: string
   content: string
   createTime: string

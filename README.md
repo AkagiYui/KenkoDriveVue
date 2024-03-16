@@ -18,6 +18,7 @@
 - [Vue Router 官方文档](https://router.vuejs.org/)
 - [Naive UI 官方文档](https://www.naiveui.com/)
 - [Vite 官方文档](https://cn.vitejs.dev/)
+- [typescript-eslint 官方文档](https://typescript-eslint.io/)
 - [适用于 Pinia 的持久化存储插件](https://prazdevs.github.io/pinia-plugin-persistedstate/zh/)
 - [JS 性能利器！Web Worker](https://yby.zone/note/frontend/js-worker.html)
 - [Normalize.css](https://necolas.github.io/normalize.css/)

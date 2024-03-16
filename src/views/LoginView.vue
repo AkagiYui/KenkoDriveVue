@@ -85,10 +85,10 @@ const onLogin = () => {
     >
       <n-tab-pane name="signin" tab="登录">
         <n-form
+          ref="modalFormRef"
           :show-require-mark="false"
           :model="loginForm"
           :rules="rules"
-          ref="modalFormRef"
         >
           <n-form-item-row path="username" label="账号">
             <n-input
@@ -98,9 +98,9 @@ const onLogin = () => {
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
             <n-input
+              v-model:value="loginForm.password"
               type="password"
               show-password-on="mousedown"
-              v-model:value="loginForm.password"
             />
           </n-form-item-row>
         </n-form>
@@ -115,13 +115,13 @@ const onLogin = () => {
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
             <n-input
+              v-model:value="loginForm.password"
               type="password"
               show-password-on="mousedown"
-              v-model:value="loginForm.password"
             />
           </n-form-item-row>
           <n-form-item-row path="repeatPassword" label="重复密码">
-            <n-input type="password" v-model:value="loginForm.repeatPassword" />
+            <n-input v-model:value="loginForm.repeatPassword" type="password" />
           </n-form-item-row>
         </n-form>
         <n-button type="primary" block secondary strong> 注册</n-button>

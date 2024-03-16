@@ -1,6 +1,6 @@
 <template>
   <side-menu />
-  <n-layout content-style="height: 100%;" id="app-layout" :style="{}">
+  <n-layout id="app-layout" content-style="height: 100%;" :style="{}">
     <n-scrollbar :class="{ 'block-scrollbar': false }">
       <n-back-top :right="50" />
       <router-view />

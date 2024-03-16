@@ -58,7 +58,7 @@ onMounted(() => {
       </n-message-provider>
     </n-loading-bar-provider>
     <div class="container">
-      <div class="banner" v-show="banner">
+      <div v-show="banner" class="banner">
         我未来可能是一个广告位，或者是一个banner
         <n-button type="error" @click="banner = false"> 关闭 </n-button>
       </div>
