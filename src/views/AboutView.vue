@@ -57,8 +57,11 @@ fetch(changelogFileUrl)
           type="success"
           :time="item.date"
           :title="item.version"
-          :content="item.content"
-        />
+        >
+          <div v-for="line in item.content.split('\n')" :key="line">
+            {{ line }}
+          </div>
+        </n-timeline-item>
       </n-timeline>
     </n-drawer-content>
   </n-drawer>
@@ -156,11 +159,7 @@ fetch(changelogFileUrl)
       </div>
       <QrCode :value="backendRepoUrl" :size="180" />
     </n-space>
-    <n-image
-      v-if="isDev"
-      :src="getAssetsUrl('ji.jpg')"
-      width="600"
-    />
+    <n-image v-if="isDev" :src="getAssetsUrl('ji.jpg')" width="600" />
   </div>
 </template>
 

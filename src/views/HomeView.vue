@@ -82,7 +82,9 @@ onBeforeMount(() => {
           :title-extra="announcement.userNickname"
           :description="announcement.updateTime"
         >
-          <div v-dompurify-html="announcement.content.replace('\n', '<br/>')" />
+          <div v-for="line in announcement.content.split('\n')" :key="line">
+            {{ line }}
+          </div>
         </n-thing>
       </n-list-item>
     </n-list>
