@@ -4,6 +4,7 @@ import QrCode from "@/components/QrCode.vue"
 import { onBeforeMount, ref } from "vue"
 import { getBackendVersion } from "@/api/server"
 
+const isDev = import.meta.env.DEV as boolean
 const frontendVersion = __APP_VERSION__
 
 const owner = "AkagiYui"
@@ -20,14 +21,6 @@ onBeforeMount(() => {
 
 const showRoadMap = ref(false)
 
-class OneVersion {
-  constructor(
-    public version: string,
-    public date: string,
-    public content: string,
-  ) {}
-}
-
 const road: OneVersion[] = []
 // 从assets/changelog.json中读取更新日志
 const changelogFileUrl = getAssetsUrl("changelog.json")
@@ -39,12 +32,17 @@ fetch(changelogFileUrl)
         const versionStr = res[version].version
         const date = res[version].date
         const content = res[version].content
-        road.push(new OneVersion(versionStr, date, content))
+        road.push({ version: versionStr, date, content })
       }
     }
     road.sort((a, b) => {
       // 根据时间倒序
-      return new Date(b.date).getTime() - new Date(a.date).getTime()
+      const byTime = new Date(b.date).getTime() - new Date(a.date).getTime()
+      if (byTime !== 0) {
+        return byTime
+      }
+      // 根据版本号倒序
+      return b.version.localeCompare(a.version)
     })
   })
 </script>
@@ -158,7 +156,11 @@ fetch(changelogFileUrl)
       </div>
       <QrCode :value="backendRepoUrl" :size="180" />
     </n-space>
-    <n-image :src="getAssetsUrl('ji.jpg')" width="600" />
+    <n-image
+      v-if="isDev"
+      :src="getAssetsUrl('ji.jpg')"
+      width="600"
+    />
   </div>
 </template>
 
