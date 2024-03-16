@@ -15,7 +15,6 @@ const customizedLocale = createLocale(
   zhCN,
 )
 
-const isProd = import.meta.env.PROD
 // 用于控制banner的显示
 const banner = ref(import.meta.env.DEV && false)
 

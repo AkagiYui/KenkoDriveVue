@@ -1,5 +1,4 @@
 import ServiceStatus from "@/types/ServiceStatus"
-import { ExistException } from "@/types/ServiceException"
 import { useUserInfo } from "@/stores/user-info"
 import axios from "axios"
 import { useRouter } from "vue-router"
@@ -40,10 +39,10 @@ request.interceptors.response.use(
         window.$loadingbar.error()
         console.error("response error", response.data)
         switch (code) {
-        case ServiceStatus.EXIST:
-          throw new ExistException()
-        default:
-          throw new Error(response.data["message"])
+          case ServiceStatus.EXIST:
+            throw new ExistException()
+          default:
+            throw new Error(response.data["message"])
         }
       } else {
         window.$loadingbar.finish()

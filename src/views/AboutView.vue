@@ -69,15 +69,16 @@ fetch(changelogFileUrl)
     <n-h2>关于</n-h2>
     <n-space>
       <div style="width: 400px">
-        <n-h3 prefix="bar"
-          >Kenko Drive Vue 前端
+        <n-h3 prefix="bar">
+          Kenko Drive Vue 前端
           <n-popover trigger="hover">
             <template #trigger>
               <n-tag
                 type="info"
                 style="cursor: pointer"
                 @click="showRoadMap = !showRoadMap"
-                >{{ frontendVersion }}
+              >
+                {{ frontendVersion }}
               </n-tag>
             </template>
             <span>{{ road[0]?.content }}</span>
@@ -91,9 +92,9 @@ fetch(changelogFileUrl)
         </p>
         <p>
           Copyright (C) 2023
-          <n-a :href="`https://github.com/${owner}`" target="_blank">{{
-            owner
-          }}</n-a>
+          <n-a :href="`https://github.com/${owner}`" target="_blank">
+            {{ owner }}
+          </n-a>
         </p>
         <p>MIT License</p>
         <p>
@@ -119,11 +120,11 @@ fetch(changelogFileUrl)
     </n-space>
     <n-space>
       <div style="width: 400px">
-        <n-h3 prefix="bar"
-          >Kenko Drive SpringBoot 后端
-          <n-tag v-if="backendVersion !== ''" type="info">{{
-            backendVersion
-          }}</n-tag>
+        <n-h3 prefix="bar">
+          Kenko Drive SpringBoot 后端
+          <n-tag v-if="backendVersion !== ''" type="info">
+            {{ backendVersion }}
+          </n-tag>
         </n-h3>
         <p>
           Github:
@@ -133,9 +134,9 @@ fetch(changelogFileUrl)
         </p>
         <p>
           Copyright (C) 2023
-          <n-a :href="`https://github.com/${owner}`" target="_blank">{{
-            owner
-          }}</n-a>
+          <n-a :href="`https://github.com/${owner}`" target="_blank">
+            {{ owner }}
+          </n-a>
         </p>
         <p>MIT License</p>
         <p>

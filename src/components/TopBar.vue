@@ -29,13 +29,13 @@ const options = ref([
 ])
 const onSelect = (key: string) => {
   switch (key) {
-  case "info":
-    router.replace("/settings")
-    break
-  case "logout":
-    deleteToken()
-    router.replace("/login")
-    break
+    case "info":
+      router.replace("/settings")
+      break
+    case "logout":
+      deleteToken()
+      router.replace("/login")
+      break
   }
 }
 </script>
@@ -60,7 +60,7 @@ const onSelect = (key: string) => {
     >
       <n-popover trigger="hover" title="网站二维码" :disabled="!isDebugMode">
         <template #header>
-          <n-text strong depth="1"> 网站二维码，扫码立即体验</n-text>
+          <n-text strong depth="1"> 网站二维码，扫码立即体验 </n-text>
         </template>
         <template #trigger>
           <router-link to="/">
@@ -89,10 +89,10 @@ const onSelect = (key: string) => {
       "
     >
       <n-switch v-if="isDebugMode" v-model:value="isDarkMode">
-        <template #checked-icon> 🌙</template>
-        <template #unchecked-icon> ☀️</template>
-        <template #checked> 测试阶段</template>
-        <template #unchecked> 全局暗色</template>
+        <template #checked-icon> 🌙 </template>
+        <template #unchecked-icon> ☀️ </template>
+        <template #checked> 测试阶段 </template>
+        <template #unchecked> 全局暗色 </template>
       </n-switch>
       <n-dropdown
         v-if="isLoggedIn"
@@ -102,7 +102,9 @@ const onSelect = (key: string) => {
         @select="onSelect"
       >
         <n-space style="display: flex; align-items: center">
-          <n-h4 style="margin: 0">{{ nickname }}</n-h4>
+          <n-h4 style="margin: 0">
+            {{ nickname }}
+          </n-h4>
           <n-badge dot :show="isDebugMode">
             <n-avatar
               :size="32"

@@ -276,13 +276,13 @@ const toDeleteUser = () => {
 }
 const onMenuClick = (x: string) => {
   switch (x) {
-  case "edit":
-    onEditUser()
-    break
-  case "delete":
-    if (!selectRow.value) return
-    showDeleteConfirmModal.value = true
-    break
+    case "edit":
+      onEditUser()
+      break
+    case "delete":
+      if (!selectRow.value) return
+      showDeleteConfirmModal.value = true
+      break
   }
 }
 const showDeleteConfirmModal = ref(false)
@@ -408,10 +408,10 @@ const afterResetPasswordModalLeave = () => {
           </NFormItem>
         </NForm>
         <NSpace justify="end">
-          <NButton type="error" @click="() => (showResetPasswordModal = false)"
-            >取消</NButton
-          >
-          <NButton type="primary" @click="resetPassword">确定</NButton>
+          <NButton type="error" @click="() => (showResetPasswordModal = false)">
+            取消
+          </NButton>
+          <NButton type="primary" @click="resetPassword"> 确定 </NButton>
         </NSpace>
       </NSpace>
     </NModal>
@@ -527,7 +527,7 @@ const afterResetPasswordModalLeave = () => {
                   <n-icon :component="SearchOutline" />
                 </template>
               </n-input>
-              <n-button type="primary" ghost :disabled="true"> 搜索</n-button>
+              <n-button type="primary" ghost :disabled="true"> 搜索 </n-button>
             </n-input-group>
           </n-space>
         </n-formItem>

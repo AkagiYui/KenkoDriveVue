@@ -14,10 +14,10 @@ const config = {
   },
   rules: {
     semi: ["warn", "never"], // 分号
-    indent: ["error", 2], // 缩进
+    indent: ["error", 2, { SwitchCase: 1 }], // 缩进，2个空格，switch语句缩进1个单位
     quotes: ["error", "double"], // 引号
 
-    "no-unused-vars": "warn", // 禁止未使用过的变量
+    "no-unused-vars": "off", // 禁止未使用过的变量。已禁用，使用typescript检查
     "no-undef": "off", // 禁止未声明的变量。已禁用，使用typescript检查
     "no-var": "error", // 禁止使用 var
 

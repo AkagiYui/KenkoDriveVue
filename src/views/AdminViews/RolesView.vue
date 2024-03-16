@@ -182,13 +182,13 @@ const toDeleteUser = () => {
 }
 const onMenuClick = (x: string) => {
   switch (x) {
-  case "edit":
-    onEditUser()
-    break
-  case "delete":
-    if (!selectRow.value) return
-    showDeleteConfirmModal.value = true
-    break
+    case "edit":
+      onEditUser()
+      break
+    case "delete":
+      if (!selectRow.value) return
+      showDeleteConfirmModal.value = true
+      break
   }
 }
 const showDeleteConfirmModal = ref(false)

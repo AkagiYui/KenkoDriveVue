@@ -2,16 +2,9 @@
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import { deleteUser, getUsers, updateUserDisabled } from "@/api/user"
 import { h, onBeforeMount, reactive, ref, nextTick } from "vue"
-import { NButton, NInput, NProgress, NTooltip, NText, NSpace } from "naive-ui"
-import { changeColor } from "seemly"
-import {
-  useThemeVars,
-  type DropdownOption,
-  type PaginationProps,
-} from "naive-ui"
+import { NButton, NInput, NTooltip, NText, NSpace } from "naive-ui"
+import { type DropdownOption, type PaginationProps } from "naive-ui"
 import ConfirmModal from "@/components/ConfirmModal.vue"
-
-const themeVars = useThemeVars()
 
 const isLoading = ref(false)
 /** 分页器 */
@@ -242,13 +235,13 @@ const toDeleteUser = () => {
 }
 const onMenuClick = (x: string) => {
   switch (x) {
-  case "edit":
-    onEditUser()
-    break
-  case "delete":
-    if (!selectRow.value) return
-    showDeleteConfirmModal.value = true
-    break
+    case "edit":
+      onEditUser()
+      break
+    case "delete":
+      if (!selectRow.value) return
+      showDeleteConfirmModal.value = true
+      break
   }
 }
 const showDeleteConfirmModal = ref(false)
@@ -404,7 +397,7 @@ const rules = {
                   <n-icon :component="SearchOutline" />
                 </template>
               </n-input>
-              <n-button type="primary" ghost :disabled="true"> 搜索</n-button>
+              <n-button type="primary" ghost :disabled="true"> 搜索 </n-button>
             </n-input-group>
           </n-space>
         </n-formItem>

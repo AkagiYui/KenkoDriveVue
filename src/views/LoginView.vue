@@ -124,7 +124,7 @@ const onLogin = () => {
             <n-input v-model:value="loginForm.repeatPassword" type="password" />
           </n-form-item-row>
         </n-form>
-        <n-button type="primary" block secondary strong> 注册</n-button>
+        <n-button type="primary" block secondary strong> 注册 </n-button>
       </n-tab-pane>
     </n-tabs>
   </n-card>

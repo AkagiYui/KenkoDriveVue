@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
 import { onMounted, ref } from "vue"
@@ -19,7 +20,7 @@ const testFunc = () => {}
 
 <template>
   <div style="padding: 24px">
-    <NButton @click="testFunc">t1</NButton><br />
+    <NButton @click="testFunc"> t1 </NButton><br />
     0
     <VueCropper ref="cropper" :img="avatarUrl" />
     1

@@ -7,5 +7,5 @@ window.$notify = useNotification()
 </script>
 
 <template>
-  <div></div>
+  <div />
 </template>
