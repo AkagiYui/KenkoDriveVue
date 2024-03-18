@@ -3,6 +3,7 @@ import { useUserInfo } from "@/stores/user-info"
 import { storeToRefs } from "pinia"
 import { onMounted, ref, onBeforeMount } from "vue"
 import { getIndexAnnouncements } from "@/api/announcement"
+import { MdSave } from "@vicons/ionicons4"
 
 const { nickname } = storeToRefs(useUserInfo())
 
@@ -72,6 +73,18 @@ onBeforeMount(() => {
       <n-h1>{{ nickname }}</n-h1>
     </n-h4>
 
+    <n-flex size="large">
+      <n-statistic label="存储空间" :value="'99G'">
+        <template #prefix>
+          <n-icon>
+            <md-save />
+          </n-icon>
+        </template>
+        <template #suffix>/100G </template>
+      </n-statistic>
+      <n-statistic label="分享点击"> 1,234,123 </n-statistic>
+    </n-flex>
+
     <n-list v-show="announcements.length > 0" bordered>
       <n-list-item
         v-for="announcement in announcements"
@@ -90,3 +103,9 @@ onBeforeMount(() => {
     </n-list>
   </div>
 </template>
+
+<style scoped>
+.n-list {
+  margin-top: 12px;
+}
+</style>
