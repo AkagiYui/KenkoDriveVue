@@ -340,9 +340,7 @@ const rules = {
       </NSpace>
       <template #action>
         <NSpace justify="end" style="width: 100%">
-          <NButton
-            :type="true ? 'success' : 'warning'"
-          >
+          <NButton :type="true ? 'success' : 'warning'">
             {{ true ? "确定" : "修改" }}
           </NButton>
         </NSpace>
@@ -377,11 +375,7 @@ const rules = {
               </template>
               刷新
             </n-button>
-            <n-button
-              tertiary
-              type="primary"
-              :disabled="true"
-            >
+            <n-button tertiary type="primary" :disabled="true">
               <template #icon>
                 <n-icon>
                   <AddOutline />

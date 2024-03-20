@@ -3,6 +3,7 @@ import { useUserInfo } from "@/stores/user-info"
 import axios from "axios"
 import { useRouter } from "vue-router"
 
+const isDev = import.meta.env.DEV
 const request = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
   timeout: 10000,
@@ -13,6 +14,9 @@ const request = axios.create({
 
 request.interceptors.request.use(
   (config) => {
+    if (isDev) {
+      console.log("request", config)
+    }
     window.$loadingbar.start()
     const userInfo = useUserInfo()
     const token = userInfo.requestToken
@@ -30,7 +34,9 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   (response) => {
     // 2xx 范围内的状态码都会触发该函数。
-
+    if (isDev) {
+      console.log("response", response)
+    }
     const contentType = response.headers["content-type"]
     if (contentType && contentType.indexOf("application/json") !== -1) {
       const code: number = response.data["code"]

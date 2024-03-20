@@ -85,7 +85,10 @@ export function updateUserDisabled(
 /**
  * (管理员)重置密码
  */
-export function resetPassword(id: string, newPassword: string): Promise<any> {
+export function updateUserPassword(
+  id: string,
+  newPassword: string,
+): Promise<any> {
   return Request.put(`/user/${id}/password`, {
     newPassword: newPassword,
   })

@@ -6,3 +6,12 @@ interface Page<T> {
   size: number
   total: number
 }
+
+/** 后端接口响应 */
+type BackendResponse<T> = {
+  code: number
+  msg: string
+  data: T
+}
+
+type RequestResponse<T> = Promise<AxiosResponse<BackendResponse<T>>>

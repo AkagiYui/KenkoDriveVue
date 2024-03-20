@@ -11,6 +11,18 @@
 - [ ] feat: 图片裁剪[vue-cropper](https://github.com/xyxiao001/vue-cropper)
 - [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
 
+## 开发注意事项
+
+请按序执行以下命令：
+
+```bash
+pnpm type-check
+pnpm lint
+pnpm format
+```
+
+并在确保所有所有警告与错误都已解决后再提交代码。
+
 ## 鸣谢
 
 - 图标：https://remixicon.com/icon/cloud-fill

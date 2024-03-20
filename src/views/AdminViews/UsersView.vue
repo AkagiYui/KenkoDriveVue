@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import { deleteUser, getUsers, updateUserDisabled } from "@/api/user"
+import {
+  deleteUser,
+  getUsers,
+  updateUserDisabled,
+  updateUserPassword,
+} from "@/api/user"
 import {
   h,
   onBeforeMount,
@@ -11,7 +16,15 @@ import {
   type RendererNode,
   type VNode,
 } from "vue"
-import { NButton, NInput, NProgress, NTooltip, NText, NSpace } from "naive-ui"
+import {
+  NButton,
+  NInput,
+  NProgress,
+  NTooltip,
+  NText,
+  NSpace,
+  type FormInst,
+} from "naive-ui"
 import {
   useThemeVars,
   type DropdownOption,
@@ -342,12 +355,22 @@ const resetPasswordRules = {
     },
   ],
 }
-const resetPassword = () => {
-  const formRef = ref()
-  formRef.value?.validate().then((valid: any) => {
+const resetPasswordFormRef = ref<FormInst | null>(null)
+const onResetPasswordClick = () => {
+  resetPasswordFormRef.value?.validate().then((valid: any) => {
     if (valid) {
       console.log("resetPasswordData: ", resetPasswordData.value)
-      showResetPasswordModal.value = false
+      const selecteId = selectRow.value?.id
+      if (!selecteId) return
+      updateUserPassword(selecteId, resetPasswordData.value.password)
+        .then(() => {
+          window.$message.success("密码重置成功")
+          showResetPasswordModal.value = false
+        })
+        .catch((e) => {
+          window.$message.error("密码重置失败")
+          console.error(e)
+        })
     }
   })
 }
@@ -369,52 +392,56 @@ const afterResetPasswordModalLeave = () => {
       "
     />
     <!-- 重置密码模态框 -->
-    <NModal
-      :show="showResetPasswordModal"
+    <n-modal
+      v-model:show="showResetPasswordModal"
       preset="card"
-      closable:="true"
-      :title="`重置密码 (${selectRow?.username})`"
+      :closable="true"
       bordered
+      :title="`重置密码 (${selectRow?.username})`"
       :mask-closable="false"
       :style="{
         width: '400px',
       }"
-      @close="() => (showResetPasswordModal = false)"
       @after-leave="afterResetPasswordModalLeave"
     >
-      <NSpace vertical>
-        <NForm
+      <n-space vertical>
+        <n-form
           ref="resetPasswordFormRef"
           :model="resetPasswordData"
           :rules="resetPasswordRules"
           label-placement="left"
           label-width="auto"
         >
-          <NFormItem path="password" label="新密码">
-            <NInput
+          <n-form-item path="password" label="新密码">
+            <n-input
               v-model:value="resetPasswordData.password"
               clearable
               placeholder="输入新密码"
               type="password"
             />
-          </NFormItem>
-          <NFormItem path="confirmPassword" label="确认密码">
-            <NInput
+          </n-form-item>
+          <n-form-item path="confirmPassword" label="确认密码">
+            <n-input
               v-model:value="resetPasswordData.confirmPassword"
               clearable
               placeholder="再次输入新密码"
               type="password"
             />
-          </NFormItem>
-        </NForm>
-        <NSpace justify="end">
-          <NButton type="error" @click="() => (showResetPasswordModal = false)">
+          </n-form-item>
+        </n-form>
+        <n-space justify="end">
+          <n-button
+            type="error"
+            @click="() => (showResetPasswordModal = false)"
+          >
             取消
-          </NButton>
-          <NButton type="primary" @click="resetPassword"> 确定 </NButton>
-        </NSpace>
-      </NSpace>
-    </NModal>
+          </n-button>
+          <n-button type="primary" @click="onResetPasswordClick">
+            确定
+          </n-button>
+        </n-space>
+      </n-space>
+    </n-modal>
     <!-- 新增删除模态框 -->
     <NModal
       :show="false"

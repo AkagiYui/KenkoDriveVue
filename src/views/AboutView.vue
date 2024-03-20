@@ -161,6 +161,11 @@ fetch(changelogFileUrl)
       <QrCode :value="backendRepoUrl" :size="180" />
     </n-space>
     <n-image v-if="isDev" :src="getAssetsUrl('ji.jpg')" width="600" />
+    <n-image
+      v-if="!isDev"
+      src="https://repobeats.axiom.co/api/embed/0ed4941f9e91671fd7d675d4ee71c21c1c497a85.svg"
+      width="600"
+    />
   </div>
 </template>
 
