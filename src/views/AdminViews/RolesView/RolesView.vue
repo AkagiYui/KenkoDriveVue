@@ -444,12 +444,7 @@ const getData = () => {
                   <n-icon :component="SearchOutline" />
                 </template>
               </n-input>
-              <n-button
-                type="primary"
-                ghost
-                :disabled="isLoading"
-                @click="getData"
-              >
+              <n-button ghost :disabled="isLoading" @click="getData">
                 搜索
               </n-button>
             </n-input-group>

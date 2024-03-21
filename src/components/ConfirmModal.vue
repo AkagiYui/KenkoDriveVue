@@ -1,39 +1,32 @@
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    show: boolean
-  }>(),
-  {},
-)
+/** 是否显示模态框 */
+const show = defineModel<boolean>("show", { default: false })
 
 const emit = defineEmits<{
   (e: "positiveClick"): void
   (e: "negativeClick"): void
-  (e: "update:show", value: boolean): void
 }>()
 
 const onNegativeClick = () => {
-  emit("update:show", false)
   emit("negativeClick")
 }
 </script>
 
 <template>
   <n-modal
-    :show="$props.show"
+    v-model:show="show"
     preset="dialog"
     title="确认"
     content="此操作不可撤销，请确认是否继续？"
     positive-text="确认"
     negative-text="取消"
     type="warning"
+    :closable="true"
     :positive-button-props="{
       type: 'error',
     }"
     @positive-click="emit('positiveClick')"
     @negative-click="onNegativeClick"
-    @close="onNegativeClick"
-    @mask-click="onNegativeClick"
   />
 </template>
 

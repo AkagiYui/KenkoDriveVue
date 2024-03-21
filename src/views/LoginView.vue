@@ -94,6 +94,7 @@ const onLogin = () => {
             <n-input
               v-model:value="loginForm.username"
               placeholder="用户名/邮箱/手机号"
+              :input-props="{ autocomplete: 'username' }"
             />
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
@@ -101,6 +102,7 @@ const onLogin = () => {
               v-model:value="loginForm.password"
               type="password"
               show-password-on="mousedown"
+              :input-props="{ autocomplete: 'current-password' }"
             />
           </n-form-item-row>
         </n-form>
