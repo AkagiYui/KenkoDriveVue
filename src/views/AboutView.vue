@@ -5,7 +5,7 @@ import { onBeforeMount, ref } from "vue"
 import { getBackendVersion } from "@/api/server"
 
 const isDev = import.meta.env.DEV as boolean
-const frontendVersion = __APP_VERSION__
+const frontendVersion = ref<string>(__APP_VERSION__)
 
 const owner = "AkagiYui"
 const frontendRepoUrl = "https://github.com/AkagiYui/KenkoDriveVue"
@@ -44,6 +44,7 @@ fetch(changelogFileUrl)
       // 根据版本号倒序
       return b.version.localeCompare(a.version)
     })
+    frontendVersion.value = road[0].version
   })
 </script>
 

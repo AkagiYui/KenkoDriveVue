@@ -53,3 +53,8 @@ export function updateRoleStatus(
     },
   })
 }
+
+/** 获取某一角色拥有的用户ID */
+export function getRoleUsers(id: string): RequestResponse<string[]> {
+  return Request.get(`/role/${id}/users`)
+}

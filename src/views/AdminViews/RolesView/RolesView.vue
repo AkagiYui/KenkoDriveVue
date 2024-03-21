@@ -12,6 +12,7 @@ import {
   updateRole,
   updateRoleStatus,
 } from "@/api/role"
+import UserTable from "./UserTable.vue"
 
 // 数据变量
 /** 表格加载中 */
@@ -91,7 +92,7 @@ const tableColumns = [
                 size: "small",
                 type: "primary",
                 secondary: true,
-                onClick: () => {},
+                onClick: () => onAssignUserButtonClick(row),
               },
               { default: () => "分配用户" },
             ),
@@ -159,6 +160,7 @@ const permissionTransferOptions = computed(() => {
     disabled: false,
   }))
 })
+const showUserTable = ref(true)
 
 // 事件
 /** 加载页面事件 */
@@ -311,6 +313,11 @@ const onToggleEnabledButtonClick = (row: Role) => {
       processing.value = false
     })
 }
+/** 分配用户按钮点击事件 */
+const onAssignUserButtonClick = (row: Role) => {
+  selectedRow.value = row
+  showUserTable.value = true
+}
 
 // 工具函数
 /** 获取表格数据 */
@@ -395,6 +402,9 @@ const getData = () => {
         </n-flex>
       </n-flex>
     </n-modal>
+
+    <!-- 角色用户表格 -->
+    <UserTable v-model:show="showUserTable" :role="selectedRow!" />
 
     <!-- 页面内容 -->
     <n-space vertical>
