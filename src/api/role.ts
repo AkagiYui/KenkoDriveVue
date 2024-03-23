@@ -58,3 +58,21 @@ export function updateRoleStatus(
 export function getRoleUsers(id: string): RequestResponse<string[]> {
   return Request.get(`/role/${id}/users`)
 }
+
+/** 分配角色用户 */
+export function assignRoleUsers(
+  id: string,
+  userIds: string[],
+): RequestResponse<null> {
+  return Request.put(`/role/${id}/users`, userIds)
+}
+
+/** 取消分配角色用户 */
+export function unassignRoleUsers(
+  id: string,
+  userIds: string[],
+): RequestResponse<null> {
+  return Request.delete(`/role/${id}/users`, {
+    data: userIds,
+  })
+}

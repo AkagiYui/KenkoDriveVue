@@ -11,6 +11,7 @@
 - [ ] feat: 图片裁剪[vue-cropper](https://github.com/xyxiao001/vue-cropper)
 - [ ] feat: 支持PWD[PWA Vite Plugin](https://vite-pwa-org.netlify.app/)
 - [ ] feat: 支持input的自动填充
+- [ ] feat: 管理员修改用户头像
 - [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
 
 ## 开发注意事项

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getRoleUsers } from "@/api/role"
+import { assignRoleUsers, getRoleUsers, unassignRoleUsers } from "@/api/role"
 import { getUsers } from "@/api/user"
 import { NButton, type PaginationProps } from "naive-ui"
 
@@ -53,7 +53,7 @@ const columns = [
             : isUserInRole(row)
               ? "error"
               : "primary",
-          onClick: () => {},
+          onClick: () => onActionClick(row),
         },
         { default: () => (isUserInRole(row) ? "移除角色" : "分配角色") },
       )
@@ -108,6 +108,38 @@ const onComponentShow = () => {
     .finally(() => {
       loading.value = false
     })
+}
+const onActionClick = (user: User) => {
+  loading.value = true
+  if (isUserInRole(user)) {
+    unassignRoleUsers(props.role.id, [user.id])
+      .then(() => {
+        window.$message.success("移除成功")
+        selectedUserIds.value = selectedUserIds.value.filter(
+          (id) => id !== user.id,
+        )
+      })
+      .catch((e) => {
+        window.$message.error("移除失败")
+        throw e
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  } else {
+    assignRoleUsers(props.role.id, [user.id])
+      .then(() => {
+        window.$message.success("分配成功")
+        selectedUserIds.value.push(user.id)
+      })
+      .catch((e) => {
+        window.$message.error("分配失败")
+        throw e
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
 }
 /** 获取用户信息 */
 const getUser = () => {
