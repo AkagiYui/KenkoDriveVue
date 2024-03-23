@@ -7,34 +7,23 @@ import {
   updateUserPassword,
 } from "@/api/user"
 import {
-  h,
-  onBeforeMount,
-  reactive,
-  ref,
-  nextTick,
-  type RendererElement,
-  type RendererNode,
-  type VNode,
-} from "vue"
-import {
   NButton,
   NInput,
   NProgress,
   NTooltip,
   NText,
   NSpace,
-  type FormInst,
-} from "naive-ui"
-import {
   useThemeVars,
-  type DropdownOption,
-  type PaginationProps,
 } from "naive-ui"
+import type { FormInst, PaginationProps } from "naive-ui"
+
 import { changeColor } from "seemly"
 import ConfirmModal from "@/components/ConfirmModal.vue"
+import { renderTooltip } from "@/utils/render"
 
+/** naiveui主题相关变量 */
 const themeVars = useThemeVars()
-
+/** 表格加载中 */
 const isLoading = ref(false)
 /** 分页器 */
 const pagination = reactive({
@@ -54,28 +43,66 @@ const pagination = reactive({
   /** 总记录数显示文本 */
   prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
-/** 页码改变事件 */
-const onPageChange = (page: number) => {
-  pagination.page = page
-  getData()
-}
-/** 每页记录数改变事件 */
-const onPageSizeChange = (pageSize: number) => {
-  pagination.pageSize = pageSize
-  pagination.page = 1
-  getData()
-}
+/** 显示删除确认模态框 */
+const showDeleteConfirmModal = ref(false)
+/** 模态框信息 */
+const modalData = ref({ name: "", number: "", className: "" })
+/** 模态框表单校验规则 */
+const rules = {
+  number: {
+    required: true,
+    message: "请输入学号",
+    min: 3,
+    trigger: ["input", "blur"],
+  },
+  name: {
+    required: true,
+    min: 2,
+    message: "请输入姓名",
+    trigger: ["input", "blur"],
+  },
 
-const renderTooltip = (
-  trigger: VNode<RendererNode, RendererElement, { [key: string]: any }>,
-  content: string,
-) => {
-  return h(NTooltip, null, {
-    trigger: () => trigger,
-    default: () => content,
-  })
+  className: {
+    required: true,
+    min: 3,
+    message: "请输入班级",
+    trigger: ["input", "blur"],
+  },
 }
-
+// 是否显示重置密码模态框
+const showResetPasswordModal = ref(false)
+// 重置密码模态框数据
+const resetPasswordData = ref({ password: "", confirmPassword: "" })
+// 重置密码模态框表单校验规则
+const resetPasswordRules = {
+  password: {
+    required: true,
+    message: "请输入新密码",
+    min: 1,
+    trigger: ["input", "blur"],
+  },
+  confirmPassword: [
+    {
+      required: true,
+      message: "请再次输入新密码",
+      min: 1,
+      trigger: ["input", "blur"],
+    },
+    {
+      validator: (_: any, value: string) => {
+        if (value !== resetPasswordData.value.password) {
+          return new Error("两次输入的密码不一致")
+        }
+        return true
+      },
+      trigger: ["input", "blur"],
+    },
+  ],
+}
+/** 搜索表达式 */
+const searchExpression = ref("")
+/** 重置密码模态框表单引用 */
+const resetPasswordFormRef = ref<FormInst | null>(null)
 /** 表格列 */
 const tableColumns = [
   {
@@ -93,7 +120,7 @@ const tableColumns = [
   {
     title: "配额",
     key: "capacity",
-    minWidth: "200px",
+    minWidth: "100px",
     render() {
       return h(
         NTooltip,
@@ -165,7 +192,7 @@ const tableColumns = [
   {
     title: "操作",
     key: "actions",
-    width: "220px",
+    width: "340px",
     render(row: User) {
       return h(
         NSpace,
@@ -178,9 +205,19 @@ const tableColumns = [
                 size: "small",
                 type: "primary",
                 secondary: true,
-                onClick: () => onEditUser(),
+                onClick: () => onEditUserInfoButtonClick(row),
               },
-              { default: () => "编辑" },
+              { default: () => "修改信息" },
+            ),
+            h(
+              NButton,
+              {
+                size: "small",
+                type: "info",
+                secondary: true,
+                onClick: () => onEditUserInfoButtonClick(row),
+              },
+              { default: () => "分配权限" },
             ),
             h(
               NButton,
@@ -218,64 +255,31 @@ const tableColumns = [
 ]
 /** 表格数据 */
 const tableData = ref<User[]>([])
-/** 获取表格数据 */
-const getData = () => {
-  isLoading.value = true
-  getUsers(pagination.page - 1, pagination.pageSize)
-    .then((res) => {
-      let data: Page<User> = res.data
-      tableData.value = data.list
-      pagination.itemCount = data.total
-    })
-    .catch((e) => {
-      window.$message.error("数据获取失败")
-      console.error(e)
-    })
-    .finally(() => (isLoading.value = false))
-}
+/** 选中行 */
+const selectRow = ref<User | null>(null)
 
+/** 页码改变事件 */
+const onPageChange = (page: number) => {
+  pagination.page = page
+  getData()
+}
+/** 每页记录数改变事件 */
+const onPageSizeChange = (pageSize: number) => {
+  pagination.pageSize = pageSize
+  pagination.page = 1
+  getData()
+}
+/** 页面挂载前开始获取数据 */
 onBeforeMount(() => {
   getData()
 })
-
-const showDropdown = ref(false)
-const x = ref(0)
-const y = ref(0)
-const selectRow = ref<User | null>(null)
-const options = ref<DropdownOption[]>([
-  {
-    label: "编辑",
-    key: "edit",
-  },
-  {
-    label: () => h(NText, { type: "error" }, () => "删除"),
-    key: "delete",
-  },
-])
-const rowProps = (row: User) => {
-  return {
-    onContextmenu: (e: MouseEvent) => {
-      e.preventDefault()
-      showDropdown.value = false
-      nextTick().then(() => {
-        selectRow.value = row
-        showDropdown.value = true
-        x.value = e.clientX
-        y.value = e.clientY
-      })
-    },
-    // ondblclick: (e: MouseEvent) => {
-    //   e.preventDefault()
-    //   selectRow.value = row
-    //   onEditUser()
-    // },
-  }
-}
-const onEditUser = () => {
+/** 修改用户信息按钮点击事件 */
+const onEditUserInfoButtonClick = (row: User) => {
   if (!selectRow.value) return
-  window.$message.info("编辑：" + selectRow.value.nickname)
+  window.$message.info("编辑：" + row.nickname)
 }
-const toDeleteUser = () => {
+/** 删除用户确认事件 */
+const onDeleteUserConfirm = () => {
   if (!selectRow.value) return
   deleteUser(selectRow.value.id)
     .then(() => {
@@ -286,76 +290,9 @@ const toDeleteUser = () => {
       window.$message.error("删除失败")
       console.error(e)
     })
+  showDeleteConfirmModal.value = false
 }
-const onMenuClick = (x: string) => {
-  switch (x) {
-    case "edit":
-      onEditUser()
-      break
-    case "delete":
-      if (!selectRow.value) return
-      showDeleteConfirmModal.value = true
-      break
-  }
-}
-const showDeleteConfirmModal = ref(false)
-
-/** 模态框信息 */
-const modalData = ref({ name: "", number: "", className: "" })
-/** 模态框表单校验规则 */
-const rules = {
-  number: {
-    required: true,
-    message: "请输入学号",
-    min: 3,
-    trigger: ["input", "blur"],
-  },
-  name: {
-    required: true,
-    min: 2,
-    message: "请输入姓名",
-    trigger: ["input", "blur"],
-  },
-
-  className: {
-    required: true,
-    min: 3,
-    message: "请输入班级",
-    trigger: ["input", "blur"],
-  },
-}
-
-// 是否显示重置密码模态框
-const showResetPasswordModal = ref(false)
-// 重置密码模态框数据
-const resetPasswordData = ref({ password: "", confirmPassword: "" })
-// 重置密码模态框表单校验规则
-const resetPasswordRules = {
-  password: {
-    required: true,
-    message: "请输入新密码",
-    min: 1,
-    trigger: ["input", "blur"],
-  },
-  confirmPassword: [
-    {
-      required: true,
-      message: "请再次输入新密码",
-      min: 1,
-      trigger: ["input", "blur"],
-    },
-    {
-      validator: (_: any, value: string) => {
-        if (value !== resetPasswordData.value.password) {
-          return new Error("两次输入的密码不一致")
-        }
-        return true
-      },
-      trigger: ["input", "blur"],
-    },
-  ],
-}
-const resetPasswordFormRef = ref<FormInst | null>(null)
+/** 重置密码按钮点击事件 */
 const onResetPasswordClick = () => {
   resetPasswordFormRef.value?.validate().then((valid: any) => {
     if (valid) {
@@ -374,8 +311,25 @@ const onResetPasswordClick = () => {
     }
   })
 }
-const afterResetPasswordModalLeave = () => {
+/** 重置密码模态框关闭后事件 */
+const onAfterResetPasswordModalLeave = () => {
   resetPasswordData.value = { password: "", confirmPassword: "" }
+}
+
+/** 获取表格数据 */
+const getData = () => {
+  isLoading.value = true
+  getUsers(pagination.page - 1, pagination.pageSize, searchExpression.value)
+    .then((res) => {
+      let data: Page<User> = res.data
+      tableData.value = data.list
+      pagination.itemCount = data.total
+    })
+    .catch((e) => {
+      window.$message.error("数据获取失败")
+      console.error(e)
+    })
+    .finally(() => (isLoading.value = false))
 }
 </script>
 
@@ -384,13 +338,9 @@ const afterResetPasswordModalLeave = () => {
     <!-- 确认删除模态框 -->
     <ConfirmModal
       v-model:show="showDeleteConfirmModal"
-      @positive-click="
-        () => {
-          toDeleteUser()
-          showDeleteConfirmModal = false
-        }
-      "
+      @positive-click="onDeleteUserConfirm"
     />
+
     <!-- 重置密码模态框 -->
     <n-modal
       v-model:show="showResetPasswordModal"
@@ -402,7 +352,7 @@ const afterResetPasswordModalLeave = () => {
       :style="{
         width: '400px',
       }"
-      @after-leave="afterResetPasswordModalLeave"
+      @after-leave="onAfterResetPasswordModalLeave"
     >
       <n-space vertical>
         <n-form
@@ -442,8 +392,9 @@ const afterResetPasswordModalLeave = () => {
         </n-space>
       </n-space>
     </n-modal>
-    <!-- 新增删除模态框 -->
-    <NModal
+
+    <!-- 新增编辑模态框 -->
+    <n-modal
       :show="false"
       preset="card"
       :style="{
@@ -454,111 +405,105 @@ const afterResetPasswordModalLeave = () => {
       :mask-closable="false"
       @after-leave="() => {}"
     >
-      <NSpace vertical>
-        <NForm
+      <n-space vertical>
+        <n-form
           ref="modalFormRef"
           :model="modalData"
           :rules="rules"
           label-placement="left"
           label-width="auto"
         >
-          <NFormItem path="number" label="用户名">
-            <NInput
+          <n-form-item path="number" label="用户名">
+            <n-input
               v-model:value="modalData.number"
               clearable
               placeholder="输入用户名"
             />
-          </NFormItem>
-          <NFormItem path="number" label="密码">
-            <NInput
+          </n-form-item>
+          <n-form-item path="number" label="密码">
+            <n-input
               v-model:value="modalData.number"
               clearable
               placeholder="输入密码"
             />
-          </NFormItem>
-          <NFormItem path="number" label="确认密码">
-            <NInput v-model:value="modalData.number" clearable placeholder="" />
-          </NFormItem>
-          <NFormItem path="name" label="昵称">
-            <NInput
+          </n-form-item>
+          <n-form-item path="number" label="确认密码">
+            <n-input
+              v-model:value="modalData.number"
+              clearable
+              placeholder=""
+            />
+          </n-form-item>
+          <n-form-item path="name" label="昵称">
+            <n-input
               v-model:value="modalData.name"
               clearable
               placeholder="输入昵称"
             />
-          </NFormItem>
-          <NFormItem path="className" label="邮箱">
-            <NInput
+          </n-form-item>
+          <n-form-item path="className" label="邮箱">
+            <n-input
               v-model:value="modalData.className"
               clearable
               placeholder="输入邮箱"
             />
-          </NFormItem>
-        </NForm>
-      </NSpace>
-      <template #action>
-        <NSpace justify="end" style="width: 100%">
-          <NButton
-            :type="true ? 'success' : 'warning'"
-            @click="console.log('todo')"
-          >
-            {{ true ? "确定" : "修改" }}
-          </NButton>
-        </NSpace>
-      </template>
-    </NModal>
+          </n-form-item>
+        </n-form>
+      </n-space>
+      <n-space justify="end" style="width: 100%">
+        <n-button
+          :type="true ? 'success' : 'warning'"
+          @click="console.log('todo')"
+        >
+          {{ true ? "确定" : "修改" }}
+        </n-button>
+      </n-space>
+    </n-modal>
 
-    <!-- 表格右键菜单 -->
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="x"
-      :y="y"
-      :options="options"
-      :show="showDropdown"
-      :on-clickoutside="() => (showDropdown = false)"
-      @select="
-        (x: string) => {
-          showDropdown = false
-          onMenuClick(x)
-        }
-      "
-    />
+    <!-- 页面内容 -->
     <n-space vertical>
-      <n-form :show-label="false" inline :show-feedback="false">
-        <n-formItem path="学号">
-          <n-space>
-            <n-button tertiary type="info" @click="getData">
-              <template #icon>
-                <n-icon>
-                  <RefreshOutline />
-                </n-icon>
-              </template>
-              刷新
-            </n-button>
-            <n-button
-              tertiary
-              type="primary"
-              :disabled="true"
-              @click="console.log('todo')"
-            >
-              <template #icon>
-                <n-icon>
-                  <AddOutline />
-                </n-icon>
-              </template>
-              新增
-            </n-button>
-            <n-input-group>
-              <n-input>
-                <template #prefix>
-                  <n-icon :component="SearchOutline" />
-                </template>
-              </n-input>
-              <n-button type="primary" ghost :disabled="true"> 搜索 </n-button>
-            </n-input-group>
-          </n-space>
-        </n-formItem>
-      </n-form>
+      <!-- 按钮区 -->
+
+      <n-space style="margin-bottom: 4px">
+        <n-button tertiary type="info" :disabled="isLoading" @click="getData">
+          <template #icon>
+            <n-icon>
+              <RefreshOutline />
+            </n-icon>
+          </template>
+          刷新
+        </n-button>
+
+        <n-button tertiary type="primary" @click="console.log('todo')">
+          <template #icon>
+            <n-icon>
+              <AddOutline />
+            </n-icon>
+          </template>
+          新增
+        </n-button>
+
+        <n-input-group>
+          <n-input
+            v-model:value="searchExpression"
+            :disabled="isLoading"
+            placeholder="用户名、昵称、邮箱"
+          >
+            <template #prefix>
+              <n-icon :component="SearchOutline" />
+            </template>
+          </n-input>
+          <n-button
+            ghost
+            :disabled="isLoading || searchExpression.length === 0"
+            @click="getData"
+          >
+            搜索
+          </n-button>
+        </n-input-group>
+      </n-space>
+
+      <!-- 表格区 -->
       <n-data-table
         remote
         striped
@@ -566,7 +511,6 @@ const afterResetPasswordModalLeave = () => {
         :columns="tableColumns"
         :data="tableData"
         :pagination="pagination"
-        :row-props="rowProps"
         :loading="isLoading"
         @update:page="onPageChange"
         @update:page-size="onPageSizeChange"
@@ -574,5 +518,3 @@ const afterResetPasswordModalLeave = () => {
     </n-space>
   </div>
 </template>
-
-<style scoped></style>

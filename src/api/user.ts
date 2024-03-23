@@ -6,7 +6,7 @@ export function getUsers(index: number, size: number, filter?: string) {
     params: {
       index: index,
       size: size,
-      filter: filter,
+      expression: filter,
     },
   })
 }
