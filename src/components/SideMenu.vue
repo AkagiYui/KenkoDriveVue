@@ -182,7 +182,7 @@ const menuOptions = ref([
     show: isDebugMode,
   },
   {
-    label: "测试",
+    label: "实验室",
     key: "test",
     icon: renderIcon(FlaskOutline),
     show: isDebugMode,

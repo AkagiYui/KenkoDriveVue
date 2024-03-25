@@ -1,3 +1,4 @@
+import { hasText } from "@/utils/string"
 import Request from "./request"
 
 /** 获取用户分页 */
@@ -14,6 +15,47 @@ export function getUsers(index: number, size: number, filter?: string) {
 /** 删除用户 */
 export function deleteUser(id: string) {
   return Request.delete(`/user/${id}`)
+}
+
+/** 新增用户 */
+export function addUser(data: {
+  username: string
+  password: string
+  nickname?: string
+  email?: string
+}) {
+  // 检查undefined，不发送
+  const requestData: any = {}
+  if (hasText(data.nickname)) {
+    requestData.nickname = data.nickname
+  }
+  if (hasText(data.email)) {
+    requestData.email = data.email
+  }
+  return Request.post("/user", {
+    username: data.username,
+    password: data.password,
+    ...requestData,
+  })
+}
+
+/** 更新用户信息 */
+export function updateUserInfo(
+  id: string,
+  data: { password?: string; nickname?: string; email?: string },
+) {
+  // 检查undefined，不发送
+  const requestData: any = {}
+  if (hasText(data.nickname)) {
+    requestData.nickname = data.nickname
+  }
+  if (hasText(data.email)) {
+    requestData.email = data.email
+  }
+  if (hasText(data.password)) {
+    requestData.password = data.password
+  }
+  return Request.put(`/user/${id}`, requestData)
 }
 
 /** 获取token */

@@ -101,7 +101,7 @@ const onLogin = () => {
             <n-input
               v-model:value="loginForm.password"
               type="password"
-              show-password-on="mousedown"
+              show-password-on="click"
               :input-props="{ autocomplete: 'current-password' }"
             />
           </n-form-item-row>

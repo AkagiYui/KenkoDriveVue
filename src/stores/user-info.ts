@@ -27,7 +27,7 @@ export const useUserInfo = defineStore(
 
     const setToken = (token: string) => {
       requestToken.value = token
-      tokenExpireTime.value = Date.now() + 1000 * 60 * 60 * 2 // 2小时
+      tokenExpireTime.value = Date.now() + 1000 * 60 * 60 * 48 // 48小时
 
       renewUserInfo() // 获取用户信息
     }

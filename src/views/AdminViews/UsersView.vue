@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import {
+  addUser,
   deleteUser,
   getUsers,
   updateUserDisabled,
+  updateUserInfo,
   updateUserPassword,
 } from "@/api/user"
 import {
@@ -45,27 +47,53 @@ const pagination = reactive({
 })
 /** 显示删除确认模态框 */
 const showDeleteConfirmModal = ref(false)
+const modalFormRef = ref<FormInst | null>(null)
 /** 模态框信息 */
-const modalData = ref({ name: "", number: "", className: "" })
+const modalData = ref({
+  username: "",
+  password: "",
+  repeatPassword: "",
+  nickname: "",
+  email: "",
+})
 /** 模态框表单校验规则 */
 const rules = {
-  number: {
+  username: {
     required: true,
-    message: "请输入学号",
-    min: 3,
+    message: "请输入用户名",
     trigger: ["input", "blur"],
   },
-  name: {
+  password: {
     required: true,
-    min: 2,
-    message: "请输入姓名",
+    message: "请输入密码",
     trigger: ["input", "blur"],
   },
-
-  className: {
-    required: true,
-    min: 3,
-    message: "请输入班级",
+  repeatPassword: [
+    {
+      required: true,
+      message: "请再次输入密码",
+      trigger: ["input", "blur"],
+    },
+    {
+      validator: (_: any, value: string) => {
+        if (value !== modalData.value.password) {
+          return new Error("两次输入的密码不一致")
+        }
+        return true
+      },
+      trigger: ["input", "blur"],
+    },
+  ],
+  nickname: {
+    required: false,
+    message: "请输入昵称",
+    min: 1,
+    trigger: ["input", "blur"],
+  },
+  email: {
+    required: false,
+    message: "请输入邮箱",
+    min: 1,
     trigger: ["input", "blur"],
   },
 }
@@ -164,7 +192,7 @@ const tableColumns = [
       )
     },
     key: "isDisabled",
-    width: "100px",
+    width: "0",
     render(row: User) {
       return h(
         NButton,
@@ -192,7 +220,7 @@ const tableColumns = [
   {
     title: "操作",
     key: "actions",
-    width: "340px",
+    width: "250px",
     render(row: User) {
       return h(
         NSpace,
@@ -203,21 +231,11 @@ const tableColumns = [
               NButton,
               {
                 size: "small",
-                type: "primary",
-                secondary: true,
-                onClick: () => onEditUserInfoButtonClick(row),
-              },
-              { default: () => "修改信息" },
-            ),
-            h(
-              NButton,
-              {
-                size: "small",
                 type: "info",
                 secondary: true,
-                onClick: () => onEditUserInfoButtonClick(row),
+                onClick: () => {},
               },
-              { default: () => "分配权限" },
+              { default: () => "分配角色" },
             ),
             h(
               NButton,
@@ -225,14 +243,25 @@ const tableColumns = [
                 size: "small",
                 type: "warning",
                 secondary: true,
-                onClick: () => {
-                  selectRow.value = row
-                  if (!selectRow.value) return
-                  showResetPasswordModal.value = true
-                },
+                onClick: () => onEditButtonClick(row),
               },
-              { default: () => "重置密码" },
+              { default: () => "修改信息" },
             ),
+
+            // h(
+            //   NButton,
+            //   {
+            //     size: "small",
+            //     type: "warning",
+            //     secondary: true,
+            //     onClick: () => {
+            //       selectRow.value = row
+            //       if (!selectRow.value) return
+            //       showResetPasswordModal.value = true
+            //     },
+            //   },
+            //   { default: () => "重置密码" },
+            // ),
             h(
               NButton,
               {
@@ -257,6 +286,10 @@ const tableColumns = [
 const tableData = ref<User[]>([])
 /** 选中行 */
 const selectRow = ref<User | null>(null)
+/** 显示编辑模态框 */
+const showEditModal = ref(false)
+/** 处于编辑/新增 */
+const isEdit = ref(false)
 
 /** 页码改变事件 */
 const onPageChange = (page: number) => {
@@ -273,11 +306,6 @@ const onPageSizeChange = (pageSize: number) => {
 onBeforeMount(() => {
   getData()
 })
-/** 修改用户信息按钮点击事件 */
-const onEditUserInfoButtonClick = (row: User) => {
-  if (!selectRow.value) return
-  window.$message.info("编辑：" + row.nickname)
-}
 /** 删除用户确认事件 */
 const onDeleteUserConfirm = () => {
   if (!selectRow.value) return
@@ -315,6 +343,73 @@ const onResetPasswordClick = () => {
 const onAfterResetPasswordModalLeave = () => {
   resetPasswordData.value = { password: "", confirmPassword: "" }
 }
+/** 编辑模态框关闭后事件 */
+const onAfterEditModalLeave = () => {
+  modalData.value = {
+    username: "",
+    password: "",
+    repeatPassword: "",
+    nickname: "",
+    email: "",
+  }
+}
+/** 新增按钮点击事件 */
+const onAddButtonClick = () => {
+  isEdit.value = false
+  showEditModal.value = true
+}
+/** 模态框按钮点击事件 */
+const onModalPositiveButtonClick = async () => {
+  try {
+    // 尝试验证模态表单
+    await modalFormRef.value?.validate()
+
+    if (isEdit.value) {
+      // 修改用户信息
+      if (!selectRow.value) {
+        throw new Error("未选中用户")
+      }
+      if (!selectRow.value.id) {
+        throw new Error("未获取到用户ID")
+      }
+      await updateUserInfo(selectRow.value.id, modalData.value)
+      window.$message.success("修改成功")
+    } else {
+      // 新增用户
+      await addUser(modalData.value)
+      window.$message.success("新增成功")
+    }
+
+    getData()
+    showEditModal.value = false
+  } catch (error) {
+    window.$message.error("操作失败")
+    console.error(error)
+  }
+}
+/** 编辑按钮点击事件 */
+const onEditButtonClick = (row: User) => {
+  isEdit.value = true
+  selectRow.value = row
+  modalData.value = {
+    username: row.username,
+    password: "",
+    repeatPassword: "",
+    nickname: row.nickname,
+    email: row.email,
+  }
+  showEditModal.value = true
+}
+watch(isEdit, (isEdit) => {
+  // 修改规则
+  if (isEdit) {
+    rules.password.required = false
+    rules.repeatPassword[0].required = false
+  } else {
+    rules.password.required = true
+    rules.repeatPassword[0].required = true
+  }
+})
 
 /** 获取表格数据 */
 const getData = () => {
@@ -395,15 +490,15 @@ const getData = () => {
 
     <!-- 新增编辑模态框 -->
     <n-modal
-      :show="false"
+      v-model:show="showEditModal"
       preset="card"
       :style="{
         width: '400px',
       }"
-      :title="true ? '新增用户' : '修改信息'"
+      :title="isEdit ? '修改信息' : '新增用户'"
       :bordered="false"
       :mask-closable="false"
-      @after-leave="() => {}"
+      @after-leave="onAfterEditModalLeave"
     >
       <n-space vertical>
         <n-form
@@ -413,37 +508,47 @@ const getData = () => {
           label-placement="left"
           label-width="auto"
         >
-          <n-form-item path="number" label="用户名">
-            <n-input
-              v-model:value="modalData.number"
-              clearable
-              placeholder="输入用户名"
-            />
+          <n-form-item path="username" label="用户名">
+            <n-tooltip :disabled="!isEdit" trigger="hover" placement="top">
+              <template #trigger>
+                <n-input
+                  v-model:value="modalData.username"
+                  clearable
+                  placeholder="输入用户名"
+                  :input-props="{ autocomplete: 'off' }"
+                  :disabled="isEdit"
+                />
+              </template>
+              用户名不可修改
+            </n-tooltip>
           </n-form-item>
-          <n-form-item path="number" label="密码">
+          <n-form-item path="password" label="密码">
             <n-input
-              v-model:value="modalData.number"
+              v-model:value="modalData.password"
+              type="password"
               clearable
               placeholder="输入密码"
+              :input-props="{ autocomplete: 'new-password' }"
             />
           </n-form-item>
-          <n-form-item path="number" label="确认密码">
+          <n-form-item path="repeatPassword" label="确认密码">
             <n-input
-              v-model:value="modalData.number"
+              v-model:value="modalData.repeatPassword"
+              type="password"
               clearable
-              placeholder=""
+              placeholder="重复密码"
             />
           </n-form-item>
-          <n-form-item path="name" label="昵称">
+          <n-form-item path="nickname" label="昵称">
             <n-input
-              v-model:value="modalData.name"
+              v-model:value="modalData.nickname"
               clearable
               placeholder="输入昵称"
             />
           </n-form-item>
-          <n-form-item path="className" label="邮箱">
+          <n-form-item path="email" label="邮箱">
             <n-input
-              v-model:value="modalData.className"
+              v-model:value="modalData.email"
               clearable
               placeholder="输入邮箱"
             />
@@ -452,10 +557,10 @@ const getData = () => {
       </n-space>
       <n-space justify="end" style="width: 100%">
         <n-button
-          :type="true ? 'success' : 'warning'"
-          @click="console.log('todo')"
+          :type="isEdit ? 'warning' : 'success'"
+          @click="onModalPositiveButtonClick"
         >
-          {{ true ? "确定" : "修改" }}
+          {{ isEdit ? "修改" : "确定" }}
         </n-button>
       </n-space>
     </n-modal>
@@ -463,7 +568,6 @@ const getData = () => {
     <!-- 页面内容 -->
     <n-space vertical>
       <!-- 按钮区 -->
-
       <n-space style="margin-bottom: 4px">
         <n-button tertiary type="info" :disabled="isLoading" @click="getData">
           <template #icon>
@@ -474,7 +578,7 @@ const getData = () => {
           刷新
         </n-button>
 
-        <n-button tertiary type="primary" @click="console.log('todo')">
+        <n-button tertiary type="primary" @click="onAddButtonClick">
           <template #icon>
             <n-icon>
               <AddOutline />

@@ -72,10 +72,13 @@ request.interceptors.response.use(
       // ! todo 如果用户在编辑内容时，会丢失编辑内容，需要提示用户
       const { deleteToken } = useUserInfo()
       deleteToken()
-      useRouter().replace("/login")
+    } else if (statusCode === 403) {
+      // 无权限
+      window.$message.error("无权限")
+    } else {
+      console.log("response error", error)
     }
 
-    console.log("response error", error)
     return Promise.reject(error)
   },
 )
