@@ -18,7 +18,7 @@ import {
   useThemeVars,
 } from "naive-ui"
 import type { FormInst, PaginationProps } from "naive-ui"
-
+import RoleTable from "./RoleTable.vue"
 import { changeColor } from "seemly"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import { renderTooltip } from "@/utils/render"
@@ -233,7 +233,7 @@ const tableColumns = [
                 size: "small",
                 type: "info",
                 secondary: true,
-                onClick: () => {},
+                onClick: () => onAssignRoleButtonClick(row),
               },
               { default: () => "分配角色" },
             ),
@@ -290,6 +290,7 @@ const selectRow = ref<User | null>(null)
 const showEditModal = ref(false)
 /** 处于编辑/新增 */
 const isEdit = ref(false)
+const showRoleTable = ref(false)
 
 /** 页码改变事件 */
 const onPageChange = (page: number) => {
@@ -410,6 +411,11 @@ watch(isEdit, (isEdit) => {
     rules.repeatPassword[0].required = true
   }
 })
+/** 分配角色按钮点击事件 */
+const onAssignRoleButtonClick = (row: User) => {
+  selectRow.value = row
+  showRoleTable.value = true
+}
 
 /** 获取表格数据 */
 const getData = () => {
@@ -564,6 +570,8 @@ const getData = () => {
         </n-button>
       </n-space>
     </n-modal>
+
+    <RoleTable v-model:show="showRoleTable" :user="selectRow!" />
 
     <!-- 页面内容 -->
     <n-space vertical>

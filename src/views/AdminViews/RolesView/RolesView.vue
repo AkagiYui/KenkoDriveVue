@@ -160,7 +160,8 @@ const permissionTransferOptions = computed(() => {
     disabled: false,
   }))
 })
-const showUserTable = ref(true)
+/** 是否显示用户表格 */
+const showUserTable = ref(false)
 
 // 事件
 /** 加载页面事件 */

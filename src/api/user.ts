@@ -135,3 +135,30 @@ export function updateUserPassword(
     newPassword: newPassword,
   })
 }
+
+/**
+ * (管理员)获取用户角色列表
+ */
+export function getUserRoles(id: string): RequestResponse<string[]> {
+  return Request.get(`/user/${id}/role`)
+}
+
+/**
+ * (管理员)分配用户角色
+ */
+export function assignRoles(
+  id: string,
+  roles: string[],
+): RequestResponse<null> {
+  return Request.put(`/user/${id}/role`, roles)
+}
+
+/**
+ * (管理员)移除用户角色
+ */
+export function removeRoles(
+  id: string,
+  roles: string[],
+): RequestResponse<null> {
+  return Request.delete(`/user/${id}/role`, { data: roles })
+}

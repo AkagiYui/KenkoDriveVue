@@ -49,7 +49,8 @@ const router = createRouter({
         {
           path: "/users",
           name: "users",
-          component: () => import("../views/AdminViews/UsersView.vue"),
+          component: () =>
+            import("../views/AdminViews/UsersView/UsersView.vue"),
           meta: {
             title: "用户信息",
           },

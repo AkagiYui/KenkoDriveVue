@@ -1,7 +1,6 @@
 import ServiceStatus from "@/types/ServiceStatus"
 import { useUserInfo } from "@/stores/user-info"
 import axios from "axios"
-import { useRouter } from "vue-router"
 
 const isDev = import.meta.env.DEV
 const request = axios.create({
