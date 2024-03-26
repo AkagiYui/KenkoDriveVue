@@ -14,6 +14,16 @@ const isProd = env.NODE_ENV === "production"
 
 /** @type {import('vite').UserConfig} */
 const config = {
+  server: {
+    host: "0.0.0.0",
+    proxy: {
+      "/api": {
+        target: "http://localhost:6677",
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/api/, ""),
+      },
+    }
+  },
   preview: {
     host: "0.0.0.0",
   },

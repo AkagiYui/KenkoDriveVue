@@ -4,7 +4,7 @@ import axios from "axios"
 
 const isDev = import.meta.env.DEV
 const request = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
+  baseURL: isDev ? "/api" : import.meta.env.VITE_BACKEND_BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
