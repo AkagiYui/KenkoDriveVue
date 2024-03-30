@@ -103,6 +103,7 @@ const onLogin = () => {
               type="password"
               show-password-on="click"
               :input-props="{ autocomplete: 'current-password' }"
+              @keyup.enter="onLogin"
             />
           </n-form-item-row>
         </n-form>
