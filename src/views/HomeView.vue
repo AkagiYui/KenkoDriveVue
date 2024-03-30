@@ -41,10 +41,17 @@ const updateHelloText = () => {
   console.log(`currentHour: ${currentHour}, helloText: ${helloText.value}`)
 }
 
+let intervalId: number | null = null
 onMounted(() => {
   updateHelloText()
   // 每一分钟执行一次更新问候语的操作
-  setInterval(updateHelloText, 60000)
+  intervalId = setInterval(updateHelloText, 60000)
+})
+onBeforeUnmount(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+    console.debug("clearInterval")
+  }
 })
 
 const announcements = ref<DisplayAnnouncement[]>([])
