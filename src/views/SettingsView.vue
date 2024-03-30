@@ -90,7 +90,12 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 <n-input-group-label class="info-label">
                   用户名
                 </n-input-group-label>
+                <n-tooltip trigger="hover" placement="top">
+              <template #trigger>
                 <n-input :value="username" disabled />
+              </template>
+              用户名不可修改
+            </n-tooltip>
               </n-input-group>
               <n-input-group>
                 <n-input-group-label class="info-label">

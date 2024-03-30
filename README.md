@@ -42,6 +42,7 @@ pnpm format
 - [GitHub: BililiveRecorder-WebUI](https://github.com/BililiveRecorder/BililiveRecorder-WebUI)
 - [GitHub: cloud-music（首屏加载动画）](https://github.com/path-yu/vue3-cloud-music/blob/master/index.html)
 - [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
+- [掘金：控制台报错 -- 被动事件监听器 ！！！](https://juejin.cn/post/7230806990452588581)
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)
 - [知乎: Vue3 Vite3 多环境配置 - 基于 vite 创建 vue3 全家桶项目(续篇）](https://zhuanlan.zhihu.com/p/571017133)
 - [哔哩哔哩: console.log导致的内存泄露](https://www.bilibili.com/video/BV16x4y117F7)
