@@ -9,13 +9,54 @@ import QrCode from "@/components/QrCode.vue"
 import { getToken, getUserAvatar } from "@/api/user"
 import { useUserInfo } from "@/stores/user-info"
 import getAssetsUrl from "@/utils/pub-use"
+import VueWordCloud from "vuewordcloud"
 
 const { isLoggedIn, requestToken, avatarUrl } = storeToRefs(useUserInfo())
 const { setAvatar } = useUserInfo()
 
 const vv = ref("你好")
 const imgUrl = ref("")
-const testFunc = () => {}
+const testFunc = () => {
+  wordCloudData.value.push(["test", 10])
+  chartJsData.value.datasets[0].data[0] += 10
+}
+
+// 词云
+const getColor = ([, weight]: [string, number]) => {
+  if (weight > 10) return "DeepPink"
+  if (weight > 5) return "RoyalBlue"
+  return "Indigo"
+}
+const wordCloudData = ref([
+  ["romance", 19],
+  ["horror", 3],
+  ["fantasy", 7],
+  ["adventure", 3],
+])
+
+// Chart.js
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js"
+import { Bar } from "vue-chartjs"
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+const chartJsData = ref({
+  labels: ["January", "February", "March"],
+  datasets: [{ data: [40, 20, 12] }],
+})
+const ddd = computed(() => {
+  return chartJsData.value
+})
+const chartJsOptions = {
+  responsive: true,
+}
 </script>
 
 <template>
@@ -87,6 +128,13 @@ const testFunc = () => {}
           />
         </svg>
       </NSpace>
+      <Bar :data="ddd" :options="chartJsOptions" />
+      <vue-word-cloud
+        style="height: 480px; width: 640px"
+        :words="wordCloudData"
+        :color="getColor"
+        font-family="Roboto"
+      />
     </NSpace>
   </div>
 </template>

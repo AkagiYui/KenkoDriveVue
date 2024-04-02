@@ -11,6 +11,12 @@ dependencies:
   axios:
     specifier: ^1.6.8
     version: 1.6.8
+  chart.js:
+    specifier: ^4.4.2
+    version: 4.4.2
+  filesize:
+    specifier: ^10.1.1
+    version: 10.1.1
   normalize.css:
     specifier: ^8.0.1
     version: 8.0.1
@@ -26,12 +32,18 @@ dependencies:
   vue:
     specifier: ^3.4.21
     version: 3.4.21(typescript@5.4.2)
+  vue-chartjs:
+    specifier: ^5.3.0
+    version: 5.3.0(chart.js@4.4.2)(vue@3.4.21)
   vue-cropper:
     specifier: ^1.1.1
     version: 1.1.1
   vue-router:
     specifier: ^4.3.0
     version: 4.3.0(vue@3.4.21)
+  vuewordcloud:
+    specifier: ^19.0.0
+    version: 19.0.0(vue@3.4.21)
 
 devDependencies:
   '@rushstack/eslint-patch':
@@ -770,6 +782,10 @@ packages:
   /@juggle/resize-observer@3.4.0:
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
     dev: true
+
+  /@kurkle/color@0.3.2:
+    resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
+    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1691,6 +1707,13 @@ packages:
       supports-color: 7.2.0
     dev: true
 
+  /chart.js@4.4.2:
+    resolution: {integrity: sha512-6GD7iKwFpP5kbSD4MeRRRlTnQvxfQREy36uEtm1hzHzcOqwWx0YEHuspuoNlslu+nciLIB7fjjsHkUv/FzFcOg==}
+    engines: {pnpm: '>=8'}
+    dependencies:
+      '@kurkle/color': 0.3.2
+    dev: false
+
   /chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
@@ -2132,6 +2155,11 @@ packages:
     dependencies:
       flat-cache: 3.2.0
     dev: true
+
+  /filesize@10.1.1:
+    resolution: {integrity: sha512-L0cdwZrKlwZQkMSFnCflJ6J2Y+5egO/p3vgRSDQGxQt++QbUZe5gMbRO6kg6gzwQDPvq2Fk9AmoxUNfZ5gdqaQ==}
+    engines: {node: '>= 10.4.0'}
+    dev: false
 
   /fill-range@7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
@@ -3317,6 +3345,16 @@ packages:
       vue: 3.4.21(typescript@5.4.2)
     dev: true
 
+  /vue-chartjs@5.3.0(chart.js@4.4.2)(vue@3.4.21):
+    resolution: {integrity: sha512-8XqX0JU8vFZ+WA2/knz4z3ThClduni2Nm0BMe2u0mXgTfd9pXrmJ07QBI+WAij5P/aPmPMX54HCE1seWL37ZdQ==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      vue: ^3.0.0-0 || ^2.7.0
+    dependencies:
+      chart.js: 4.4.2
+      vue: 3.4.21(typescript@5.4.2)
+    dev: false
+
   /vue-cropper@1.1.1:
     resolution: {integrity: sha512-WsqKMpaBf9Osi1LQlE/5AKdD0nHWOy1asLXocaG8NomOWO07jiZi968+/PbMmnD0QbPJOumDQaGuGa13qys85A==}
     dev: false
@@ -3419,6 +3457,14 @@ packages:
       vooks: 0.2.12(vue@3.4.21)
       vue: 3.4.21(typescript@5.4.2)
     dev: true
+
+  /vuewordcloud@19.0.0(vue@3.4.21):
+    resolution: {integrity: sha512-DgvvtatvU+lp1Crb7s+KbjvO/ULJLc43jce/mUY31bHireqeIHKaZ9PeXRfAy0rMcZi8EURnGK0ZPWoJBDRUhw==}
+    peerDependencies:
+      vue: ^3
+    dependencies:
+      vue: 3.4.21(typescript@5.4.2)
+    dev: false
 
   /watchpack@2.4.1:
     resolution: {integrity: sha512-8wrBCMtVhqcXP2Sup1ctSkga6uc2Bx0IIvKyT7yTFier5AXHooSI+QyQQAtTb7+E0IUCCKyTFmXqdqgum2XWGg==}

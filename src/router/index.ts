@@ -23,6 +23,14 @@ const router = createRouter({
           },
         },
         {
+          path: "/files",
+          name: "file",
+          component: () => import("../views/FilesView/FilesView.vue"),
+          meta: {
+            title: "文件",
+          },
+        },
+        {
           path: "/about",
           name: "about",
           component: () => import("../views/AboutView.vue"),

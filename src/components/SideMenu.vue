@@ -43,6 +43,7 @@ const menuOptions = ref([
   {
     label: "文件",
     key: "file",
+    path: "/files",
     icon: renderIcon(FolderOpenOutline),
   },
   {
