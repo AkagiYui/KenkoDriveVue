@@ -2,7 +2,7 @@
 import { NButton, NIcon, NFlex, useThemeVars } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import { Folder, ArrowUp } from "@vicons/carbon"
-import { RefreshOutline } from "@vicons/ionicons5"
+import { RefreshOutline, AddOutline, TrashBinOutline } from "@vicons/ionicons5"
 import {
   FolderOpenTwotone,
   AndroidTwotone,
@@ -11,6 +11,7 @@ import {
 } from "@vicons/material"
 import { filesize } from "filesize"
 import { getFolderContent } from "@/api/file"
+import CreateFolderModal from "./CreateFolderModal.vue"
 
 /**
  * 主题相关变量
@@ -210,10 +211,32 @@ function loadFolder(id?: string): void {
     contentResponse.value = res.data
   })
 }
+
+const showCreateFolderModal = ref(false)
+const imageRef = ref<HTMLElement | null>(null)
 </script>
 
 <template>
   <div style="padding-top: 10px">
+    <CreateFolderModal
+      v-model:show="showCreateFolderModal"
+      :parent="currentFolderId"
+      @success="() => loadFolder(currentFolderId)"
+    />
+
+    <n-image
+      ref="imageRef"
+      :v-show="false"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      "
+      preview-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+    />
+
     <!-- 页面内容 -->
     <n-flex vertical>
       <!-- 操作按钮 -->
@@ -231,14 +254,24 @@ function loadFolder(id?: string): void {
           </template>
           刷新
         </n-button>
-        <n-button> 新建文件夹</n-button>
-        <n-button :disabled="true" type="error"> 删除</n-button>
+        <n-button @click="showCreateFolderModal = true">
+          <template #icon>
+            <n-icon :component="AddOutline" />
+          </template>
+          新建文件夹
+        </n-button>
+        <n-button type="error" @click="() => imageRef?.click()">
+          <template #icon>
+            <n-icon :component="TrashBinOutline" />
+          </template>
+          删除
+        </n-button>
       </n-flex>
 
       <!-- 面包屑导航 -->
       <n-breadcrumb style="margin: 0 0 0 10px">
         <n-breadcrumb-item
-          :clickable="!breadcrumbLastItem"
+          :clickable="!!breadcrumbLastItem"
           @click="
             () => {
               if (!breadcrumbLastItem) {
@@ -263,9 +296,7 @@ function loadFolder(id?: string): void {
             }
           "
         >
-          <n-icon>
-            <Folder />
-          </n-icon>
+          <n-icon :component="Folder" />
         </n-breadcrumb-item>
 
         <n-breadcrumb-item
