@@ -7,18 +7,24 @@ import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import { storeToRefs } from "pinia"
 import { getToken } from "@/api/user"
+import { getRegisterEnabled } from "@/api/server"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { isLoggedIn } = storeToRefs(useUserInfo())
 const { setToken } = useUserInfo()
 const route = useRouter()
 
+const isRegisterEnabled = ref(false)
+
 onBeforeMount(() => {
   // 如果已经登录，跳转到首页
-  console.log("isLoggedIn: ", isLoggedIn.value)
   if (isLoggedIn.value) {
     route.push("/")
   }
+  getRegisterEnabled().then((res) => {
+    console.log(res.data)
+    isRegisterEnabled.value = res.data
+  })
 })
 
 const modalFormRef = ref<FormInst | null>(null)
@@ -111,7 +117,7 @@ const onLogin = () => {
           登录
         </n-button>
       </n-tab-pane>
-      <n-tab-pane name="signup" tab="注册">
+      <n-tab-pane v-if="isRegisterEnabled" name="signup" tab="注册">
         <n-form :show-require-mark="false" :model="loginForm" :rules="rules">
           <n-form-item-row path="username" label="用户名">
             <n-input v-model:value="loginForm.username" />
@@ -127,7 +133,7 @@ const onLogin = () => {
             <n-input v-model:value="loginForm.repeatPassword" type="password" />
           </n-form-item-row>
         </n-form>
-        <n-button type="primary" block secondary strong> 注册 </n-button>
+        <n-button type="primary" block secondary strong> 注册</n-button>
       </n-tab-pane>
     </n-tabs>
   </n-card>

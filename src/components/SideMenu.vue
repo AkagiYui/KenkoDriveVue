@@ -164,9 +164,9 @@ const menuOptions = ref([
       },
       {
         label: "系统设置",
-        key: "system-setting",
+        key: "system-settings",
+        path: "/system/settings",
         icon: renderIcon(SettingsOutline),
-        disabled: true,
       },
     ],
   },

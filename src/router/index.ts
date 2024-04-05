@@ -88,6 +88,14 @@ const router = createRouter({
             title: "公告管理",
           },
         },
+        {
+          path: "/system/settings",
+          name: "system-settings",
+          component: () => import("../views/AdminViews/SystemSettingsView/SystemSettingsView.vue"),
+          meta: {
+            title: "系统设置",
+          },
+        },
       ],
     },
     {
