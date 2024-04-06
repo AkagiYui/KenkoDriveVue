@@ -13,5 +13,6 @@ interface Announcement {
   createTime: string
   updateTime: string
   userId: string
+  username: string
   enabled: boolean
 }

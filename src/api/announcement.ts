@@ -67,3 +67,16 @@ export function updateAnnouncement(
   }
   return Request.put(`/announcement/${id}`, requestData)
 }
+
+/**
+ * 新增公告
+ *
+ * @param data 公告信息
+ * @returns 公告ID
+ */
+export function addAnnouncement(data: {
+  title: string
+  content: string
+}): RequestResponse<string> {
+  return Request.post("/announcement", data)
+}

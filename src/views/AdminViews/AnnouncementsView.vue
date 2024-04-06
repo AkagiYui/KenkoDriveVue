@@ -11,6 +11,7 @@ import {
 } from "naive-ui"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import {
+  addAnnouncement,
   deleteAnnouncement,
   getAnnouncements,
   updateAnnouncement,
@@ -65,19 +66,25 @@ const tableColumns = [
   {
     title: "标题",
     key: "title",
+    resizable: true,
   },
   {
     title: "发布时间",
     key: "createTime",
+    maxWidth: 200,
+    resizable: true,
   },
   {
     title: "发布者",
-    key: "email",
+    key: "username",
+    width: 100,
+    resizable: true,
   },
   {
     title: "内容",
     key: "capacity",
     minWidth: "200px",
+    resizable: true,
     render(row: Announcement) {
       return h(
         NTooltip,
@@ -244,37 +251,43 @@ function onAddButtonClick() {
 }
 
 /** 模态框按钮点击事件 */
-async function onModalPositiveButtonClick() {
-  try {
-    // 尝试验证模态表单
-    await modalFormRef.value?.validate()
-
-    if (isEdit.value) {
-      // 修改用户信息
-      if (!selectRow.value) {
-        throw new Error("未选中用户")
+function onModalPositiveButtonClick() {
+  modalFormRef.value
+    ?.validate()
+    .then(() => {
+      if (isEdit.value) {
+        // 修改用户信息
+        if (!selectRow.value) {
+          throw new Error("未选中用户")
+        }
+        if (!selectRow.value.id) {
+          throw new Error("未获取到用户ID")
+        }
+        updateAnnouncement(
+          selectRow.value.id,
+          modalData.value.title,
+          modalData.value.content,
+        )
+          .then(() => {
+            getData()
+            window.$message.success("修改成功")
+          })
+          .catch(() => {
+            window.$message.error("修改失败")
+          })
+      } else {
+        // 新增条目
+        addAnnouncement(modalData.value)
+          .then(() => {
+            getData()
+            window.$message.success("新增成功")
+          })
+          .catch(() => {
+            window.$message.error("新增失败")
+          })
       }
-      if (!selectRow.value.id) {
-        throw new Error("未获取到用户ID")
-      }
-      await updateAnnouncement(
-        selectRow.value.id,
-        modalData.value.title,
-        modalData.value.content,
-      )
-      window.$message.success("修改成功")
-    } else {
-      // 新增用户
-      // await addUser(modalData.value)
-      window.$message.success("新增成功")
-    }
-
-    getData()
-    showEditModal.value = false
-  } catch (error) {
-    window.$message.error("操作失败")
-    console.error(error)
-  }
+    })
+    .catch(() => {})
 }
 
 /** 编辑按钮点击事件 */
