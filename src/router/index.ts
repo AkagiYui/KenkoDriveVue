@@ -91,7 +91,10 @@ const router = createRouter({
         {
           path: "/system/settings",
           name: "system-settings",
-          component: () => import("../views/AdminViews/SystemSettingsView/SystemSettingsView.vue"),
+          component: () =>
+            import(
+              "../views/AdminViews/SystemSettingsView/SystemSettingsView.vue"
+            ),
           meta: {
             title: "系统设置",
           },

@@ -5,12 +5,14 @@ import { getConfig, setRegisterEnabled } from "@/api/server"
 const isLoading = ref(false)
 onBeforeMount(() => {
   isLoading.value = true
-  getConfig().then((res) => {
-    const data = res.data
-    allowRegister.value = data.registerEnabled
-  }).finally(() => {
-    isLoading.value = false
-  })
+  getConfig()
+    .then((res) => {
+      const data = res.data
+      allowRegister.value = data.registerEnabled
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
 })
 
 // 开放注册
@@ -19,11 +21,13 @@ const allowRegisterLoading = ref(false)
 function onAllowRegisterChange(value: boolean) {
   if (allowRegisterLoading.value) return
   allowRegisterLoading.value = true
-  setRegisterEnabled(value).then(() => {
-    allowRegister.value = value
-  }).finally(() => {
-    allowRegisterLoading.value = false
-  })
+  setRegisterEnabled(value)
+    .then(() => {
+      allowRegister.value = value
+    })
+    .finally(() => {
+      allowRegisterLoading.value = false
+    })
 }
 </script>
 
@@ -41,18 +45,17 @@ function onAllowRegisterChange(value: boolean) {
           <n-switch
             v-model:value="allowRegister"
             :loading="allowRegisterLoading"
+            :disabled="isLoading"
             @update:value="onAllowRegisterChange"
           />
         </n-form-item>
         <n-form-item label="注册需要邮箱验证">
-          <n-switch
-            :disabled="true"
-          />
+          <n-switch :disabled="true" />
         </n-form-item>
         <n-divider />
         <n-h3>SMTP设置</n-h3>
         <n-form-item label="SMTP服务器">
-          <n-input :disabled="true"/>
+          <n-input :disabled="true" />
         </n-form-item>
         <n-form-item label="SMTP端口">
           <n-input :disabled="true" />
