@@ -8,16 +8,16 @@ import {
   updateUserInfo,
   updateUserPassword,
 } from "@/api/user"
+import type { FormInst, PaginationProps } from "naive-ui"
 import {
   NButton,
   NInput,
   NProgress,
-  NTooltip,
-  NText,
   NSpace,
+  NText,
+  NTooltip,
   useThemeVars,
 } from "naive-ui"
-import type { FormInst, PaginationProps } from "naive-ui"
 import RoleTable from "./RoleTable.vue"
 import { changeColor } from "seemly"
 import ConfirmModal from "@/components/ConfirmModal.vue"
@@ -290,6 +290,7 @@ const selectRow = ref<User | null>(null)
 const showEditModal = ref(false)
 /** 处于编辑/新增 */
 const isEdit = ref(false)
+/** 显示角色表格 */
 const showRoleTable = ref(false)
 
 /** 页码改变事件 */
@@ -600,6 +601,7 @@ const getData = () => {
             v-model:value="searchExpression"
             :disabled="isLoading"
             placeholder="用户名、昵称、邮箱"
+            @keyup.enter="getData"
           >
             <template #prefix>
               <n-icon :component="SearchOutline" />

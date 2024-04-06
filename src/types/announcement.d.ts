@@ -7,9 +7,11 @@ type DisplayAnnouncement = {
 }
 
 interface Announcement {
+  id: string
   title: string
   content: string
   createTime: string
   updateTime: string
   userId: string
+  enabled: boolean
 }

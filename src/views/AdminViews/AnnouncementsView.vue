@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import { deleteUser, getUsers, updateUserDisabled } from "@/api/user"
-import { h, onBeforeMount, reactive, ref, nextTick } from "vue"
-import { NButton, NInput, NTooltip, NText, NSpace } from "naive-ui"
-import { type DropdownOption, type PaginationProps } from "naive-ui"
+import type { PaginationProps } from "naive-ui"
+import {
+  type FormInst,
+  NButton,
+  NInput,
+  NSpace,
+  NText,
+  NTooltip,
+} from "naive-ui"
 import ConfirmModal from "@/components/ConfirmModal.vue"
+import { getAnnouncements, updateAnnouncementStatus } from "@/api/announcement"
+import { renderTooltip } from "@/utils/render"
 
+/** 表格加载中 */
 const isLoading = ref(false)
 /** 分页器 */
 const pagination = reactive({
@@ -25,25 +33,28 @@ const pagination = reactive({
   /** 总记录数显示文本 */
   prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
-/** 页码改变事件 */
-const onPageChange = (page: number) => {
-  pagination.page = page
-  getData()
+/** 显示删除确认模态框 */
+const showDeleteConfirmModal = ref(false)
+const modalFormRef = ref<FormInst | null>(null)
+/** 模态框信息 */
+const modalData = ref({ title: "", content: "" })
+/** 模态框表单校验规则 */
+const rules = {
+  title: {
+    required: true,
+    message: "请输入标题",
+    min: 1,
+    trigger: ["input", "blur"],
+  },
+  content: {
+    required: true,
+    min: 1,
+    message: "请输入内容",
+    trigger: ["input", "blur"],
+  },
 }
-/** 每页记录数改变事件 */
-const onPageSizeChange = (pageSize: number) => {
-  pagination.pageSize = pageSize
-  pagination.page = 1
-  getData()
-}
-
-const renderTooltip = (trigger: any, content: string) => {
-  return h(NTooltip, null, {
-    trigger: () => trigger,
-    default: () => content,
-  })
-}
-
+/** 搜索表达式 */
+const searchExpression = ref("")
 /** 表格列 */
 const tableColumns = [
   {
@@ -98,18 +109,18 @@ const tableColumns = [
     },
     key: "isDisabled",
     width: "100px",
-    render(row: User) {
+    render(row: Announcement) {
       return h(
         NButton,
         {
           strong: true,
           tertiary: true,
           size: "small",
-          type: !row.disabled ? "success" : "error",
+          type: row.enabled ? "success" : "error",
           onClick: () => {
-            row.disabled = !row.disabled
-            updateUserDisabled(row.id, row.disabled)
+            updateAnnouncementStatus(row.id, row.enabled)
               .then(() => {
+                row.enabled = !row.enabled
                 window.$message.success("操作成功")
               })
               .catch((e) => {
@@ -118,7 +129,7 @@ const tableColumns = [
               })
           },
         },
-        { default: () => (!row.disabled ? "已发布" : "已隐藏") },
+        { default: () => (row.enabled ? "已发布" : "已隐藏") },
       )
     },
   },
@@ -126,7 +137,7 @@ const tableColumns = [
     title: "操作",
     key: "actions",
     width: "140px",
-    render(row: User) {
+    render(row: Announcement) {
       return h(
         NSpace,
         {},
@@ -138,7 +149,7 @@ const tableColumns = [
                 size: "small",
                 type: "primary",
                 secondary: true,
-                onClick: () => onEditUser(),
+                onClick: () => onEditButtonClick(row),
               },
               { default: () => "编辑" },
             ),
@@ -163,14 +174,122 @@ const tableColumns = [
   },
 ]
 /** 表格数据 */
-const tableData = ref<User[]>([])
+const tableData = computed(() => {
+  if (!requestData.value) return []
+  return requestData.value.map((announcement) => {
+    const n = announcement
+    n.createTime = new Date(announcement.createTime).toLocaleString()
+    return n
+  })
+})
+/** 选中行 */
+const selectRow = ref<Announcement | null>(null)
+/** 显示编辑模态框 */
+const showEditModal = ref(false)
+/** 处于编辑/新增 */
+const isEdit = ref(false)
+/** 请求数据 */
+const requestData = ref<Announcement[]>([])
+
+/** 页码改变事件 */
+function onPageChange(page: number) {
+  pagination.page = page
+  getData()
+}
+
+/** 每页记录数改变事件 */
+function onPageSizeChange(pageSize: number) {
+  pagination.pageSize = pageSize
+  pagination.page = 1
+  getData()
+}
+
+/** 页面挂载前事件 */
+onBeforeMount(() => {
+  getData()
+})
+
+/** 删除确认事件 */
+function onDeleteConfirm() {
+  if (!selectRow.value) return
+  // deleteUser(selectRow.value.id)
+  //   .then(() => {
+  //     getData()
+  //     window.$message.success("删除成功")
+  //   })
+  //   .catch((e) => {
+  //     window.$message.error("删除失败")
+  //     console.error(e)
+  //   })
+  showDeleteConfirmModal.value = false
+}
+
+/** 编辑模态框关闭后事件 */
+function onAfterEditModalLeave() {
+  modalData.value = {
+    title: "",
+    content: "",
+  }
+}
+
+/** 新增按钮点击事件 */
+function onAddButtonClick() {
+  isEdit.value = false
+  showEditModal.value = true
+}
+
+/** 模态框按钮点击事件 */
+async function onModalPositiveButtonClick() {
+  try {
+    // 尝试验证模态表单
+    await modalFormRef.value?.validate()
+
+    if (isEdit.value) {
+      // 修改用户信息
+      if (!selectRow.value) {
+        throw new Error("未选中用户")
+      }
+      if (!selectRow.value.id) {
+        throw new Error("未获取到用户ID")
+      }
+      // await updateUserInfo(selectRow.value.id, modalData.value)
+      window.$message.success("修改成功")
+    } else {
+      // 新增用户
+      // await addUser(modalData.value)
+      window.$message.success("新增成功")
+    }
+
+    getData()
+    showEditModal.value = false
+  } catch (error) {
+    window.$message.error("操作失败")
+    console.error(error)
+  }
+}
+
+/** 编辑按钮点击事件 */
+function onEditButtonClick(row: Announcement) {
+  isEdit.value = true
+  selectRow.value = row
+  modalData.value = {
+    title: row.title,
+    content: row.content,
+  }
+  showEditModal.value = true
+}
+
 /** 获取表格数据 */
-const getData = () => {
+function getData() {
   isLoading.value = true
-  getUsers(pagination.page - 1, pagination.pageSize)
+  getAnnouncements(
+    pagination.page - 1,
+    pagination.pageSize,
+    searchExpression.value,
+  )
     .then((res) => {
-      let data: Page<User> = res.data
-      tableData.value = data.list
+      let data: Page<any> = res.data
+      requestData.value = data.list
       pagination.itemCount = data.total
     })
     .catch((e) => {
@@ -179,97 +298,6 @@ const getData = () => {
     })
     .finally(() => (isLoading.value = false))
 }
-
-onBeforeMount(() => {
-  getData()
-})
-
-const showDropdown = ref(false)
-const x = ref(0)
-const y = ref(0)
-const selectRow = ref<User | null>(null)
-const options = ref<DropdownOption[]>([
-  {
-    label: "编辑",
-    key: "edit",
-  },
-  {
-    label: () => h(NText, { type: "error" }, () => "删除"),
-    key: "delete",
-  },
-])
-const rowProps = (row: User) => {
-  return {
-    onContextmenu: (e: MouseEvent) => {
-      e.preventDefault()
-      showDropdown.value = false
-      nextTick().then(() => {
-        selectRow.value = row
-        showDropdown.value = true
-        x.value = e.clientX
-        y.value = e.clientY
-      })
-    },
-    // ondblclick: (e: MouseEvent) => {
-    //   e.preventDefault()
-    //   selectRow.value = row
-    //   onEditUser()
-    // },
-  }
-}
-const onEditUser = () => {
-  if (!selectRow.value) return
-  window.$message.info("编辑：" + selectRow.value.nickname)
-}
-const toDeleteUser = () => {
-  if (!selectRow.value) return
-  deleteUser(selectRow.value.id)
-    .then(() => {
-      getData()
-      window.$message.success("删除成功")
-    })
-    .catch((e) => {
-      window.$message.error("删除失败")
-      console.error(e)
-    })
-}
-const onMenuClick = (x: string) => {
-  switch (x) {
-    case "edit":
-      onEditUser()
-      break
-    case "delete":
-      if (!selectRow.value) return
-      showDeleteConfirmModal.value = true
-      break
-  }
-}
-const showDeleteConfirmModal = ref(false)
-
-/** 模态框信息 */
-const modalData = ref({ name: "", number: "", className: "" })
-/** 模态框表单校验规则 */
-const rules = {
-  number: {
-    required: true,
-    message: "请输入学号",
-    min: 3,
-    trigger: ["input", "blur"],
-  },
-  name: {
-    required: true,
-    min: 2,
-    message: "请输入姓名",
-    trigger: ["input", "blur"],
-  },
-
-  className: {
-    required: true,
-    min: 3,
-    message: "请输入班级",
-    trigger: ["input", "blur"],
-  },
-}
 </script>
 
 <template>
@@ -277,123 +305,85 @@ const rules = {
     <!-- 确认删除模态框 -->
     <ConfirmModal
       v-model:show="showDeleteConfirmModal"
-      @positive-click="
-        () => {
-          toDeleteUser()
-          showDeleteConfirmModal = false
-        }
-      "
+      @positive-click="onDeleteConfirm"
     />
 
     <!-- 新增删除模态框 -->
-    <NModal
-      :show="false"
+    <n-modal
+      v-model:show="showEditModal"
       preset="card"
-      :style="{
-        width: '400px',
-      }"
-      :title="true ? '新增用户' : '修改信息'"
+      :title="isEdit ? '修改公告' : '新增公告'"
+      style="width: 400px"
       :bordered="false"
       :mask-closable="false"
-      @after-leave="() => {}"
+      @after-leave="onAfterEditModalLeave"
     >
-      <NSpace vertical>
-        <NForm
+      <n-space vertical>
+        <n-form
           ref="modalFormRef"
           :model="modalData"
           :rules="rules"
           label-placement="left"
           label-width="auto"
         >
-          <NFormItem path="number" label="用户名">
-            <NInput
-              v-model:value="modalData.number"
-              clearable
-              placeholder="输入用户名"
-            />
-          </NFormItem>
-          <NFormItem path="number" label="密码">
-            <NInput
-              v-model:value="modalData.number"
-              clearable
-              placeholder="输入密码"
-            />
-          </NFormItem>
-          <NFormItem path="number" label="确认密码">
-            <NInput v-model:value="modalData.number" clearable placeholder="" />
-          </NFormItem>
-          <NFormItem path="name" label="昵称">
-            <NInput
-              v-model:value="modalData.name"
-              clearable
-              placeholder="输入昵称"
-            />
-          </NFormItem>
-          <NFormItem path="className" label="邮箱">
-            <NInput
-              v-model:value="modalData.className"
-              clearable
-              placeholder="输入邮箱"
-            />
-          </NFormItem>
-        </NForm>
-      </NSpace>
-      <template #action>
-        <NSpace justify="end" style="width: 100%">
-          <NButton :type="true ? 'success' : 'warning'">
-            {{ true ? "确定" : "修改" }}
-          </NButton>
-        </NSpace>
-      </template>
-    </NModal>
+          <n-form-item label="标题" path="title">
+            <n-input v-model:value="modalData.title" placeholder="输入标题" />
+          </n-form-item>
+          <n-form-item label="内容" path="content">
+            <n-input v-model:value="modalData.content" placeholder="输入内容" />
+          </n-form-item>
+        </n-form>
+      </n-space>
+      <n-space justify="end" style="width: 100%">
+        <n-button
+          :type="isEdit ? 'warning' : 'success'"
+          @click="onModalPositiveButtonClick"
+        >
+          {{ isEdit ? "修改" : "确定" }}
+        </n-button>
+      </n-space>
+    </n-modal>
 
-    <!-- 表格右键菜单 -->
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="x"
-      :y="y"
-      :options="options"
-      :show="showDropdown"
-      :on-clickoutside="() => (showDropdown = false)"
-      @select="
-        (x: string) => {
-          showDropdown = false
-          onMenuClick(x)
-        }
-      "
-    />
+    <!-- 页面内容 -->
     <n-space vertical>
-      <n-form :show-label="false" inline :show-feedback="false">
-        <n-formItem path="学号">
-          <n-space>
-            <n-button tertiary type="info" @click="getData">
-              <template #icon>
-                <n-icon>
-                  <RefreshOutline />
-                </n-icon>
-              </template>
-              刷新
-            </n-button>
-            <n-button tertiary type="primary" :disabled="true">
-              <template #icon>
-                <n-icon>
-                  <AddOutline />
-                </n-icon>
-              </template>
-              新增
-            </n-button>
-            <n-input-group>
-              <n-input>
-                <template #prefix>
-                  <n-icon :component="SearchOutline" />
-                </template>
-              </n-input>
-              <n-button type="primary" ghost :disabled="true"> 搜索 </n-button>
-            </n-input-group>
-          </n-space>
-        </n-formItem>
-      </n-form>
+      <!-- 按钮区 -->
+      <n-space style="margin-bottom: 4px">
+        <n-button :disabled="isLoading" tertiary type="info" @click="getData">
+          <template #icon>
+            <n-icon :component="RefreshOutline" />
+          </template>
+          刷新
+        </n-button>
+
+        <n-button tertiary type="primary" @click="onAddButtonClick">
+          <template #icon>
+            <n-icon :component="AddOutline" />
+          </template>
+          新增
+        </n-button>
+
+        <n-input-group>
+          <n-input
+            v-model:value="searchExpression"
+            :disabled="isLoading"
+            placeholder="标题、内容"
+            @keyup.enter="getData"
+          >
+            <template #prefix>
+              <n-icon :component="SearchOutline" />
+            </template>
+          </n-input>
+          <n-button
+            :disabled="isLoading || searchExpression.length === 0"
+            ghost
+            @click="getData"
+          >
+            搜索
+          </n-button>
+        </n-input-group>
+      </n-space>
+
+      <!-- 表格区 -->
       <n-data-table
         remote
         striped
@@ -401,7 +391,6 @@ const rules = {
         :columns="tableColumns"
         :data="tableData"
         :pagination="pagination"
-        :row-props="rowProps"
         :loading="isLoading"
         @update:page="onPageChange"
         @update:page-size="onPageSizeChange"
@@ -409,5 +398,3 @@ const rules = {
     </n-space>
   </div>
 </template>
-
-<style scoped></style>
