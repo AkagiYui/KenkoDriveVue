@@ -1,4 +1,5 @@
-import Request from './request'
+import Request from "./request"
+import { hasText } from "@/utils/string"
 
 /** 获取首页公告 */
 export function getIndexAnnouncements(): Promise<any> {
@@ -13,7 +14,7 @@ export function getAnnouncements(
   size: number = 10,
   expression?: string,
 ): RequestResponse<Page<Announcement>> {
-  return Request.get('/announcement', {
+  return Request.get("/announcement", {
     params: {
       index: index,
       size: size,
@@ -25,7 +26,10 @@ export function getAnnouncements(
 /**
  * 更新公告状态
  */
-export function updateAnnouncementStatus(id: string, disabled: boolean): RequestResponse<undefined> {
+export function updateAnnouncementStatus(
+  id: string,
+  disabled: boolean,
+): RequestResponse<undefined> {
   return Request.put(
     `/announcement/${id}/status`,
     {
@@ -33,8 +37,33 @@ export function updateAnnouncementStatus(id: string, disabled: boolean): Request
     },
     {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     },
   )
+}
+
+/**
+ * 删除公告
+ */
+export function deleteAnnouncement(id: string): RequestResponse<undefined> {
+  return Request.delete(`/announcement/${id}`)
+}
+
+/**
+ * 修改公告
+ */
+export function updateAnnouncement(
+  id: string,
+  title?: string,
+  content?: string,
+): RequestResponse<undefined> {
+  const requestData: { title?: string; content?: string } = {}
+  if (hasText(title)) {
+    requestData.title = title
+  }
+  if (hasText(content)) {
+    requestData.content = content
+  }
+  return Request.put(`/announcement/${id}`, requestData)
 }

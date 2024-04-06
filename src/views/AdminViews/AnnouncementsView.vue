@@ -10,7 +10,12 @@ import {
   NTooltip,
 } from "naive-ui"
 import ConfirmModal from "@/components/ConfirmModal.vue"
-import { getAnnouncements, updateAnnouncementStatus } from "@/api/announcement"
+import {
+  deleteAnnouncement,
+  getAnnouncements,
+  updateAnnouncement,
+  updateAnnouncementStatus,
+} from "@/api/announcement"
 import { renderTooltip } from "@/utils/render"
 
 /** 表格加载中 */
@@ -212,15 +217,15 @@ onBeforeMount(() => {
 /** 删除确认事件 */
 function onDeleteConfirm() {
   if (!selectRow.value) return
-  // deleteUser(selectRow.value.id)
-  //   .then(() => {
-  //     getData()
-  //     window.$message.success("删除成功")
-  //   })
-  //   .catch((e) => {
-  //     window.$message.error("删除失败")
-  //     console.error(e)
-  //   })
+  deleteAnnouncement(selectRow.value.id)
+    .then(() => {
+      getData()
+      window.$message.success("删除成功")
+    })
+    .catch((e) => {
+      window.$message.error("删除失败")
+      console.error(e)
+    })
   showDeleteConfirmModal.value = false
 }
 
@@ -252,7 +257,11 @@ async function onModalPositiveButtonClick() {
       if (!selectRow.value.id) {
         throw new Error("未获取到用户ID")
       }
-      // await updateUserInfo(selectRow.value.id, modalData.value)
+      await updateAnnouncement(
+        selectRow.value.id,
+        modalData.value.title,
+        modalData.value.content,
+      )
       window.$message.success("修改成功")
     } else {
       // 新增用户
@@ -330,7 +339,11 @@ function getData() {
             <n-input v-model:value="modalData.title" placeholder="输入标题" />
           </n-form-item>
           <n-form-item label="内容" path="content">
-            <n-input v-model:value="modalData.content" placeholder="输入内容" />
+            <n-input
+              v-model:value="modalData.content"
+              placeholder="输入内容"
+              type="textarea"
+            />
           </n-form-item>
         </n-form>
       </n-space>
