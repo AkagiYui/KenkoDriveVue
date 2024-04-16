@@ -1,35 +1,37 @@
 <script setup lang="ts">
 import { h, ref } from "vue"
 import { RouterLink, useRoute } from "vue-router"
-import { NIcon, type MenuOption } from "naive-ui"
+import { type MenuOption, NIcon } from "naive-ui"
 import { storeToRefs } from "pinia"
 import { useAppConfig } from "@/stores/app-config"
-const { expandedMenuKeys } = storeToRefs(useAppConfig())
 import renderIcon from "@/utils/render-icon"
 import {
-  HomeOutline,
-  CaretDownOutline,
-  SpeedometerOutline,
-  FolderOpenOutline,
-  SettingsOutline,
-  DocumentTextOutline,
-  InformationOutline,
-  FlaskOutline,
-  HeartOutline,
-  LockClosedOutline,
-  ImagesOutline,
-  PaperPlaneOutline,
-  TimeOutline,
-  PeopleOutline,
   BulbOutline,
-  LogInOutline,
-  TrashOutline,
-  PersonOutline,
-  ShieldCheckmarkOutline,
-  TerminalOutline,
+  CaretDownOutline,
+  DocumentTextOutline,
+  FlaskOutline,
+  FolderOpenOutline,
+  HeartOutline,
+  HomeOutline,
+  ImagesOutline,
+  InformationOutline,
   KeyOutline,
+  LockClosedOutline,
+  LogInOutline,
   MegaphoneOutline,
+  PaperPlaneOutline,
+  PeopleOutline,
+  PersonOutline,
+  ReceiptOutline,
+  SettingsOutline,
+  ShieldCheckmarkOutline,
+  SpeedometerOutline,
+  TerminalOutline,
+  TimeOutline,
+  TrashOutline,
 } from "@vicons/ionicons5"
+
+const { expandedMenuKeys } = storeToRefs(useAppConfig())
 
 const { isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
 
@@ -112,6 +114,13 @@ const menuOptions = ref([
             key: "system",
             path: "/system",
             icon: renderIcon(TerminalOutline),
+          },
+          {
+            label: "系统日志",
+            key: "log",
+            path: "/log",
+            icon: renderIcon(ReceiptOutline),
+            disabled: true,
           },
           {
             label: "文件分析",
