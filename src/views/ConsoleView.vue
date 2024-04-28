@@ -9,13 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue"
 import SideMenu from "@/components/SideMenu.vue"
 import { useUserInfo } from "@/stores/user-info"
-const { renewAvatar, renewUserInfo } = useUserInfo()
 
-onMounted(() => {
-  renewAvatar()
+const { renewUserInfo } = useUserInfo()
+
+onBeforeMount(() => {
   renewUserInfo()
 })
 </script>
