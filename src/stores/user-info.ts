@@ -3,6 +3,7 @@ import { useRouter } from "vue-router"
 import { defineStore } from "pinia"
 import { getUserAvatar, getUserInfo } from "@/api/user"
 import type { AxiosResponse } from "axios"
+import Permission from "@/types/permission"
 
 export const useUserInfo = defineStore(
   "user-info",
@@ -14,6 +15,7 @@ export const useUserInfo = defineStore(
     const nickname = ref("")
     const email = ref("")
     const avatarUrl = ref("")
+    const permissions = ref<Permission[]>([])
 
     const isLoggedIn = computed(() => {
       if (requestToken.value !== "") {
@@ -58,13 +60,17 @@ export const useUserInfo = defineStore(
       if (!isLoggedIn.value) return
       const router = useRouter()
       getUserInfo()
-        .then((res: AxiosResponse) => {
+        .then((res) => {
           renewAvatar()
           const data = res.data
           username.value = data.username
           userId.value = data.id
           email.value = data.email
-          nickname.value = data.nickname
+          nickname.value = data.nickname || data.username
+          permissions.value = (data.permissions as string[]).map((item) => {
+            // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
+            return (Permission as Record<string, any>)[item]
+          })
         })
         .catch((err) => {
           const code = err.response.status
@@ -73,6 +79,9 @@ export const useUserInfo = defineStore(
             router.replace("/login")
           }
         })
+    }
+    const hasPermission = (permission: Permission) => {
+      return permissions.value.includes(permission)
     }
 
     return {
@@ -86,9 +95,11 @@ export const useUserInfo = defineStore(
       nickname,
       email,
       avatarUrl,
+      permissions,
       setAvatar,
       renewAvatar,
       renewUserInfo,
+      hasPermission,
     }
   },
   {
