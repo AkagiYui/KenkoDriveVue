@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from "vue"
 import { storeToRefs } from "pinia"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import { WeatherMoon16Regular, WeatherSunny16Regular } from "@vicons/fluent"
-import { type UploadFileInfo } from "naive-ui"
+import type { UploadFileInfo } from "naive-ui"
 import { uploadUserAvatar } from "@/api/user"
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
@@ -79,7 +78,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 />
               </n-upload-dragger>
               <n-space justify="center">
-                <n-button dashed size="small"> 上传头像 </n-button>
+                <n-button dashed size="small"> 上传头像</n-button>
               </n-space>
             </n-space>
           </n-upload>
@@ -110,7 +109,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 <n-input v-model:value="personalInfo.email" />
               </n-input-group>
             </n-space>
-            <n-button style="height: 100%"> 保存 </n-button>
+            <n-button style="height: 100%"> 保存</n-button>
           </n-space>
         </n-space>
       </n-card>
@@ -150,11 +149,17 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
           </n-space>
         </n-space>
       </n-card>
+
       <n-card title="恢复">
         <n-space vertical>
-          <n-popconfirm @positive-click="reset">
+          <n-popconfirm
+            :positive-button-props="{
+              type: 'error',
+            }"
+            @positive-click="reset"
+          >
             <template #trigger>
-              <n-button type="error"> 重置面板缓存 </n-button>
+              <n-button type="error"> 重置面板缓存</n-button>
             </template>
             是否要重置面板缓存？<br />该操作不会清除用户数据。
           </n-popconfirm>
