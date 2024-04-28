@@ -145,7 +145,7 @@ const onLogin = () => {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 设置遮罩颜色和透明度 */
+  background-color: rgba(0, 0, 0, 0.6); /* 设置遮罩颜色和透明度 */
   /* 遮罩动画 */
   animation: fadeOut 0.2s ease-in-out;
 }
@@ -168,7 +168,7 @@ const onLogin = () => {
 }
 
 .background {
-  background-image: url("http://api.cloud.189.cn/guns/img/recommendedPosition/20230621190400_webDUANWU.jpg");
+  background-image: url("/images/background.webp");
   background-size: cover;
   background-position: center top;
   opacity: 1;
