@@ -162,3 +162,28 @@ export function removeRoles(
 ): RequestResponse<null> {
   return Request.delete(`/user/${id}/role`, { data: roles })
 }
+
+/**
+ * 获取注册邮件验证码
+ */
+export function sendRegisterEmailCode(
+  username: string,
+  password: string,
+  email: string,
+) {
+  return Request.post("/user/register/email", {
+    username: username,
+    password: password,
+    email: email,
+  })
+}
+
+/**
+ * 确认邮件验证码注册
+ */
+export function confirmRegisterEmailCode(username: string, code: string) {
+  return Request.post("/user/register", {
+    email: username,
+    verifyCode: code,
+  })
+}
