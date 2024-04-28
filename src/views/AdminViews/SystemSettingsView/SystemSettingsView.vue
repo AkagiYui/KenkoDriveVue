@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { getConfig, setRegisterEnabled } from "@/api/server"
+import { getConfig, updateSetting } from "@/api/server"
+import { useDebounceFn } from "@vueuse/core"
 
 // 全局变量
 const isLoading = ref(false)
@@ -7,28 +8,76 @@ onBeforeMount(() => {
   isLoading.value = true
   getConfig()
     .then((res) => {
-      const data = res.data
-      allowRegister.value = data.registerEnabled
+      oldSettings.value = { ...res.data }
+      settings.value = { ...res.data }
+      watch(
+        settings,
+        () => {
+          updateSettingsDebounced()
+        },
+        { deep: true },
+      )
     })
     .finally(() => {
       isLoading.value = false
     })
 })
 
-// 开放注册
-const allowRegister = ref(false)
-const allowRegisterLoading = ref(false)
-function onAllowRegisterChange(value: boolean) {
-  if (allowRegisterLoading.value) return
-  allowRegisterLoading.value = true
-  setRegisterEnabled(value)
-    .then(() => {
-      allowRegister.value = value
-    })
-    .finally(() => {
-      allowRegisterLoading.value = false
-    })
+type SettingsType = {
+  [key: string]: string | number | boolean
 }
+
+const oldSettings = ref<SettingsType>({
+  fileUploadChunkSize: 0,
+  fileUploadMaxSize: 0,
+  mailFrom: "",
+  mailVerifyCodeTimeout: 0,
+  registerEnabled: false,
+  smtpHost: "",
+  smtpPassword: "",
+  smtpPort: 0,
+  smtpSsl: false,
+  smtpUsername: "",
+})
+
+const settings = ref<SettingsType>({
+  fileUploadChunkSize: 0,
+  fileUploadMaxSize: 0,
+  mailFrom: "",
+  mailVerifyCodeTimeout: 0,
+  registerEnabled: false,
+  smtpHost: "",
+  smtpPassword: "",
+  smtpPort: 0,
+  smtpSsl: false,
+  smtpUsername: "",
+})
+
+const updateSettingsDebounced = useDebounceFn(() => {
+  console.log("updateSettingsDebounced")
+  const updatePromises = []
+
+  for (const key in settings.value) {
+    if (settings.value[key] !== oldSettings.value[key]) {
+      updatePromises.push(updateSetting(key, settings.value[key]))
+      oldSettings.value[key] = settings.value[key]
+    }
+  }
+
+  if (updatePromises.length > 0) {
+    isLoading.value = true
+    Promise.all(updatePromises)
+      .then(() => {
+        window.$message.success("设置成功")
+      })
+      .catch(() => {
+        window.$message.error("设置失败")
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
+  }
+}, 1000)
 </script>
 
 <template>
@@ -43,31 +92,63 @@ function onAllowRegisterChange(value: boolean) {
         <n-h3>用户注册</n-h3>
         <n-form-item label="开放注册">
           <n-switch
-            v-model:value="allowRegister"
-            :loading="allowRegisterLoading"
+            v-model:value="settings.registerEnabled"
             :disabled="isLoading"
-            @update:value="onAllowRegisterChange"
           />
         </n-form-item>
         <n-form-item label="注册需要邮箱验证">
-          <n-switch :disabled="true" />
+          <n-switch :disabled="true" :value="true" />
         </n-form-item>
         <n-divider />
         <n-h3>SMTP设置</n-h3>
         <n-form-item label="SMTP服务器">
-          <n-input :disabled="true" />
+          <n-input
+            v-model:value="settings.smtpHost as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'off' }"
+          />
         </n-form-item>
         <n-form-item label="SMTP端口">
-          <n-input :disabled="true" />
+          <n-input-number
+            v-model:value="settings.smtpPort as number"
+            :allow-input="(value: string) => !value || /^\d+$/.test(value)"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'off' }"
+            :max="65535"
+            :min="0"
+            style="width: 100%"
+          />
+        </n-form-item>
+        <n-form-item label="使用 SSL">
+          <n-switch v-model:value="settings.smtpSsl" :disabled="isLoading" />
         </n-form-item>
         <n-form-item label="SMTP用户名">
-          <n-input :disabled="true" />
+          <n-input
+            v-model:value="settings.smtpUsername as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'email' }"
+          />
         </n-form-item>
         <n-form-item label="SMTP密码">
-          <n-input :disabled="true" />
+          <n-input
+            v-model:value="settings.smtpPassword as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'new-password' }"
+            show-password-on="click"
+            type="password"
+          />
         </n-form-item>
-        <n-form-item label="SMTP加密方式">
+        <n-form-item label="发件人邮箱">
+          <n-input
+            v-model:value="settings.mailFrom as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'email' }"
+          />
+        </n-form-item>
+
+        <n-form-item v-if="false" label="SMTP加密方式">
           <n-select
+            v-if="false"
             :disabled="true"
             :options="[
               {
