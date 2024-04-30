@@ -6,10 +6,15 @@ import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import getAssetsUrl from "@/utils/pub-use"
 import renderIcon from "@/utils/render-icon"
-import { LogOutOutline, PersonCircleOutline } from "@vicons/ionicons5"
+import {
+  ArrowUpOutline,
+  LogOutOutline,
+  PersonCircleOutline,
+} from "@vicons/ionicons5"
 import QrCode from "@/components/QrCode.vue"
 
-const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
+const { isDarkMode, isDebugMode, isUploadDrawerShow, uploadItemCount } =
+  storeToRefs(useAppConfig())
 const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
 const { deleteToken } = useUserInfo()
 const router = useRouter()
@@ -60,7 +65,7 @@ const onSelect = (key: string) => {
     >
       <n-popover trigger="hover" title="网站二维码" :disabled="!isDebugMode">
         <template #header>
-          <n-text strong depth="1"> 网站二维码，扫码立即体验 </n-text>
+          <n-text depth="1" strong> 网站二维码，扫码立即体验</n-text>
         </template>
         <template #trigger>
           <router-link to="/">
@@ -89,11 +94,18 @@ const onSelect = (key: string) => {
       "
     >
       <n-switch v-if="isDebugMode" v-model:value="isDarkMode">
-        <template #checked-icon> 🌙 </template>
-        <template #unchecked-icon> ☀️ </template>
-        <template #checked> 测试阶段 </template>
-        <template #unchecked> 全局暗色 </template>
+        <template #checked-icon> 🌙</template>
+        <template #unchecked-icon> ☀️</template>
+        <template #checked> 测试阶段</template>
+        <template #unchecked> 全局暗色</template>
       </n-switch>
+      <n-badge v-if="isLoggedIn" :max="999" :value="uploadItemCount">
+        <n-button circle secondary strong @click="isUploadDrawerShow = true">
+          <template #icon>
+            <n-icon :component="ArrowUpOutline" />
+          </template>
+        </n-button>
+      </n-badge>
       <n-dropdown
         v-if="isLoggedIn"
         trigger="hover"

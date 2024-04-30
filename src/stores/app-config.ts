@@ -10,6 +10,9 @@ export const useAppConfig = defineStore(
     const isDebugMode = ref(false)
     const expandedMenuKeys = ref<string[]>([])
 
+    const isUploadDrawerShow = ref(false)
+    const uploadItemCount = ref(0)
+
     const toggleDarkMode = () => {
       isDarkMode.value = !isDarkMode.value
     }
@@ -19,6 +22,8 @@ export const useAppConfig = defineStore(
       currentRouteName.value = ""
       isDebugMode.value = false
       expandedMenuKeys.value = []
+      isUploadDrawerShow.value = false
+      uploadItemCount.value = 0
     }
 
     return {
@@ -29,11 +34,20 @@ export const useAppConfig = defineStore(
       reset,
       isDebugMode,
       expandedMenuKeys,
+      isUploadDrawerShow,
+      uploadItemCount,
     }
   },
   {
     persist: {
       storage: localStorage,
+      paths: [
+        "isDarkMode",
+        "isMenuCollapsed",
+        "expandedMenuKeys",
+        "currentRouteName",
+        "isDebugMode",
+      ],
     },
   },
 )
