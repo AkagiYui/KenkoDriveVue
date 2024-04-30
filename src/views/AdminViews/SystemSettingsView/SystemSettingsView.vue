@@ -27,19 +27,7 @@ type SettingsType = {
   [key: string]: string | number | boolean
 }
 
-const oldSettings = ref<SettingsType>({
-  fileUploadChunkSize: 0,
-  fileUploadMaxSize: 0,
-  mailFrom: "",
-  mailVerifyCodeTimeout: 0,
-  registerEnabled: false,
-  smtpHost: "",
-  smtpPassword: "",
-  smtpPort: 0,
-  smtpSsl: false,
-  smtpUsername: "",
-})
-
+const oldSettings = ref<SettingsType>({})
 const settings = ref<SettingsType>({
   fileUploadChunkSize: 0,
   fileUploadMaxSize: 0,
@@ -51,6 +39,11 @@ const settings = ref<SettingsType>({
   smtpPort: 0,
   smtpSsl: false,
   smtpUsername: "",
+
+  aliyunSmsAccessKeyId: "",
+  aliyunSmsAccessKeySecret: "",
+  aliyunSmsSignName: "",
+  aliyunSmsTemplateCode: "",
 })
 
 const updateSettingsDebounced = useDebounceFn(() => {
@@ -100,7 +93,7 @@ const updateSettingsDebounced = useDebounceFn(() => {
           <n-switch :disabled="true" :value="true" />
         </n-form-item>
         <n-divider />
-        <n-h3>SMTP设置</n-h3>
+        <n-h3>SMTP服务</n-h3>
         <n-form-item label="SMTP服务器">
           <n-input
             v-model:value="settings.smtpHost as string"
@@ -162,6 +155,40 @@ const updateSettingsDebounced = useDebounceFn(() => {
                 value: 'song1',
               },
             ]"
+          />
+        </n-form-item>
+        <n-divider />
+        <n-h3>阿里云短信服务</n-h3>
+        <n-form-item label="AccessKeyId">
+          <n-input
+            v-model:value="settings.aliyunSmsAccessKeyId as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'off' }"
+            show-password-on="click"
+            type="password"
+          />
+        </n-form-item>
+        <n-form-item label="AccessKeySecret">
+          <n-input
+            v-model:value="settings.aliyunSmsAccessKeySecret as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'off' }"
+            show-password-on="click"
+            type="password"
+          />
+        </n-form-item>
+        <n-form-item label="短信签名">
+          <n-input
+            v-model:value="settings.aliyunSmsSignName as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'off' }"
+          />
+        </n-form-item>
+        <n-form-item label="短信模板">
+          <n-input
+            v-model:value="settings.aliyunSmsTemplateCode as string"
+            :disabled="isLoading"
+            :input-props="{ autocomplete: 'off' }"
           />
         </n-form-item>
       </n-form>
