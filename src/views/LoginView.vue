@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from "vue"
 import { useRouter } from "vue-router"
 import { type FormInst, NIcon } from "naive-ui"
-import { SendSharp } from "@vicons/ionicons5"
+import { CheckmarkOutline, SendSharp } from "@vicons/ionicons5"
 import { ResponseMessagesSimplifiedChinese } from "@/types/ResponseMessages"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
@@ -110,8 +110,9 @@ function onRegisterButtonClick() {
   })
 }
 
+const codeInputRef = ref<HTMLInputElement | null>(null)
 function onSendEmailCodeLogoClick() {
-  console.log("000", registerFormRef)
+  if (isCooldown.value) return
   registerFormRef.value
     ?.validate()
     .then(() => {
@@ -128,6 +129,7 @@ function onSendEmailCodeLogoClick() {
           setTimeout(() => {
             isCooldown.value = false
           }, 60000)
+          codeInputRef.value?.focus()
         })
         .catch((err) => {
           const code = err.response?.status
@@ -137,9 +139,7 @@ function onSendEmailCodeLogoClick() {
           }
         })
     })
-    .catch(() => {
-      console.log(456)
-    })
+    .catch(() => {})
 }
 
 const selectedTab = ref("signin")
@@ -226,15 +226,12 @@ const selectedTab = ref("signin")
             <n-input
               v-model:value="loginForm.email"
               :disabled="isCooldown"
-              :loading="isCooldown"
               @keyup.enter="onSendEmailCodeLogoClick"
             >
               <template #suffix>
                 <n-icon
-                  v-if="!isCooldown"
-                  :component="SendSharp"
-                  :loading="true"
-                  style="cursor: pointer"
+                  :component="isCooldown ? CheckmarkOutline : SendSharp"
+                  :style="isCooldown ? {} : { cursor: 'pointer' }"
                   @click="onSendEmailCodeLogoClick"
                 />
               </template>
@@ -242,6 +239,7 @@ const selectedTab = ref("signin")
           </n-form-item-row>
           <n-form-item-row label="验证码" path="code">
             <n-input
+              ref="codeInputRef"
               v-model:value="loginForm.code"
               :disabled="!sentEmailCode"
             />
