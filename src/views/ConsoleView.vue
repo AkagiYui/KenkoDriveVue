@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import SideMenu from "@/components/SideMenu.vue"
-import UploadDrawer from "@/components/UploadDrawer.vue"
+import UploadDrawer from "@/components/Upload/UploadDrawer.vue"
 import { useUserInfo } from "@/stores/user-info"
 
 const { renewUserInfo } = useUserInfo()
