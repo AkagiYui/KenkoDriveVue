@@ -28,3 +28,5 @@ declare module "vue" {
     $geetest: GeetestComponent
   }
 }
+
+declare module "default-passive-events" {}
