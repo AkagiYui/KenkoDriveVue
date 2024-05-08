@@ -64,7 +64,24 @@ const config = {
         drop_debugger: true, // 删除 debugger
       },
     },
-  }
+    rollupOptions: {
+      output: {
+        manualChunks(id: string): string | undefined {
+          // 从 node_modules 中引入的模块，按模块名称拆分
+          if (id.includes("node_modules")) {
+            const packagePath = id.split("node_modules/")[1].split("/")
+            const first = packagePath[0]
+            let name = first === ".pnpm" ? packagePath[1] : first
+            if (name.startsWith("@")) {
+              name = name.substring(1)
+            }
+            name = name.replace(".", "_")
+            return "module-" + name.split("@")[0]
+          }
+        },
+      },
+    },
+  },
 }
 
 if (isProd) {
