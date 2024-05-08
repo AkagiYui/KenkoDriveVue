@@ -45,6 +45,19 @@ import { storeToRefs } from "pinia"
 import UploadItem from "./UploadItem.vue"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
 
+function onBeforeUnload(event: BeforeUnloadEvent) {
+  if (running.value) {
+    event.preventDefault()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("beforeunload", onBeforeUnload)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener("beforeunload", onBeforeUnload)
+})
+
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
