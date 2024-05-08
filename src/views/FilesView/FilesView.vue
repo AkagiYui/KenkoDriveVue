@@ -1,17 +1,31 @@
 <script setup lang="ts">
-import { NButton, NIcon, NFlex, useThemeVars } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
-import { Folder, ArrowUp } from "@vicons/carbon"
-import { RefreshOutline, AddOutline, TrashBinOutline } from "@vicons/ionicons5"
+import { NButton, NDropdown, NFlex, NIcon, useThemeVars } from "naive-ui"
+import { ArrowUp, Folder } from "@vicons/carbon"
 import {
-  FolderOpenTwotone,
+  AddOutline,
+  ArrowUpOutline,
+  RefreshOutline,
+  TrashBinOutline,
+} from "@vicons/ionicons5"
+import {
   AndroidTwotone,
+  FolderOpenTwotone,
   GifBoxTwotone,
   InsertDriveFileTwotone,
 } from "@vicons/material"
 import { filesize } from "filesize"
 import { getFolderContent } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
+import renderIcon from "@/utils/render-icon"
+import {
+  ArrowDownload24Regular as DownloadIcon,
+  Delete24Regular as DeleteIcon,
+  Play24Regular as PlayIcon,
+  Rename24Regular as RenameIcon,
+  ReOrderDotsHorizontal16Regular as ReOrderIcon,
+  Share24Regular as ShareIcon,
+} from "@vicons/fluent"
 
 /**
  * 主题相关变量
@@ -112,7 +126,7 @@ const columns: DataTableColumns<TableData> = [
   {
     title: "大小",
     key: "size",
-    width: "80px",
+    width: "100px",
   },
   {
     title: "操作",
@@ -120,18 +134,86 @@ const columns: DataTableColumns<TableData> = [
     width: "80px",
     render: (row: TableData) => {
       return h(
-        NButton,
+        NDropdown,
         {
-          strong: true,
-          tertiary: true,
-          size: "small",
-          onClick: () => window.$message.success("预览文件 " + row.name),
+          options: row.type === "folder" ? options : fileOptions,
+          trigger: "hover",
+          onSelect: (key) => onActionSelect(key, row),
         },
-        { default: () => "Play" },
+        {
+          default: () =>
+            h(
+              NButton,
+              {
+                strong: true,
+                secondary: true,
+                circle: true,
+              },
+              {
+                icon: renderIcon(ReOrderIcon),
+              },
+            ),
+        },
       )
     },
   },
 ]
+
+function onActionSelect(key: string, row: TableData) {
+  switch (key) {
+    case "share":
+      window.$message.success("分享文件 " + row)
+      break
+    case "rename":
+      window.$message.success("重命名文件 " + row)
+      break
+    case "delete":
+      window.$message.success("删除文件 " + row)
+      break
+    case "play":
+      playFile(row)
+      break
+    case "download":
+      window.$message.success("下载文件 " + row)
+      break
+  }
+}
+
+function playFile(row: TableData) {
+  window.$message.success("播放文件 " + row)
+}
+
+const options = [
+  {
+    label: "分享",
+    key: "share",
+    icon: renderIcon(ShareIcon),
+  },
+  {
+    label: "重命名",
+    key: "rename",
+    icon: renderIcon(RenameIcon),
+  },
+  {
+    label: "删除",
+    key: "delete",
+    icon: renderIcon(DeleteIcon),
+  },
+]
+const fileOptions = [
+  {
+    label: "预览",
+    key: "play",
+    icon: renderIcon(PlayIcon),
+  },
+  {
+    label: "下载",
+    key: "download",
+    icon: renderIcon(DownloadIcon),
+  },
+  ...options,
+]
+
 /**
  * 表格数据
  */
@@ -198,7 +280,7 @@ function onDoubleClick(row: TableData) {
   if (row.type === "folder") {
     currentFolderId.value = row.id
   } else {
-    window.$message.success("播放文件 " + row)
+    playFile(row)
   }
 }
 
@@ -254,6 +336,12 @@ const imageRef = ref<HTMLElement | null>(null)
           </template>
           刷新
         </n-button>
+        <n-button type="success">
+          <template #icon>
+            <n-icon :component="ArrowUpOutline" />
+          </template>
+          上传
+        </n-button>
         <n-button @click="showCreateFolderModal = true">
           <template #icon>
             <n-icon :component="AddOutline" />
@@ -284,7 +372,7 @@ const imageRef = ref<HTMLElement | null>(null)
           "
         >
           <n-icon :depth="1" :component="ArrowUp" />
-          <template #separator> | </template>
+          <template #separator> |</template>
         </n-breadcrumb-item>
         <n-breadcrumb-item
           @click="
@@ -343,6 +431,7 @@ const imageRef = ref<HTMLElement | null>(null)
 }
 
 .buttons-container {
+  --color: 1; /** to prevent missing variable error */
   padding: 0 10px 10px 10px;
   border-bottom: 1px solid var(--color);
   transition: border-color 0.4s ease;
