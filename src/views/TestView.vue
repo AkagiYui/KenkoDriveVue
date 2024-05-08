@@ -3,7 +3,6 @@
 import { storeToRefs } from "pinia"
 import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
-import { getFileLink } from "@/api/file"
 import { useUserInfo } from "@/stores/user-info"
 import VueWordCloud from "vuewordcloud"
 // Chart.js
@@ -54,12 +53,7 @@ const chartJsOptions = {
   responsive: true,
 }
 
-function testFunc2() {
-  getFileLink("1786261388541427712").then((res) => {
-    const url = res
-    console.log(url)
-  })
-}
+function testFunc2() {}
 
 function captchaHandler(captchaObj: any) {
   console.log(captchaObj)
