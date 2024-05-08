@@ -2,7 +2,12 @@
 import { onBeforeMount, ref } from "vue"
 import { useRouter } from "vue-router"
 import { type FormInst, NIcon } from "naive-ui"
-import { CheckmarkOutline, SendSharp } from "@vicons/ionicons5"
+import {
+  CheckmarkOutline,
+  LockClosedOutline,
+  MailOutline,
+  SendSharp,
+} from "@vicons/ionicons5"
 import { ResponseMessagesSimplifiedChinese } from "@/types/ResponseMessages"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
@@ -111,33 +116,37 @@ function onRegisterButtonClick() {
 }
 
 const codeInputRef = ref<HTMLInputElement | null>(null)
+const geetest = getCurrentInstance()!.proxy!.$geetest
+
 function onSendEmailCodeLogoClick() {
   if (isCooldown.value) return
   registerFormRef.value
     ?.validate()
     .then(() => {
-      console.log(123)
-      sendRegisterEmailCode(
-        loginForm.value.username,
-        loginForm.value.password,
-        loginForm.value.email,
-      )
-        .then(() => {
-          window.$message.success("验证码已发送，请查收")
-          isCooldown.value = true
-          sentEmailCode.value = true
-          setTimeout(() => {
-            isCooldown.value = false
-          }, 60000)
-          codeInputRef.value?.focus()
-        })
-        .catch((err) => {
-          const code = err.response?.status
-          if (code === 400) {
-            const code = err.response?.data.code
-            window.$message.error(ResponseMessagesSimplifiedChinese[code])
-          }
-        })
+      geetest.validate().then((w) => {
+        sendRegisterEmailCode(
+          loginForm.value.username,
+          loginForm.value.password,
+          loginForm.value.email,
+          w,
+        )
+          .then(() => {
+            window.$message.success("验证码已发送，请查收")
+            isCooldown.value = true
+            sentEmailCode.value = true
+            setTimeout(() => {
+              isCooldown.value = false
+            }, 60000)
+            codeInputRef.value?.focus()
+          })
+          .catch((err) => {
+            const code = err.response?.status
+            if (code === 400) {
+              const code = err.response?.data.code
+              window.$message.error(ResponseMessagesSimplifiedChinese[code])
+            }
+          })
+      })
     })
     .catch(() => {})
 }
@@ -161,6 +170,7 @@ const selectedTab = ref("signin")
         <n-form
           ref="modalFormRef"
           :show-require-mark="false"
+          :show-label="false"
           :model="loginForm"
           :rules="rules"
         >
@@ -169,16 +179,25 @@ const selectedTab = ref("signin")
               v-model:value="loginForm.username"
               placeholder="用户名/邮箱/手机号"
               :input-props="{ autocomplete: 'username' }"
-            />
+            >
+              <template #prefix>
+                <n-icon :component="MailOutline" />
+              </template>
+            </n-input>
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
             <n-input
               v-model:value="loginForm.password"
               type="password"
+              placeholder="请输入密码"
               show-password-on="click"
               :input-props="{ autocomplete: 'current-password' }"
               @keyup.enter="onLoginButtonClick"
-            />
+            >
+              <template #prefix>
+                <n-icon :component="LockClosedOutline" />
+              </template>
+            </n-input>
           </n-form-item-row>
         </n-form>
         <n-button

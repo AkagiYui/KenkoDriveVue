@@ -1,15 +1,24 @@
 <!-- eslint-disable -->
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
-import { onMounted, ref } from "vue"
+import { ref } from "vue"
 import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
-
-import QrCode from "@/components/QrCode.vue"
-import { getToken, getUserAvatar } from "@/api/user"
+import { getFileLink } from "@/api/file"
 import { useUserInfo } from "@/stores/user-info"
-import getAssetsUrl from "@/utils/pub-use"
 import VueWordCloud from "vuewordcloud"
+// Chart.js
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js"
+import { Bar } from "vue-chartjs"
+import GeetestCaptcha from "@/components/GeetestCaptcha.vue"
 
 const { isLoggedIn, requestToken, avatarUrl } = storeToRefs(useUserInfo())
 const { setAvatar } = useUserInfo()
@@ -34,18 +43,6 @@ const wordCloudData = ref([
   ["adventure", 3],
 ])
 
-// Chart.js
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from "chart.js"
-import { Bar } from "vue-chartjs"
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const chartJsData = ref({
   labels: ["January", "February", "March"],
@@ -57,19 +54,53 @@ const ddd = computed(() => {
 const chartJsOptions = {
   responsive: true,
 }
+
+function testFunc2() {
+  getFileLink("1786261388541427712").then((res) => {
+    const url = res
+    console.log(url)
+  })
+}
+
+function captchaHandler(captchaObj: any) {
+  console.log(captchaObj)
+}
+
+const captchaRef = ref<typeof GeetestCaptcha | null>(null)
+const geetest = getCurrentInstance()!.proxy!.$geetest
 </script>
 
 <template>
   <div style="padding: 24px">
-    <NButton @click="testFunc"> t1 </NButton><br />
-    0
-    <VueCropper ref="cropper" :img="avatarUrl" />
-    1
     <NDivider title-placement="right">
       This is playground. 下面是开发者用来测试组件的区域。
     </NDivider>
-    wwwwww
     <NSpace vertical>
+      <NButton
+        @click="
+          () => {
+            geetest
+              .validate((w) => {
+                console.log(w)
+              })
+              .then((res) => {
+                console.log('success1', res)
+              })
+            // captchaRef?.validate().then((res) => {
+            //   console.log('success', res)
+            // })
+          }
+        "
+        >测试
+      </NButton>
+      <GeetestCaptcha
+        v-if="false"
+        ref="captchaRef"
+        :config="{
+          captchaId: 'f7b89e4e50e1c622f8442b41d6947950',
+          language: 'zho-hk',
+        }"
+      />
       <NSpace>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -128,6 +159,13 @@ const chartJsOptions = {
           />
         </svg>
       </NSpace>
+      wwwwww
+      <NButton @click="testFunc"> t1</NButton>
+      <br />
+      <n-button @click="testFunc2">t2</n-button>
+      0
+      <VueCropper ref="cropper" :img="avatarUrl" />
+      1
       <Bar :data="ddd" :options="chartJsOptions" />
       <vue-word-cloud
         style="height: 480px; width: 640px"

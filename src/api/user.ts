@@ -170,12 +170,19 @@ export function sendRegisterEmailCode(
   username: string,
   password: string,
   email: string,
+  captcha: GeetestSuccessInfo,
 ) {
-  return Request.post("/user/register/email", {
-    username: username,
-    password: password,
-    email: email,
-  })
+  return Request.post(
+    "/user/register/email",
+    {
+      username: username,
+      password: password,
+      email: email,
+    },
+    {
+      params: { ...captcha },
+    },
+  )
 }
 
 /**

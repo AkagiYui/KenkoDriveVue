@@ -1,11 +1,17 @@
 /// <reference types="vite/client" />
 
-/* eslint-disable no-undef */
-declare interface Window {
-  $message: MessageApiInjection
-  $dialog: DialogApiInjection
-  $loadingbar: LoadingBarInst
-  $notify: NotificationApiInjection
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+declare global {
+  export interface Window {
+    $message: MessageApiInjection
+    $dialog: DialogApiInjection
+    $loadingbar: LoadingBarInst
+    $notify: NotificationApiInjection
+  }
+
+  /** 项目版本号 */
+  export const __APP_VERSION__: string
 }
 
 interface ImportMetaEnv {
@@ -17,11 +23,8 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
-/** 项目版本号 */
-declare const __APP_VERSION__: string
-
-declare module "*.vue" {
-  import type { DefineComponent } from "vue"
-  const vueComponent: DefineComponent<{}, {}, any>
-  export default vueComponent
+declare module "vue" {
+  export interface ComponentCustomProperties {
+    $geetest: GeetestComponent
+  }
 }

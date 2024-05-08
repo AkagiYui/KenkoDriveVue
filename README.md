@@ -2,7 +2,21 @@
 
 我的云盘 Vue 前端
 
-后端仓库：[Kenko Drive](https://github.com/AkagiYui/KenkoDrive)
+[![GitHub License](https://img.shields.io/github/license/AkagiYui/KenkoDriveVue?style=flat-square)](https://github.com/AkagiYui/KenkoDriveVue?tab=readme-ov-file#MIT-1-ov-file)
+![GitHub top language](https://img.shields.io/github/languages/top/AkagiYui/KenkoDriveVue?style=flat-square)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/t/AkagiYui/KenkoDriveVue?style=flat-square)](https://github.com/AkagiYui/KenkoDriveVue/commits/)
+[![GitHub last commit](https://img.shields.io/github/last-commit/AkagiYui/KenkoDriveVue?style=flat-square)](https://github.com/AkagiYui/KenkoDriveVue/commits/)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/AkagiYui/KenkoDriveVue?style=flat-square)
+
+> [!IMPORTANT]
+> 该项目仅为个人学习项目，不具备商业使用价值，仅供学习交流。
+
+|      相关       |                                                                          链接                                                                          |
+|:-------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------:|
+|   GitHub仓库    |                                    [github.com/AkagiYui/KenkoDriveVue](https://github.com/AkagiYui/KenkoDriveVue)                                    |
+| GitLink中国大陆仓库 |                                [gitlink.org.cn/AkagiYui/KenkoDriveVue](https://gitlink.org.cn/AkagiYui/KenkoDriveVue)                                |
+|    在线演示地址     | [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdrive.akagiyui.com%2F&style=flat-square)drive.akagiyui.com](https://drive.akagiyui.com) |
+|     后端仓库      |          [github.com/AkagiYui/KenkoDrive](https://github.com/AkagiYui/KenkoDrive) / [中国大陆镜像仓库](https://gitlink.org.cn/AkagiYui/KenkoDrive)           |
 
 ## TODO
 
@@ -16,15 +30,15 @@
 
 ## 开发注意事项
 
-请按序执行以下命令：
+请按序执行以下命令，并在确保所有所有警告与错误都已处理完毕再提交代码。
 
-```bash
-pnpm type-check
-pnpm lint
-pnpm format
+```shell
+pnpm type-check && pnpm lint && pnpm format
 ```
 
-并在确保所有所有警告与错误都已解决后再提交代码。
+## 活跃数据
+
+![Alt](https://repobeats.axiom.co/api/embed/01a8984fbd9998e1b780dce7af875e5f71ba157f.svg "Repobeats analytics image")
 
 ## 鸣谢
 
@@ -46,6 +60,7 @@ pnpm format
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)
 - [知乎: Vue3 Vite3 多环境配置 - 基于 vite 创建 vue3 全家桶项目(续篇）](https://zhuanlan.zhihu.com/p/571017133)
 - [哔哩哔哩: console.log导致的内存泄露](https://www.bilibili.com/video/BV16x4y117F7)
+- [哔哩哔哩: 在vite中手动分包【渡一教育】](https://www.bilibili.com/video/av1403644928)
 - [CSDN: Pinia使用方法及持久化存储](https://blog.csdn.net/m0_53808238/article/details/129751966)
 - [CSDN: 去掉router-link文字的下划线](https://blog.csdn.net/weixin_52418790/article/details/117361939)
 - [CSDN: vue3+vite如何引入本地静态图片](https://blog.csdn.net/weixin_57399180/article/details/128191707)
@@ -57,7 +72,3 @@ pnpm format
 - [CSDN: vue 默认margin:8px](https://blog.csdn.net/AinUser/article/details/106254235)
 - [CSDN: 前端判断当前系统主题](https://blog.csdn.net/u013367867/article/details/124687719)
 - [CSDN: ESLint语法检查--indent（缩进）规则](https://blog.csdn.net/pengjunlee/article/details/97750755)
-
-## 活跃数据
-
-![Alt](https://repobeats.axiom.co/api/embed/01a8984fbd9998e1b780dce7af875e5f71ba157f.svg "Repobeats analytics image")

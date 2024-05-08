@@ -47,4 +47,45 @@ if (import.meta.env.PROD) {
   console.debug("Development mode")
 }
 
+function createGeetest(): GeetestComponent {
+  let geetest: Geetest
+  // 注入极验验证码脚本
+  const script = document.createElement("script")
+  script.src = "https://static.geetest.com/v4/gt4.js"
+  script.onload = () => {
+    window.initGeetest4(
+      {
+        language: "zho",
+        captchaId: import.meta.env.VITE_GEETEST_CAPTCHA_ID,
+        product: "bind",
+        hideSuccess: true,
+      },
+      (e) => {
+        e.onReady(() => (geetest = e))
+      },
+    )
+  }
+  document.head.appendChild(script)
+  return {
+    validate: (onFail: (w: GeetestFailInfo) => void = () => {}) =>
+      new Promise<GeetestSuccessInfo>(
+        (
+          resolve: (value: GeetestSuccessInfo) => void = () => {},
+          reject = () => {},
+        ) => {
+          if (!geetest) {
+            reject(new Error("geetest not ready"))
+            return
+          }
+          geetest.onSuccess(() => resolve(geetest.getValidate()))
+          geetest.onFail(onFail)
+          geetest.onError(reject)
+          geetest.showCaptcha()
+        },
+      ),
+  }
+}
+
+app.config.globalProperties.$geetest = createGeetest()
+
 app.mount("#app")
