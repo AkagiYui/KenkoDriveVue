@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import getAssetsUrl from "@/utils/pub-use"
 import QrCode from "@/components/QrCode.vue"
-import { onBeforeMount, ref } from "vue"
 import { getBackendVersion } from "@/api/server"
 
 const isDev = import.meta.env.DEV as boolean

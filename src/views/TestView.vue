@@ -1,7 +1,6 @@
 <!-- eslint-disable -->
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
-import { ref } from "vue"
 import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
 import { getFileLink } from "@/api/file"

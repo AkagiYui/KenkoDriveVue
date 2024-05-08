@@ -48,7 +48,7 @@ const settings = ref<SettingsType>({
 
 const updateSettingsDebounced = useDebounceFn(() => {
   console.log("updateSettingsDebounced")
-  const updatePromises = []
+  const updatePromises: Promise<any>[] = []
 
   for (const key in settings.value) {
     if (settings.value[key] !== oldSettings.value[key]) {

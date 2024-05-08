@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
 import Message from "@/components/MessageApi.vue"
-import { zhCN, dateZhCN, darkTheme, createLocale } from "naive-ui"
+import { createLocale, darkTheme, dateZhCN, zhCN } from "naive-ui"
 import { useAppConfig } from "@/stores/app-config"
-import { ref, onMounted } from "vue"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const customizedLocale = createLocale(
@@ -59,7 +58,7 @@ onMounted(() => {
     <div class="container">
       <div v-show="banner" class="banner">
         我未来可能是一个广告位，或者是一个banner
-        <n-button type="error" @click="banner = false"> 关闭 </n-button>
+        <n-button type="error" @click="banner = false"> 关闭</n-button>
       </div>
       <n-layout class="main">
         <top-bar />

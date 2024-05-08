@@ -12,7 +12,7 @@ import MsClarity from "vite-plugin-ms-clarity"
 const env = process.env
 const isProd = env.NODE_ENV === "production"
 
-/** @type {import('vite').UserConfig} */
+/** @type {import("vite").UserConfig} */
 const config = {
   server: {
     host: "0.0.0.0",
@@ -22,7 +22,7 @@ const config = {
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/api/, ""),
       },
-    }
+    },
   },
   preview: {
     host: "0.0.0.0",
@@ -56,7 +56,7 @@ const config = {
     __APP_VERSION__: JSON.stringify(env.npm_package_version),
   },
   build: {
-    minify: isProd ? "terser" : "esbuild" as "esbuild" | "terser",
+    minify: isProd ? "terser" : ("esbuild" as "esbuild" | "terser"),
     terserOptions: {
       compress: {
         keep_infinity: true, // 保持 Infinity 不变，否则会被当成 1/0，在Chrome中可能出现性能问题

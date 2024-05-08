@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { h, ref } from "vue"
 import { RouterLink, useRoute } from "vue-router"
 import { type MenuOption, NIcon } from "naive-ui"
 import { storeToRefs } from "pinia"

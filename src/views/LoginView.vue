@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from "vue"
 import { useRouter } from "vue-router"
 import { type FormInst, NIcon } from "naive-ui"
 import {
