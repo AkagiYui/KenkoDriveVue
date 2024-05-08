@@ -184,7 +184,7 @@ function onActionSelect(key: string, row: TableData) {
       playFile(row)
       break
     case "download":
-      window.$message.success("下载文件 " + row)
+      downloadFile(row)
       break
   }
 }
@@ -197,7 +197,7 @@ function playFile(row: TableData) {
   }
   const fileType = row.fileType!
   if (fileType.startsWith("image")) {
-    getFileTemporaryUrl(row.id, true).then((res) => {
+    getFileTemporaryUrl(row.id).then((res) => {
       imagePreviewUrl.value = res
     })
   } else if (fileType.startsWith("video")) {
@@ -212,6 +212,17 @@ function playFile(row: TableData) {
     window.$message.error("暂不支持该文件类型的预览")
     console.log("play file", row)
   }
+}
+
+function downloadFile(row: TableData) {
+  getFileTemporaryUrl(row.id).then((url) => {
+    // 创建a标签
+    const a = document.createElement("a")
+    a.href = url
+    a.download = row.name
+    a.click()
+    a.remove()
+  })
 }
 
 const options = [
