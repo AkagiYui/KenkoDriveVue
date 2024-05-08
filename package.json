@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.9.0",
+    "artplayer": "^5.1.1",
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "default-passive-events": "^2.0.0",

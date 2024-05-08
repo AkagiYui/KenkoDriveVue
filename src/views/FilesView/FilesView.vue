@@ -33,6 +33,9 @@ import {
   ReOrderDotsHorizontal16Regular as ReOrderIcon,
   Share24Regular as ShareIcon,
 } from "@vicons/fluent"
+import { useRouter } from "vue-router"
+
+const router = useRouter()
 
 /**
  * 主题相关变量
@@ -193,11 +196,21 @@ function playFile(row: TableData) {
     return
   }
   const fileType = row.fileType!
-  window.$message.success("播放文件 " + fileType)
   if (fileType.startsWith("image")) {
     getFileTemporaryUrl(row.id, true).then((res) => {
       imagePreviewUrl.value = res
     })
+  } else if (fileType.startsWith("video")) {
+    getFileTemporaryUrl(row.id).then((res) => {
+      const route = router.resolve({
+        name: "video",
+        query: { url: res },
+      })
+      window.open(route.href, "_blank")
+    })
+  } else {
+    window.$message.error("暂不支持该文件类型的预览")
+    console.log("play file", row)
   }
 }
 

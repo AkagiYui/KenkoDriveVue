@@ -117,6 +117,14 @@ const router = createRouter({
         title: "404",
       },
     },
+    {
+      path: "/video",
+      name: "video",
+      component: () => import("../views/VideoPlayerView/VideoPlayerView.vue"),
+      meta: {
+        title: "视频",
+      },
+    },
   ],
 })
 

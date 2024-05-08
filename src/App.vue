@@ -61,7 +61,7 @@ onMounted(() => {
         <n-button type="error" @click="banner = false"> 关闭</n-button>
       </div>
       <n-layout class="main">
-        <top-bar />
+        <TopBar />
         <n-layout position="absolute" style="top: 64px" has-sider>
           <router-view />
         </n-layout>

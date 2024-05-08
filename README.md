@@ -18,6 +18,21 @@
 |    在线演示地址     | [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdrive.akagiyui.com%2F&style=flat-square)drive.akagiyui.com](https://drive.akagiyui.com) |
 |     后端仓库      |          [github.com/AkagiYui/KenkoDrive](https://github.com/AkagiYui/KenkoDrive) / [中国大陆镜像仓库](https://gitlink.org.cn/AkagiYui/KenkoDrive)           |
 
+## 技术栈
+
+- [Vue 3](https://cn.vuejs.org/): JavaScript 框架
+- [Vite 5](https://cn.vitejs.dev/): 构建工具
+- [Naive UI](https://www.naiveui.com/): UI 组件库
+- [Pinia](https://pinia.vuejs.org/): 状态管理
+- [TypeScript](https://www.typescriptlang.org/): 类型检查
+- [ESLint](https://eslint.org/): 代码检查
+- [Prettier](https://prettier.io/): 代码格式化
+- [Axios](https://axios-http.com/): HTTP 请求
+- [Vue Router](https://router.vuejs.org/): 路由管理
+- [ArtPlayer](https://artplayer.org/): 视频播放器
+- [VueUse](https://vueuse.org/): Vue 工具库
+- [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
+
 ## TODO
 
 - [ ] feat: 国际化[Vue I18n](https://kazupon.github.io/vue-i18n/zh/)
@@ -27,6 +42,7 @@
 - [ ] feat: 支持input的自动填充
 - [ ] feat: 管理员修改用户头像
 - [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
+- [ ] refactor: 二维码组件使用Naive UI自带组件
 
 ## 开发注意事项
 
