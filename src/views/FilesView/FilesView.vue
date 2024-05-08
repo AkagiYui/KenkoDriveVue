@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { DataTableColumns } from "naive-ui"
-import { NButton, NDropdown, NFlex, NIcon, useThemeVars } from "naive-ui"
+import {
+  NButton,
+  NDropdown,
+  NFlex,
+  NIcon,
+  NImage,
+  useThemeVars,
+} from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
 import {
   AddOutline,
@@ -15,7 +22,7 @@ import {
   InsertDriveFileTwotone,
 } from "@vicons/material"
 import { filesize } from "filesize"
-import { getFolderContent } from "@/api/file"
+import { getFileTemporaryUrl, getFolderContent } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import renderIcon from "@/utils/render-icon"
 import {
@@ -179,8 +186,19 @@ function onActionSelect(key: string, row: TableData) {
   }
 }
 
+const imagePreviewUrl = ref("")
+
 function playFile(row: TableData) {
-  window.$message.success("播放文件 " + row)
+  if (row.type === "folder") {
+    return
+  }
+  const fileType = row.fileType!
+  window.$message.success("播放文件 " + fileType)
+  if (fileType.startsWith("image")) {
+    getFileTemporaryUrl(row.id, true).then((res) => {
+      imagePreviewUrl.value = res
+    })
+  }
 }
 
 const options = [
@@ -295,30 +313,33 @@ function loadFolder(id?: string): void {
 }
 
 const showCreateFolderModal = ref(false)
-const imageRef = ref<HTMLElement | null>(null)
+const imageRef = ref<typeof NImage | null>(null)
 </script>
 
 <template>
+  <n-image
+    ref="imageRef"
+    :show-toolbar-tooltip="true"
+    :src="imagePreviewUrl"
+    style="
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    "
+    @load="
+      () => {
+        imageRef?.click()
+      }
+    "
+  />
   <div style="padding-top: 10px">
     <CreateFolderModal
       v-model:show="showCreateFolderModal"
       :parent="currentFolderId"
       @success="() => loadFolder(currentFolderId)"
     />
-
-    <n-image
-      ref="imageRef"
-      :v-show="false"
-      style="
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      "
-      preview-src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-    />
-
     <!-- 页面内容 -->
     <n-flex vertical>
       <!-- 操作按钮 -->

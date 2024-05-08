@@ -4,13 +4,15 @@ import { NIcon } from "naive-ui"
 import { BugReportOutlined } from "@vicons/material"
 
 const isDev = import.meta.env.DEV
-const request = axios.create({
+export const config = {
   baseURL: isDev ? "/api" : import.meta.env.VITE_BACKEND_BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
-})
+}
+
+const request = axios.create(config)
 
 request.interceptors.request.use(
   (config) => {
