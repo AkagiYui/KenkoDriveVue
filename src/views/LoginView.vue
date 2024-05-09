@@ -306,7 +306,7 @@ const selectedTab = ref("signin")
 }
 
 .background {
-  background-image: url("/images/background.webp");
+  background-image: url("/img/background.webp");
   background-size: cover;
   background-position: center top;
   opacity: 1;

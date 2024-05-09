@@ -79,6 +79,29 @@ const config = {
             return "module-" + name.split("@")[0]
           }
         },
+        entryFileNames: "js/[name]-[hash].js",
+        chunkFileNames: "js/[name]-[hash].js",
+        assetFileNames(chunkInfo: any) {
+          if (chunkInfo.name.endsWith(".css")) {
+            return "css/[name]-[hash][extname]"
+          }
+          if (chunkInfo.name.endsWith(".js")) {
+            return "js/[name]-[hash][extname]"
+          }
+          const imgExts = [
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+            ".svg",
+            ".webp",
+            ".ico",
+          ]
+          if (imgExts.some((ext) => chunkInfo.name.endsWith(ext))) {
+            return "img/[name]-[hash][extname]"
+          }
+          return "assets/[name]-[hash][extname]"
+        },
       },
     },
   },
