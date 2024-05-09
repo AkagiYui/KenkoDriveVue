@@ -74,7 +74,7 @@ function onRemoveButtonClick() {
       v-show="file.status != 'waiting'"
       id="progress"
       :offset-degree="180"
-      :percentage="60"
+      :percentage="file.progress"
       :processing="true"
       :show-indicator="false"
       :stroke-width="10"
@@ -84,10 +84,10 @@ function onRemoveButtonClick() {
       circle
       quaternary
       size="small"
-      @click="emit('onRemoveButtonClick')"
+      @click="emit('onPauseButtonClick')"
     >
       <n-icon
-        :component="file.status != 'paused' ? PlayOutline : PauseOutline"
+        :component="file.status == 'paused' ? PlayOutline : PauseOutline"
       />
     </n-button>
     <n-button

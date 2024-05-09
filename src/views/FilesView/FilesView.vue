@@ -22,7 +22,11 @@ import {
   InsertDriveFileTwotone,
 } from "@vicons/material"
 import { filesize } from "filesize"
-import { getFileTemporaryUrl, getFolderContent } from "@/api/file"
+import {
+  deleteFile as deleteFileEndpoint,
+  getFileTemporaryUrl,
+  getFolderContent,
+} from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import renderIcon from "@/utils/render-icon"
 import {
@@ -178,7 +182,7 @@ function onActionSelect(key: string, row: TableData) {
       window.$message.success("重命名文件 " + row)
       break
     case "delete":
-      window.$message.success("删除文件 " + row)
+      deleteFile(row)
       break
     case "play":
       playFile(row)
@@ -187,6 +191,13 @@ function onActionSelect(key: string, row: TableData) {
       downloadFile(row)
       break
   }
+}
+
+function deleteFile(row: TableData) {
+  deleteFileEndpoint(row.id).then(() => {
+    window.$message.success("删除成功")
+    loadFolder(currentFolderId.value)
+  })
 }
 
 const imagePreviewUrl = ref("")
@@ -199,8 +210,9 @@ function playFile(row: TableData) {
   if (fileType.startsWith("image")) {
     getFileTemporaryUrl(row.id).then((res) => {
       imagePreviewUrl.value = res
+      window.$loadingbar.start()
     })
-  } else if (fileType.startsWith("video")) {
+  } else if (fileType.startsWith("video") || fileType.startsWith("audio")) {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
         name: "video",
@@ -215,7 +227,7 @@ function playFile(row: TableData) {
 }
 
 function downloadFile(row: TableData) {
-  getFileTemporaryUrl(row.id).then((url) => {
+  getFileTemporaryUrl(row.id, false, row.name).then((url) => {
     // 创建a标签
     const a = document.createElement("a")
     a.href = url
@@ -223,6 +235,11 @@ function downloadFile(row: TableData) {
     a.click()
     a.remove()
   })
+}
+
+function onImageLoaded() {
+  window.$loadingbar.finish()
+  imageRef?.value?.click()
 }
 
 const options = [
@@ -352,11 +369,7 @@ const imageRef = ref<typeof NImage | null>(null)
       left: 50%;
       transform: translate(-50%, -50%);
     "
-    @load="
-      () => {
-        imageRef?.click()
-      }
-    "
+    @load="onImageLoaded"
   />
   <div style="padding-top: 10px">
     <CreateFolderModal

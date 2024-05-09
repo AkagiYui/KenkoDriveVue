@@ -16,8 +16,8 @@
         v-for="(item, index) in fileList"
         :key="index"
         :file="item"
-        @on-pause-button-click="console.log('on-pause-button-click')"
-        @on-remove-button-click="console.log('on-remove-button-click')"
+        @on-pause-button-click="console.log('on-pause-button-click', item)"
+        @on-remove-button-click="console.log('on-remove-button-click', item)"
       />
       <template #footer>
         <n-flex>
@@ -44,13 +44,14 @@ import { useAppConfig } from "@/stores/app-config"
 import { storeToRefs } from "pinia"
 import UploadItem from "./UploadItem.vue"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
+import { uploadFile } from "@/api/file"
 
+// 阻止关闭页面
 function onBeforeUnload(event: BeforeUnloadEvent) {
   if (running.value) {
     event.preventDefault()
   }
 }
-
 onMounted(() => {
   window.addEventListener("beforeunload", onBeforeUnload)
 })
@@ -82,19 +83,23 @@ function onFileInputChange(event: any) {
   addFile(list)
 }
 
-const fileList = ref<UploadFileInfo[]>([])
+const fileList = reactive<UploadFileInfo[]>([])
+watch(fileList, () => {
+  uploadItemCount.value = fileList.length
+})
 
-function addFile(files: File[]) {
-  files.forEach((file) => {
-    fileList.value.push({
+function addFile(files: FileList) {
+  console.log(files, files)
+  Array.from(files).forEach((file) => {
+    fileList.push({
       name: file.name,
       size: file.size,
       type: file.type,
       file: file,
       status: "waiting",
+      progress: 0,
     })
   })
-  uploadItemCount.value = fileList.value.length
   upload()
 }
 
@@ -105,16 +110,29 @@ function upload() {
     return
   }
   running.value = true
-  const file = fileList.value[0]
-  const size = file.size
-  // 小于 256KB
-  if (size < 256 * 1024) {
-    // 上传
-    console.log("upload", file)
-    uploadItemCount.value = fileList.value.length
+  if (fileList.length === 0) {
     running.value = false
     return
   }
+  const file = fileList[0]
+  const size = file.size
+  // 上传
+  console.log("upload", file)
+  const { requestPromise: request, cancelTrigger: cancel } = uploadFile(
+    file.file,
+    file.name,
+    undefined,
+    (progress) => {
+      console.log("progress", progress)
+      file.status = "uploading"
+      file.progress = progress.progress! * 100
+    },
+  )
+  request.then(() => {
+    fileList.shift()
+    running.value = false
+    upload()
+  })
 }
 </script>
 
