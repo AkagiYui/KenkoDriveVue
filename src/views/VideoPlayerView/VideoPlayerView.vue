@@ -9,7 +9,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <VideoPlayer id="player" :url="route.query.url"></VideoPlayer>
+  <VideoPlayer id="player" :url="route.query.url as string"></VideoPlayer>
 </template>
 
 <style scoped>

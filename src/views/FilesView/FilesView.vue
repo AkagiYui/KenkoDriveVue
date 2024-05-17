@@ -221,8 +221,22 @@ function playFile(row: TableData) {
       window.open(route.href, "_blank")
     })
   } else {
-    window.$message.error("暂不支持该文件类型的预览")
-    console.log("play file", row)
+    const suffix = row.name.split(".").pop()
+    if (["txt", "md", "markdown"].includes(suffix!)) {
+      getFileTemporaryUrl(row.id).then((res) => {
+        window.$loadingbar.start()
+        fetch(res)
+          .then((res) => res.text())
+          .then((res) => {
+            window.$loadingbar.finish()
+            markdownPreviewValue.value = res
+            showMarkdownPreview.value = true
+          })
+      })
+    } else {
+      window.$message.error("暂不支持该文件类型的预览")
+      console.log("play file", row)
+    }
   }
 }
 
@@ -355,6 +369,8 @@ function loadFolder(id?: string): void {
 
 const showCreateFolderModal = ref(false)
 const imageRef = ref<typeof NImage | null>(null)
+const showMarkdownPreview = ref(false)
+const markdownPreviewValue = ref("")
 </script>
 
 <template>
@@ -371,6 +387,15 @@ const imageRef = ref<typeof NImage | null>(null)
     "
     @load="onImageLoaded"
   />
+  <n-modal
+    v-model:show="showMarkdownPreview"
+    preset="card"
+    style="width: 70%"
+    title="Markdown 预览"
+    width="80%"
+  >
+    <MarkdownPreview :value="markdownPreviewValue" />
+  </n-modal>
   <div style="padding-top: 10px">
     <CreateFolderModal
       v-model:show="showCreateFolderModal"
