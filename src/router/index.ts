@@ -125,6 +125,14 @@ const router = createRouter({
         title: "视频",
       },
     },
+    {
+      path: "/pdf",
+      name: "pdf",
+      component: () => import("../views/PdfPlayerView/PdfPlayerView.vue"),
+      meta: {
+        title: "PDF",
+      },
+    },
   ],
 })
 

@@ -18,6 +18,10 @@
 |    在线演示地址     | [![Website](https://img.shields.io/website?url=https%3A%2F%2Fdrive.akagiyui.com%2F&style=flat-square)drive.akagiyui.com](https://drive.akagiyui.com) |
 |     后端仓库      |          [github.com/AkagiYui/KenkoDrive](https://github.com/AkagiYui/KenkoDrive) / [中国大陆镜像仓库](https://gitlink.org.cn/AkagiYui/KenkoDrive)           |
 
+## 功能点
+
+- [x] [更新检查](src/updateChecker.ts)
+
 ## 技术栈
 
 - [Vue 3](https://cn.vuejs.org/): JavaScript 框架
@@ -30,6 +34,7 @@
 - [Axios](https://axios-http.com/): HTTP 请求
 - [Vue Router](https://router.vuejs.org/): 路由管理
 - [ArtPlayer](https://artplayer.org/): 视频播放器
+- [vue-pdf](https://github.com/TaTo30/vue-pdf): PDF 阅读器（PDF.js封装）
 - [VueUse](https://vueuse.org/): Vue 工具库
 - [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
 
@@ -38,7 +43,7 @@
 - [ ] feat: 国际化[Vue I18n](https://kazupon.github.io/vue-i18n/zh/)
 - [ ] feat: 无障碍图标
 - [ ] feat: 图片裁剪[vue-cropper](https://github.com/xyxiao001/vue-cropper)
-- [ ] feat: 支持PWD[PWA Vite Plugin](https://vite-pwa-org.netlify.app/)
+- [ ] feat: 支持PWA[PWA Vite Plugin](https://vite-pwa-org.netlify.app/)
 - [ ] feat: 支持input的自动填充
 - [ ] feat: 管理员修改用户头像
 - [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
@@ -71,6 +76,7 @@ pnpm type-check && pnpm lint && pnpm format
 - [GitHub: qrcode.vue](https://github.com/scopewu/qrcode.vue/blob/main/README-zh_cn.md)
 - [GitHub: BililiveRecorder-WebUI](https://github.com/BililiveRecorder/BililiveRecorder-WebUI)
 - [GitHub: cloud-music（首屏加载动画）](https://github.com/path-yu/vue3-cloud-music/blob/master/index.html)
+- [How to open PDF Blob using browser's PDF viewer rather than downloading?](https://stackoverflow.com/questions/53066089/how-to-open-pdf-blob-using-browsers-pdf-viewer-rather-than-downloading)
 - [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
 - [掘金：控制台报错 -- 被动事件监听器 ！！！](https://juejin.cn/post/7230806990452588581)
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)

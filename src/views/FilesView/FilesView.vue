@@ -207,12 +207,18 @@ function playFile(row: TableData) {
     return
   }
   const fileType = row.fileType!
+
+  // 图片预览
   if (fileType.startsWith("image")) {
     getFileTemporaryUrl(row.id).then((res) => {
       imagePreviewUrl.value = res
       window.$loadingbar.start()
     })
-  } else if (fileType.startsWith("video") || fileType.startsWith("audio")) {
+    return
+  }
+
+  // 视频、音频播放
+  if (fileType.startsWith("video") || fileType.startsWith("audio")) {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
         name: "video",
@@ -220,24 +226,50 @@ function playFile(row: TableData) {
       })
       window.open(route.href, "_blank")
     })
-  } else {
-    const suffix = row.name.split(".").pop()
-    if (["txt", "md", "markdown"].includes(suffix!)) {
-      getFileTemporaryUrl(row.id).then((res) => {
-        window.$loadingbar.start()
-        fetch(res)
-          .then((res) => res.text())
-          .then((res) => {
-            window.$loadingbar.finish()
-            markdownPreviewValue.value = res
-            showMarkdownPreview.value = true
-          })
-      })
-    } else {
-      window.$message.error("暂不支持该文件类型的预览")
-      console.log("play file", row)
-    }
+    return
   }
+
+  // PDF 预览
+  if (fileType === "application/pdf") {
+    getFileTemporaryUrl(row.id).then((res) => {
+      // 使用浏览器打开
+      // fetch(res)
+      //   .then((res) => res.blob())
+      //   .then((res) => {
+      //     const blob = new Blob([res], { type: "application/pdf" })
+      //     const url = URL.createObjectURL(blob)
+      //     window.open(url, "_blank")
+      //   })
+      //
+      // 使用内置 PDF 阅读器
+      const route = router.resolve({
+        name: "pdf",
+        query: { url: res },
+      })
+      window.open(route.href, "_blank")
+    })
+    return
+  }
+
+  // 未知文件类型，使用后缀
+  const suffix = row.name.split(".").pop()
+  if (["txt", "md", "markdown"].includes(suffix!)) {
+    getFileTemporaryUrl(row.id).then((res) => {
+      window.$loadingbar.start()
+      fetch(res)
+        .then((res) => res.text())
+        .then((res) => {
+          window.$loadingbar.finish()
+          markdownPreviewValue.value = res
+          showMarkdownPreview.value = true
+        })
+    })
+    return
+  }
+
+  // 不支持的文件类型
+  window.$message.error("暂不支持该文件类型的预览")
+  console.log("play file", row)
 }
 
 function downloadFile(row: TableData) {
