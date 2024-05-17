@@ -194,3 +194,36 @@ export function confirmRegisterEmailCode(username: string, code: string) {
     verifyCode: code,
   })
 }
+
+/**
+ * 获取短信验证码
+ *
+ * @param phone 手机号
+ * @param captcha 极验验证信息
+ */
+export function sendSmsCode(phone: string, captcha: GeetestSuccessInfo) {
+  return Request.post(
+    "/user/sms",
+    {
+      ...captcha,
+      phone,
+    },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    },
+  )
+}
+
+/**
+ * 确认短信验证码登录
+ */
+export function confirmSmsCode(phone: string, code: string) {
+  return Request.get("/user/token/sms", {
+    params: {
+      phone: phone,
+      code: code,
+    },
+  })
+}
