@@ -51,7 +51,7 @@ function createGeetest(): GeetestComponent {
   let geetest: Geetest
   // 注入极验验证码脚本
   const script = document.createElement("script")
-  script.src = "https://static.geetest.com/v4/gt4.js"
+  script.src = "./gt4.js"
   script.onload = () => {
     window.initGeetest4(
       {
