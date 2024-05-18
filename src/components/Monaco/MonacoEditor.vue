@@ -100,7 +100,9 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  editor.dispose()
+  if (editor) {
+    editor.dispose()
+  }
 })
 onMounted(async () => {
   // 语法检查
@@ -128,7 +130,7 @@ onMounted(async () => {
 
   editor = monaco.editor.create(codeEditBox.value, {
     value: content.value,
-    language: language,
+    language: language.value,
     theme: theme.value,
     readOnly: props.readOnly,
     minimap: {

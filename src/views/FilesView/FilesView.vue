@@ -277,8 +277,8 @@ function playFile(row: TableData) {
         .then((res) => {
           window.$loadingbar.finish()
           monacoPreviewValue.value = res
-          showMonaco.value = true
           monacoLanguage.value = suffix!
+          showMonaco.value = true
         })
     })
     return
@@ -451,7 +451,7 @@ const monacoLanguage = ref("plaintext")
   <n-modal
     v-model:show="showMonaco"
     preset="card"
-    style="width: 70%; height: 70vh"
+    style="width: 80%; height: 80vh"
     title="代码预览"
   >
     <MonacoEditor
