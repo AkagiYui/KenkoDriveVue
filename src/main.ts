@@ -4,8 +4,7 @@ import piniaPersist from "pinia-plugin-persistedstate"
 import VueDOMPurifyHTML from "vue-dompurify-html"
 import "./vfonts/Lato.css"
 import "normalize.css/normalize.css"
-import "default-passive-events"
-
+//import "default-passive-events"
 import App from "./App.vue"
 import router from "./router"
 

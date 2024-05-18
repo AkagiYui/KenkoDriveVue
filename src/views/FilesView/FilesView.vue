@@ -38,7 +38,10 @@ import {
   Share24Regular as ShareIcon,
 } from "@vicons/fluent"
 import { useRouter } from "vue-router"
+import { useAppConfig } from "@/stores/app-config"
+import { storeToRefs } from "pinia"
 
+const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()
 
 /**
@@ -266,6 +269,20 @@ function playFile(row: TableData) {
     })
     return
   }
+  if (["js", "txt", "ass", "srt", "xml", "sql", "vue"].includes(suffix!)) {
+    getFileTemporaryUrl(row.id).then((res) => {
+      window.$loadingbar.start()
+      fetch(res)
+        .then((res) => res.text())
+        .then((res) => {
+          window.$loadingbar.finish()
+          monacoPreviewValue.value = res
+          showMonaco.value = true
+          monacoLanguage.value = suffix!
+        })
+    })
+    return
+  }
 
   // 不支持的文件类型
   window.$message.error("暂不支持该文件类型的预览")
@@ -403,6 +420,10 @@ const showCreateFolderModal = ref(false)
 const imageRef = ref<typeof NImage | null>(null)
 const showMarkdownPreview = ref(false)
 const markdownPreviewValue = ref("")
+
+const showMonaco = ref(false)
+const monacoPreviewValue = ref("")
+const monacoLanguage = ref("plaintext")
 </script>
 
 <template>
@@ -424,9 +445,20 @@ const markdownPreviewValue = ref("")
     preset="card"
     style="width: 70%"
     title="Markdown 预览"
-    width="80%"
   >
     <MarkdownPreview :value="markdownPreviewValue" />
+  </n-modal>
+  <n-modal
+    v-model:show="showMonaco"
+    preset="card"
+    style="width: 70%; height: 70vh"
+    title="代码预览"
+  >
+    <MonacoEditor
+      :content="monacoPreviewValue"
+      :dark="isDarkMode"
+      :language="monacoLanguage"
+    />
   </n-modal>
   <div style="padding-top: 10px">
     <CreateFolderModal

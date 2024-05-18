@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@shikijs/monaco':
+        specifier: ^1.5.2
+        version: 1.5.2
       '@tato30/vue-pdf':
         specifier: ^1.9.7
         version: 1.9.7(vue@3.4.21(typescript@5.4.2))
@@ -32,6 +35,9 @@ importers:
       marked:
         specifier: ^12.0.2
         version: 12.0.2
+      monaco-editor:
+        specifier: ^0.48.0
+        version: 0.48.0
       normalize.css:
         specifier: ^8.0.1
         version: 8.0.1
@@ -129,6 +135,9 @@ importers:
       seemly:
         specifier: ^0.3.8
         version: 0.3.8
+      shiki:
+        specifier: ^1.5.2
+        version: 1.5.2
       stylus:
         specifier: ^0.59.0
         version: 0.59.0
@@ -153,6 +162,9 @@ importers:
       vite-plugin-ms-clarity:
         specifier: ^1.0.0
         version: 1.0.0(vite@5.1.6(@types/node@20.11.28)(stylus@0.59.0)(terser@5.29.2))
+      vscode-loc.git:
+        specifier: github:microsoft/vscode-loc
+        version: vscode-loc@https://codeload.github.com/microsoft/vscode-loc/tar.gz/0858be15aefbb175c3f8b48760fab9e29bc44e69
       vue-dompurify-html:
         specifier: ^5.0.1
         version: 5.0.1(vue@3.4.21(typescript@5.4.2))
@@ -625,6 +637,12 @@ packages:
 
   '@rushstack/eslint-patch@1.7.2':
     resolution: {integrity: sha512-RbhOOTCNoCrbfkRyoXODZp75MlpiHMgbE5MEBZAnnnLyQNgrigEj4p0lzsMDyc1zVsJDLrivB58tgg3emX0eEA==}
+
+  '@shikijs/core@1.5.2':
+    resolution: {integrity: sha512-wSAOgaz48GmhILFElMCeQypSZmj6Ru6DttOOtl3KNkdJ17ApQuGNCfzpk4cClasVrnIu45++2DBwG4LNMQAfaA==}
+
+  '@shikijs/monaco@1.5.2':
+    resolution: {integrity: sha512-k2wxI31/qFCA2YRvx7Vn5Au/8w564F9mKk07abToktBZtm/fJ2kN5WDPqh1BnAIEwdPSQVUALlHIBOCtYm/SaQ==}
 
   '@tato30/vue-pdf@1.9.7':
     resolution: {integrity: sha512-YgIr4jZD6KMa03/TLAAJdOnBH1oQy2rOV2rDY/BsS9HrufxOO07LVoKzk88MAlneNmcPjY2dtG8eD9Bzt0Tk0A==}
@@ -1629,6 +1647,9 @@ packages:
   mlly@1.6.1:
     resolution: {integrity: sha512-vLgaHvaeunuOXHSmEbZ9izxPx3USsk8KCQ8iC+aTlp5sKRSoZvwhHh5L9VbKSaVC6sJDqbyohIS76E2VmHIPAA==}
 
+  monaco-editor@0.48.0:
+    resolution: {integrity: sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==}
+
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
 
@@ -1904,6 +1925,9 @@ packages:
   shell-quote@1.8.1:
     resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
 
+  shiki@1.5.2:
+    resolution: {integrity: sha512-fpPbuSaatinmdGijE7VYUD3hxLozR3ZZ+iAx8Iy2X6REmJGyF5hQl94SgmiUNTospq346nXUVZx0035dyGvIVw==}
+
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
 
@@ -2144,6 +2168,10 @@ packages:
     resolution: {integrity: sha512-iox0I3RZzxtKlcgYaStQYKEzWWGAduMmq+jS7OrNdQo1FgGfPMubGL3uGHOU9n97NIvfFDBGnpSvkWyb/NSn/Q==}
     peerDependencies:
       vue: ^3.0.0
+
+  vscode-loc@https://codeload.github.com/microsoft/vscode-loc/tar.gz/0858be15aefbb175c3f8b48760fab9e29bc44e69:
+    resolution: {tarball: https://codeload.github.com/microsoft/vscode-loc/tar.gz/0858be15aefbb175c3f8b48760fab9e29bc44e69}
+    version: 0.0.0
 
   vue-chartjs@5.3.0:
     resolution: {integrity: sha512-8XqX0JU8vFZ+WA2/knz4z3ThClduni2Nm0BMe2u0mXgTfd9pXrmJ07QBI+WAij5P/aPmPMX54HCE1seWL37ZdQ==}
@@ -2676,6 +2704,12 @@ snapshots:
     optional: true
 
   '@rushstack/eslint-patch@1.7.2': {}
+
+  '@shikijs/core@1.5.2': {}
+
+  '@shikijs/monaco@1.5.2':
+    dependencies:
+      '@shikijs/core': 1.5.2
 
   '@tato30/vue-pdf@1.9.7(vue@3.4.21(typescript@5.4.2))':
     dependencies:
@@ -3796,6 +3830,8 @@ snapshots:
       pkg-types: 1.0.3
       ufo: 1.5.1
 
+  monaco-editor@0.48.0: {}
+
   ms@2.1.2: {}
 
   muggle-string@0.3.1: {}
@@ -4076,6 +4112,10 @@ snapshots:
 
   shell-quote@1.8.1: {}
 
+  shiki@1.5.2:
+    dependencies:
+      '@shikijs/core': 1.5.2
+
   signal-exit@3.0.7:
     optional: true
 
@@ -4316,6 +4356,8 @@ snapshots:
     dependencies:
       evtd: 0.2.4
       vue: 3.4.21(typescript@5.4.2)
+
+  vscode-loc@https://codeload.github.com/microsoft/vscode-loc/tar.gz/0858be15aefbb175c3f8b48760fab9e29bc44e69: {}
 
   vue-chartjs@5.3.0(chart.js@4.4.2)(vue@3.4.21(typescript@5.4.2)):
     dependencies:

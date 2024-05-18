@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@shikijs/monaco": "^1.5.2",
     "@tato30/vue-pdf": "^1.9.7",
     "@vueuse/core": "^10.9.0",
     "artplayer": "^5.1.1",
@@ -21,6 +22,7 @@
     "default-passive-events": "^2.0.0",
     "filesize": "^10.1.1",
     "marked": "^12.0.2",
+    "monaco-editor": "^0.48.0",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
@@ -55,6 +57,7 @@
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.2.5",
     "seemly": "^0.3.8",
+    "shiki": "^1.5.2",
     "stylus": "^0.59.0",
     "stylus-loader": "^7.1.3",
     "terser": "^5.29.2",
@@ -63,6 +66,7 @@
     "unplugin-vue-components": "^0.26.0",
     "vite": "^5.1.6",
     "vite-plugin-ms-clarity": "^1.0.0",
+    "vscode-loc.git": "github:microsoft/vscode-loc",
     "vue-dompurify-html": "^5.0.1",
     "vue-tsc": "^1.8.27"
   }
