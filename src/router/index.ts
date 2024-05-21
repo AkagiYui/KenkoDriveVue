@@ -124,7 +124,7 @@ const router = createRouter({
       component: () => import("../views/PdfPlayerView/PdfPlayerView.vue"),
       meta: {
         title: "PDF预览",
-        isPlayer: true,,
+        isPlayer: true,
       },
     },
     {
@@ -133,7 +133,7 @@ const router = createRouter({
       component: () => import("../views/DocxPlayerView/DocxPlayerView.vue"),
       meta: {
         title: "Docx预览",
-        isPlayer: tru,e,
+        isPlayer: true,
       },
     },
     {
@@ -142,7 +142,7 @@ const router = createRouter({
       component: () => import("../views/XlsxPlayerView/XlsxPlayerView.vue"),
       meta: {
         title: "Xlsx预览",
-        isPlayer: tr,ue,
+        isPlayer: true,
       },
     },
     {
