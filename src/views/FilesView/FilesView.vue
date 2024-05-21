@@ -80,11 +80,41 @@ function rowClassName(row: TableData): string {
  * 行属性
  * @param row 行数据
  */
-function rowProps(row: TableData): Record<string, any> {
+function rowProps(row: TableData): HTMLAttributes {
   return {
     onDblclick: () => onDoubleClick(row),
+    // 当拖动开始时触发
+    onDragstart: (event: DragEvent) => {
+      allowDrop.value = false
+      event.dataTransfer!.effectAllowed = "move" // 设置拖动指针样式
+      event.dataTransfer!.setData("id", row.id) // 设置拖动数据
+      event.dataTransfer!.setData("type", row.type)
+    },
+    // 当拖动元素在目标元素上时触发
+    onDragover: (event: DragEvent) => {
+      if (row.type === "folder") {
+        // 只有文件夹可以放置
+        event.preventDefault() // 阻止默认行为以允许放置
+      }
+    },
+    // 当拖动元素放到目标元素上时触发
+    onDrop: (event: DragEvent) => {
+      const id = event.dataTransfer!.getData("id")
+      const type = event.dataTransfer!.getData("type")
+      if (type === "folder") {
+        onFolderMove(id, row.id)
+      } else {
+        onFileMove(id, row.id)
+      }
+      allowDrop.value = true
+    },
+    draggable: true, // 设置行为可拖动
   }
 }
+
+function onFileMove(fileId: string, targetId: string) {}
+
+function onFolderMove(folderId: string, targetId: string) {}
 
 /**
  * 行索引
