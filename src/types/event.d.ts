@@ -1,4 +1,4 @@
 interface AddEntriesEvent {
-  file: FileSystemEntry[]
+  file: FileSystemFileEntry[]
   folderId: string
 }

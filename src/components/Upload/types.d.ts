@@ -5,4 +5,5 @@ type UploadFileInfo = {
   file: File
   status: "uploading" | "paused" | "done" | "error" | "canceled" | "waiting"
   progress: number
+  folderId?: string
 }

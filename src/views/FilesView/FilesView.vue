@@ -42,11 +42,22 @@ import { useAppConfig } from "@/stores/app-config"
 import { storeToRefs } from "pinia"
 import type { HTMLAttributes } from "vue"
 import useGlobal from "@/utils/useGlobal"
+import { EVENT_ADD_ENTRIES, EVENT_UPLOAD_SUCCESS } from "@/utils/string"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()
 
 const { $bus } = useGlobal()
+onMounted(() => {
+  $bus.on(EVENT_UPLOAD_SUCCESS, (folderId) => {
+    if (currentFolderId.value === folderId) {
+      loadFolder(folderId)
+    }
+  })
+})
+onBeforeUnmount(() => {
+  $bus.off(EVENT_UPLOAD_SUCCESS)
+})
 
 /**
  * 主题相关变量
@@ -492,7 +503,7 @@ const allowDrop = ref(true)
 
 function onDrop(file: FileSystemEntry[]) {
   const folderId = currentFolderId.value
-  $bus.emit("add:entries", { file, folderId })
+  $bus.emit(EVENT_ADD_ENTRIES, { file, folderId })
 }
 </script>
 

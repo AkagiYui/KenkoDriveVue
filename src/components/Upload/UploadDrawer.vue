@@ -46,6 +46,7 @@ import UploadItem from "./UploadItem.vue"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
 import { uploadFile } from "@/api/file"
 import useGlobal from "@/utils/useGlobal"
+import { EVENT_ADD_ENTRIES, EVENT_UPLOAD_SUCCESS } from "@/utils/string"
 
 const { $bus } = useGlobal()
 
@@ -77,12 +78,19 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const folderInputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
   fileInputRef.value?.addEventListener("change", onFileInputChange)
-  $bus.on("add:entries", ({ file, folderId }: AddEntriesEvent) => {
-    console.log("add:entries", file, folderId)
+  $bus.on(EVENT_ADD_ENTRIES, ({ file, folderId }: AddEntriesEvent) => {
+    file
+      .filter((f) => f.isFile)
+      .map((f) =>
+        f.file((f) => {
+          addFile(f, folderId)
+        }),
+      )
   })
 })
 onBeforeUnmount(() => {
-  $bus.off("add:entries")
+  $bus.off(EVENT_ADD_ENTRIES)
+  $bus.off(EVENT_UPLOAD_SUCCESS)
 })
 
 function onUploadFileButtonClick() {
@@ -98,7 +106,7 @@ function onFileInputChange(event: any) {
   if (list.length === 0) {
     return
   }
-  addFile(list)
+  addFileList(list)
 }
 
 const fileList = reactive<UploadFileInfo[]>([])
@@ -106,7 +114,7 @@ watch(fileList, () => {
   uploadItemCount.value = fileList.length
 })
 
-function addFile(files: FileList) {
+function addFileList(files: FileList) {
   console.log(files, files)
   Array.from(files).forEach((file) => {
     fileList.push({
@@ -117,6 +125,19 @@ function addFile(files: FileList) {
       status: "waiting",
       progress: 0,
     })
+  })
+  upload()
+}
+
+function addFile(file: File, folderId?: string) {
+  fileList.push({
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    file: file,
+    status: "waiting",
+    progress: 0,
+    folderId,
   })
   upload()
 }
@@ -139,7 +160,7 @@ function upload() {
   const { requestPromise: request, cancelTrigger: cancel } = uploadFile(
     file.file,
     file.name,
-    undefined,
+    file.folderId,
     (progress) => {
       console.log("progress", progress)
       file.status = "uploading"
@@ -149,6 +170,7 @@ function upload() {
   request.then(() => {
     fileList.shift()
     running.value = false
+    $bus.emit(EVENT_UPLOAD_SUCCESS, file.folderId)
     upload()
   })
 }
