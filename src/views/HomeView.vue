@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useUserInfo } from "@/stores/user-info"
 import { storeToRefs } from "pinia"
-import { onMounted, ref, onBeforeMount } from "vue"
+import { onBeforeMount, onMounted, ref } from "vue"
 import { getIndexAnnouncements } from "@/api/announcement"
 import { MdSave } from "@vicons/ionicons4"
+import { useAppConfig } from "@/stores/app-config"
 
 const { nickname } = storeToRefs(useUserInfo())
+const { isDebugMode } = useAppConfig()
 
 // 每个问候语对应的时间点
 const helloLabel = {
@@ -79,8 +81,9 @@ onBeforeMount(() => {
       {{ helloText }}，
       <n-h1>{{ nickname }}</n-h1>
     </n-h4>
+    <n-h2>欢迎使用 Kenko Drive</n-h2>
 
-    <n-flex size="large">
+    <n-flex v-if="isDebugMode" size="large">
       <n-statistic label="存储空间" :value="'99G'">
         <template #prefix>
           <n-icon>
