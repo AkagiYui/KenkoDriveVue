@@ -110,19 +110,12 @@ const router = createRouter({
       },
     },
     {
-      path: "/:pathMatch(.*)*",
-      name: "not-found",
-      component: () => import("../views/NotFoundView.vue"),
-      meta: {
-        title: "404",
-      },
-    },
-    {
       path: "/video",
       name: "video",
       component: () => import("../views/VideoPlayerView/VideoPlayerView.vue"),
       meta: {
-        title: "视频",
+        title: "视频预览",
+        isPlayer: true,
       },
     },
     {
@@ -130,7 +123,34 @@ const router = createRouter({
       name: "pdf",
       component: () => import("../views/PdfPlayerView/PdfPlayerView.vue"),
       meta: {
-        title: "PDF",
+        title: "PDF预览",
+        isPlayer: true,,
+      },
+    },
+    {
+      path: "/docx",
+      name: "docx",
+      component: () => import("../views/DocxPlayerView/DocxPlayerView.vue"),
+      meta: {
+        title: "Docx预览",
+        isPlayer: tru,e,
+      },
+    },
+    {
+      path: "/xlsx",
+      name: "xlsx",
+      component: () => import("../views/XlsxPlayerView/XlsxPlayerView.vue"),
+      meta: {
+        title: "Xlsx预览",
+        isPlayer: tr,ue,
+      },
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: () => import("../views/NotFoundView.vue"),
+      meta: {
+        title: "404",
       },
     },
   ],

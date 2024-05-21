@@ -14,6 +14,15 @@ importers:
       '@tato30/vue-pdf':
         specifier: ^1.9.7
         version: 1.9.7(vue@3.4.21(typescript@5.4.2))
+      '@vue-office/docx':
+        specifier: ^1.6.1
+        version: 1.6.1(vue-demi@0.14.7(vue@3.4.21(typescript@5.4.2)))(vue@3.4.21(typescript@5.4.2))
+      '@vue-office/excel':
+        specifier: ^1.7.8
+        version: 1.7.8(vue-demi@0.14.7(vue@3.4.21(typescript@5.4.2)))(vue@3.4.21(typescript@5.4.2))
+      '@vue-office/pdf':
+        specifier: ^2.0.2
+        version: 2.0.2(vue-demi@0.14.7(vue@3.4.21(typescript@5.4.2)))(vue@3.4.21(typescript@5.4.2))
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.9.0(vue@3.4.21(typescript@5.4.2))
@@ -62,6 +71,9 @@ importers:
       vue-cropper:
         specifier: ^1.1.1
         version: 1.1.1
+      vue-demi:
+        specifier: ^0.14.7
+        version: 0.14.7(vue@3.4.21(typescript@5.4.2))
       vue-router:
         specifier: ^4.3.0
         version: 4.3.0(vue@3.4.21(typescript@5.4.2))
@@ -803,6 +815,36 @@ packages:
 
   '@volar/typescript@1.11.1':
     resolution: {integrity: sha512-iU+t2mas/4lYierSnoFOeRFQUhAEMgsFuQxoxvwn5EdQopw43j+J27a4lt9LMInx1gLJBC6qL14WYGlgymaSMQ==}
+
+  '@vue-office/docx@1.6.1':
+    resolution: {integrity: sha512-DKB0F7b5tv4MvZO/nYdKiUUGXAD3LmZeHLQLodYg+c4Rap8w1EeU1DTJxXumq88xCggVrM69Qx+ocVIpq4eSYQ==}
+    peerDependencies:
+      '@vue/composition-api': ^1.7.1
+      vue: ^2.0.0 || >=3.0.0
+      vue-demi: ^0.14.6
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@vue-office/excel@1.7.8':
+    resolution: {integrity: sha512-pQxogMRDECFElpDcZhQBDtM9GpL8d1/w+fjAXiqJRTIjzbrW/JiOURExgE5LoUkfc+cDhUfSGtfvCvwSx30yQw==}
+    peerDependencies:
+      '@vue/composition-api': ^1.7.1
+      vue: ^2.0.0 || >=3.0.0
+      vue-demi: ^0.14.6
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@vue-office/pdf@2.0.2':
+    resolution: {integrity: sha512-bQFqGxSOnKbvCS7OoJniYoTz1VIm1XOrRD27Msorxny9NFJ8RsQK1A4uhlnISJRFMaUwp1qlcVE9jMAhsiIyjg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.7.1
+      vue: ^2.0.0 || >=3.0.0
+      vue-demi: ^0.14.6
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
 
   '@vue/babel-helper-vue-transform-on@1.2.1':
     resolution: {integrity: sha512-jtEXim+pfyHWwvheYwUwSXm43KwQo8nhOBDyjrUITV6X2tB7lJm6n/+4sqR8137UVZZul5hBzWHdZ2uStYpyRQ==}
@@ -2906,6 +2948,21 @@ snapshots:
     dependencies:
       '@volar/language-core': 1.11.1
       path-browserify: 1.0.1
+
+  '@vue-office/docx@1.6.1(vue-demi@0.14.7(vue@3.4.21(typescript@5.4.2)))(vue@3.4.21(typescript@5.4.2))':
+    dependencies:
+      vue: 3.4.21(typescript@5.4.2)
+      vue-demi: 0.14.7(vue@3.4.21(typescript@5.4.2))
+
+  '@vue-office/excel@1.7.8(vue-demi@0.14.7(vue@3.4.21(typescript@5.4.2)))(vue@3.4.21(typescript@5.4.2))':
+    dependencies:
+      vue: 3.4.21(typescript@5.4.2)
+      vue-demi: 0.14.7(vue@3.4.21(typescript@5.4.2))
+
+  '@vue-office/pdf@2.0.2(vue-demi@0.14.7(vue@3.4.21(typescript@5.4.2)))(vue@3.4.21(typescript@5.4.2))':
+    dependencies:
+      vue: 3.4.21(typescript@5.4.2)
+      vue-demi: 0.14.7(vue@3.4.21(typescript@5.4.2))
 
   '@vue/babel-helper-vue-transform-on@1.2.1': {}
 

@@ -38,6 +38,7 @@
 - [VueUse](https://vueuse.org/): Vue 工具库
 - [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
 - [mitt](https://github.com/developit/mitt) 事件总线
+- [vue-office](https://github.com/501351981/vue-office) Office 预览
 
 ## TODO
 

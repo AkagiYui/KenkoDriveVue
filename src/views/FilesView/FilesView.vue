@@ -288,6 +288,35 @@ function playFile(row: TableData) {
     return
   }
 
+  // docx
+  if (
+    fileType ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    getFileTemporaryUrl(row.id).then((res) => {
+      const route = router.resolve({
+        name: "docx",
+        query: { url: res },
+      })
+      window.open(route.href, "_blank")
+    })
+    return
+  }
+  // xlsx
+  if (
+    fileType ===
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ) {
+    getFileTemporaryUrl(row.id).then((res) => {
+      const route = router.resolve({
+        name: "xlsx",
+        query: { url: res },
+      })
+      window.open(route.href, "_blank")
+    })
+    return
+  }
+
   // 未知文件类型，使用后缀
   const suffix = row.name.split(".").pop()
   if (["txt", "md", "markdown"].includes(suffix!)) {
