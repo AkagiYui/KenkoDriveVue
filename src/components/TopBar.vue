@@ -8,7 +8,9 @@ import renderIcon from "@/utils/render-icon"
 import {
   ArrowUpOutline,
   LogOutOutline,
+  MoonOutline,
   PersonCircleOutline,
+  SunnyOutline,
 } from "@vicons/ionicons5"
 import QrCode from "@/components/QrCode.vue"
 
@@ -17,6 +19,14 @@ const { isDarkMode, isDebugMode, isUploadDrawerShow, uploadItemCount } =
 const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
 const { deleteToken } = useUserInfo()
 const router = useRouter()
+
+const isPlayer = ref(false)
+onMounted(async () => {
+  // 在路由完成后再判断是否为播放器页面
+  await router.isReady()
+  const currentRoute = router.currentRoute.value
+  isPlayer.value = currentRoute.meta.isPlayer ?? false
+})
 
 const host = window.location.origin
 const options = ref([
@@ -92,13 +102,16 @@ const onSelect = (key: string) => {
         height: 64px;
       "
     >
-      <n-switch v-if="isDebugMode" v-model:value="isDarkMode">
-        <template #checked-icon> 🌙</template>
-        <template #unchecked-icon> ☀️</template>
-        <template #checked> 测试阶段</template>
-        <template #unchecked> 全局暗色</template>
-      </n-switch>
-      <n-badge v-if="isLoggedIn" :max="999" :value="uploadItemCount">
+      <n-button circle quaternary strong @click="isDarkMode = !isDarkMode">
+        <template #icon>
+          <n-icon :component="isDarkMode ? MoonOutline : SunnyOutline" />
+        </template>
+      </n-button>
+      <n-badge
+        v-if="isLoggedIn && !isPlayer"
+        :max="999"
+        :value="uploadItemCount"
+      >
         <n-button circle secondary strong @click="isUploadDrawerShow = true">
           <template #icon>
             <n-icon :component="ArrowUpOutline" />
@@ -106,7 +119,7 @@ const onSelect = (key: string) => {
         </n-button>
       </n-badge>
       <n-dropdown
-        v-if="isLoggedIn"
+        v-if="isLoggedIn && !isPlayer"
         trigger="hover"
         :options="options"
         placement="bottom-end"

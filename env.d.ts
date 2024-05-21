@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+// 为了确保这个文件被当作一个模块，添加至少一个 `export` 声明
 export {}
 
 declare global {
@@ -26,6 +27,12 @@ interface ImportMeta {
 declare module "vue" {
   export interface ComponentCustomProperties {
     $geetest: GeetestComponent
+  }
+}
+
+declare module "vue-router" {
+  interface RouteMeta {
+    isPlayer?: boolean
   }
 }
 
