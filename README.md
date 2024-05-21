@@ -37,6 +37,7 @@
 - [vue-pdf](https://github.com/TaTo30/vue-pdf): PDF 阅读器（PDF.js封装）
 - [VueUse](https://vueuse.org/): Vue 工具库
 - [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
+- [mitt](https://github.com/developit/mitt) 事件总线
 
 ## TODO
 
@@ -80,10 +81,13 @@ pnpm type-check && pnpm lint && pnpm format
 - [Stack Overflow: How to open PDF Blob using browser's PDF viewer rather than downloading?](https://stackoverflow.com/questions/53066089/how-to-open-pdf-blob-using-browsers-pdf-viewer-rather-than-downloading)
 - [掘金：[前端项目创新]前端检测版本更新的简易之道](https://juejin.cn/post/6910395895485825037)
 - [掘金：控制台报错 -- 被动事件监听器 ！！！](https://juejin.cn/post/7230806990452588581)
+- [掘金：vue3实现全屏拖拽上传文件](https://juejin.cn/post/7208099962911850551)
 - [知乎: Vue3 Vite3 状态管理 pinia 基本使用、持久化、在路由守卫中的使用](https://zhuanlan.zhihu.com/p/572165769)
 - [知乎: Vue3 Vite3 多环境配置 - 基于 vite 创建 vue3 全家桶项目(续篇）](https://zhuanlan.zhihu.com/p/571017133)
 - [哔哩哔哩: console.log导致的内存泄露](https://www.bilibili.com/video/BV16x4y117F7)
 - [哔哩哔哩: 在vite中手动分包【渡一教育】](https://www.bilibili.com/video/av1403644928)
+- [哔哩哔哩: 阿里云的文件上传【渡一教育】](https://www.bilibili.com/video/av1903215359)
+- [哔哩哔哩: 拖拽API【渡一教育】](https://www.bilibili.com/video/av323652523)
 - [CSDN: Pinia使用方法及持久化存储](https://blog.csdn.net/m0_53808238/article/details/129751966)
 - [CSDN: 去掉router-link文字的下划线](https://blog.csdn.net/weixin_52418790/article/details/117361939)
 - [CSDN: vue3+vite如何引入本地静态图片](https://blog.csdn.net/weixin_57399180/article/details/128191707)
@@ -95,3 +99,4 @@ pnpm type-check && pnpm lint && pnpm format
 - [CSDN: vue 默认margin:8px](https://blog.csdn.net/AinUser/article/details/106254235)
 - [CSDN: 前端判断当前系统主题](https://blog.csdn.net/u013367867/article/details/124687719)
 - [CSDN: ESLint语法检查--indent（缩进）规则](https://blog.csdn.net/pengjunlee/article/details/97750755)
+- [CSDN: 拖拽本地文件夹到浏览器中，展示所有文件结构](https://blog.csdn.net/tangran0526/article/details/104108551)

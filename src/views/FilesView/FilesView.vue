@@ -40,9 +40,13 @@ import {
 import { useRouter } from "vue-router"
 import { useAppConfig } from "@/stores/app-config"
 import { storeToRefs } from "pinia"
+import type { HTMLAttributes } from "vue"
+import useGlobal from "@/utils/useGlobal"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()
+
+const { $bus } = useGlobal()
 
 /**
  * 主题相关变量
@@ -390,7 +394,7 @@ watch(currentFolderId, (id) => {
 /**
  * 页面加载时请求数据
  */
-onBeforeMount(() => {
+onBeforeMount(async () => {
   loadFolder()
 })
 
@@ -424,9 +428,17 @@ const markdownPreviewValue = ref("")
 const showMonaco = ref(false)
 const monacoPreviewValue = ref("")
 const monacoLanguage = ref("plaintext")
+
+const allowDrop = ref(true)
+
+function onDrop(file: FileSystemEntry[]) {
+  const folderId = currentFolderId.value
+  $bus.emit("add:entries", { file, folderId })
+}
 </script>
 
 <template>
+  <FullScreenDrag v-if="allowDrop" @drop="onDrop"></FullScreenDrag>
   <n-image
     ref="imageRef"
     :show-toolbar-tooltip="true"
@@ -513,8 +525,7 @@ const monacoLanguage = ref("plaintext")
                 return
               }
               const lastItem = breadcrumbItems[breadcrumbItems.length - 1]
-              const parentId = lastItem ? lastItem.id : undefined
-              currentFolderId = parentId
+              currentFolderId = lastItem ? lastItem.id : undefined
             }
           "
         >

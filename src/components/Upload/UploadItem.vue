@@ -40,10 +40,10 @@ const icon = computed(() => {
       return DocumentTextOutline
     case "video/mp4":
       return FilmOutline
-    default:
-      console.log("unknown file type", file.value.type)
-      return DocumentOutline
   }
+  const suffix = file.value.name.split(".").pop()
+  console.log("unknown file type", file.value.type, suffix)
+  return DocumentOutline
 })
 let timer = 0
 

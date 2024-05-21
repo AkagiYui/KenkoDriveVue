@@ -7,6 +7,7 @@ import "normalize.css/normalize.css"
 //import "default-passive-events"
 import App from "./App.vue"
 import router from "./router"
+import mitt from "mitt"
 
 const pinia = createPinia()
 pinia.use(piniaPersist)
@@ -87,5 +88,6 @@ function createGeetest(): GeetestComponent {
 }
 
 app.config.globalProperties.$geetest = createGeetest()
+app.config.globalProperties.$bus = mitt()
 
 app.mount("#app")

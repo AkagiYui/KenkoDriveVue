@@ -45,6 +45,9 @@ import { storeToRefs } from "pinia"
 import UploadItem from "./UploadItem.vue"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
 import { uploadFile } from "@/api/file"
+import useGlobal from "@/utils/useGlobal"
+
+const { $bus } = useGlobal()
 
 // 阻止关闭页面
 function onBeforeUnload(event: BeforeUnloadEvent) {
@@ -59,12 +62,27 @@ onBeforeUnmount(() => {
   window.removeEventListener("beforeunload", onBeforeUnload)
 })
 
+const uploadWorker = new Worker(new URL("./uploadWorker.ts", import.meta.url), {
+  type: "module",
+})
+uploadWorker.postMessage({
+  command: "init",
+  url: "http://localhost:3000",
+  token: "123",
+})
+
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
 
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const folderInputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
   fileInputRef.value?.addEventListener("change", onFileInputChange)
+  $bus.on("add:entries", ({ file, folderId }: AddEntriesEvent) => {
+    console.log("add:entries", file, folderId)
+  })
+})
+onBeforeUnmount(() => {
+  $bus.off("add:entries")
 })
 
 function onUploadFileButtonClick() {
