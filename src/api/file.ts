@@ -67,8 +67,7 @@ export function uploadFile(
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      onUploadProgress: onUploadProgress || (() => {
-      }),
+      onUploadProgress: onUploadProgress || (() => {}),
       timeout: 0,
       signal: abortController.signal,
     }),
@@ -84,4 +83,21 @@ export function uploadFile(
  */
 export function deleteFile(id: string): RequestResponse<null> {
   return Request.delete(`/file/${id}`)
+}
+
+/**
+ * 移动文件
+ * @param id 文件ID
+ * @param folderId 目标文件夹ID
+ */
+export function moveFile(id: string, folderId: string): RequestResponse<null> {
+  return Request.put(
+    `/file/${id}/move`,
+    {},
+    {
+      params: {
+        folder: folderId,
+      },
+    },
+  )
 }

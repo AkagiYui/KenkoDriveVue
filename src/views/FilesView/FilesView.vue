@@ -26,6 +26,7 @@ import {
   deleteFile as deleteFileEndpoint,
   getFileTemporaryUrl,
   getFolderContent,
+  moveFile,
 } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import renderIcon from "@/utils/render-icon"
@@ -43,6 +44,7 @@ import { storeToRefs } from "pinia"
 import type { HTMLAttributes } from "vue"
 import useGlobal from "@/utils/useGlobal"
 import { EVENT_ADD_ENTRIES, EVENT_UPLOAD_SUCCESS } from "@/utils/string"
+import { moveFolder } from "@/api/folder"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()
@@ -109,7 +111,7 @@ function rowProps(row: TableData): HTMLAttributes {
       }
     },
     // 当拖动元素放到目标元素上时触发
-    onDrop: (event: DragEvent) => {
+    onDrop: async (event: DragEvent) => {
       const id = event.dataTransfer!.getData("id")
       const type = event.dataTransfer!.getData("type")
       if (type === "folder") {
@@ -123,9 +125,19 @@ function rowProps(row: TableData): HTMLAttributes {
   }
 }
 
-function onFileMove(fileId: string, targetId: string) {}
+function onFileMove(fileId: string, targetId: string) {
+  moveFile(fileId, targetId).then(() => {
+    window.$message.success("移动成功")
+    loadFolder(currentFolderId.value)
+  })
+}
 
-function onFolderMove(folderId: string, targetId: string) {}
+function onFolderMove(folderId: string, targetId: string) {
+  moveFolder(folderId, targetId).then(() => {
+    window.$message.success("移动成功")
+    loadFolder(currentFolderId.value)
+  })
+}
 
 /**
  * 行索引
