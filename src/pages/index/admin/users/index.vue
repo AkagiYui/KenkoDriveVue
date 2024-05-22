@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "user-manage",
+  "meta": {
+    "title": "用户管理"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import {

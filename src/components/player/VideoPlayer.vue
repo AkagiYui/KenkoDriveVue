@@ -19,9 +19,6 @@ onMounted(() => {
     flip: true,
     aspectRatio: true,
   })
-  nextTick(() => {
-    console.log("instance", instance)
-  })
 })
 onUnmounted(() => {
   instance?.destroy()

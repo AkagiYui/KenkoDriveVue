@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "settings",
+  "meta": {
+    "title": "设置"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
 import { useAppConfig } from "@/stores/app-config"

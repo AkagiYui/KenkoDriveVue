@@ -17,9 +17,13 @@ export function moveFolder(
   id: string,
   parent: string,
 ): RequestResponse<undefined> {
-  return Request.put(`/folder/${id}/move`, {}, {
-    params: {
-      parent,
+  return Request.put(
+    `/folder/${id}/move`,
+    {},
+    {
+      params: {
+        parent,
+      },
     },
-  })
+  )
 }

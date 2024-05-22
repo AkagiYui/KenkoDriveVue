@@ -20,7 +20,6 @@ import {
   MegaphoneOutline,
   PaperPlaneOutline,
   PeopleOutline,
-  PersonOutline,
   ReceiptOutline,
   SettingsOutline,
   ShieldCheckmarkOutline,
@@ -43,7 +42,7 @@ const menuOptions = ref([
   },
   {
     label: "文件",
-    key: "file",
+    key: "files",
     path: "/files",
     icon: renderIcon(FolderOpenOutline),
   },
@@ -110,16 +109,15 @@ const menuOptions = ref([
         children: [
           {
             label: "运行信息",
-            key: "system",
-            path: "/system",
+            key: "runtime-info",
+            path: "/admin/system/status",
             icon: renderIcon(TerminalOutline),
           },
           {
             label: "系统日志",
-            key: "log",
-            path: "/log",
+            key: "system-log",
+            path: "/admin/system/log",
             icon: renderIcon(ReceiptOutline),
-            disabled: true,
           },
           {
             label: "文件分析",
@@ -134,23 +132,16 @@ const menuOptions = ref([
         ],
       },
       {
-        label: "用户管理",
+        label: "用户信息",
         key: "user-manage",
+        path: "/admin/users",
         icon: renderIcon(PeopleOutline),
-        children: [
-          {
-            label: "用户信息",
-            key: "users",
-            path: "/users",
-            icon: renderIcon(PersonOutline),
-          },
-          {
-            label: "角色权限",
-            key: "roles",
-            path: "/roles",
-            icon: renderIcon(ShieldCheckmarkOutline),
-          },
-        ],
+      },
+      {
+        label: "角色管理",
+        key: "role-manage",
+        path: "/admin/roles",
+        icon: renderIcon(ShieldCheckmarkOutline),
       },
       {
         label: "文件管理",
@@ -166,14 +157,14 @@ const menuOptions = ref([
       },
       {
         label: "公告管理",
-        key: "announcements",
-        path: "/announcements",
+        key: "announcement-manage",
+        path: "/admin/announcements",
         icon: renderIcon(MegaphoneOutline),
       },
       {
         label: "系统设置",
         key: "system-settings",
-        path: "/system/settings",
+        path: "/admin/system/settings",
         icon: renderIcon(SettingsOutline),
       },
     ],

@@ -23,6 +23,8 @@ const config = {
 
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+
+    "vue/multi-word-component-names": "off", // 组件名必须是多个单词
   },
 }
 

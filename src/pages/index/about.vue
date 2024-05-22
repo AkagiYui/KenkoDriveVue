@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "about",
+  "meta": {
+    "title": "关于"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import getAssetsUrl from "@/utils/pub-use"
 import QrCode from "@/components/QrCode.vue"

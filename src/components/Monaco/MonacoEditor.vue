@@ -39,6 +39,7 @@ const props = withDefaults(
     language: "plaintext",
     readOnly: true,
     minimap: false,
+    options: {},
   },
 )
 const emits = defineEmits<{

@@ -63,15 +63,6 @@ onBeforeUnmount(() => {
   window.removeEventListener("beforeunload", onBeforeUnload)
 })
 
-const uploadWorker = new Worker(new URL("./uploadWorker.ts", import.meta.url), {
-  type: "module",
-})
-uploadWorker.postMessage({
-  command: "init",
-  url: "http://localhost:3000",
-  token: "123",
-})
-
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
 
 const fileInputRef = ref<HTMLInputElement | null>(null)

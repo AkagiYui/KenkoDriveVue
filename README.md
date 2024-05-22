@@ -39,6 +39,7 @@
 - [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
 - [mitt](https://github.com/developit/mitt) 事件总线
 - [vue-office](https://github.com/501351981/vue-office) Office 预览
+- [unplugin-vue-router](https://uvr.esm.is/) 基于文件的路由配置
 
 ## TODO
 
@@ -101,3 +102,4 @@ pnpm type-check && pnpm lint && pnpm format
 - [CSDN: 前端判断当前系统主题](https://blog.csdn.net/u013367867/article/details/124687719)
 - [CSDN: ESLint语法检查--indent（缩进）规则](https://blog.csdn.net/pengjunlee/article/details/97750755)
 - [CSDN: 拖拽本地文件夹到浏览器中，展示所有文件结构](https://blog.csdn.net/tangran0526/article/details/104108551)
+- [简书: v-html防止XSS注入](https://www.jianshu.com/p/902a6896cff4)

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .eslintignore",
     "format": "prettier --write src/"
   },
   "dependencies": {
@@ -70,6 +70,7 @@
     "typescript": "~5.4.2",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-vue-components": "^0.26.0",
+    "unplugin-vue-router": "^0.8.7",
     "vite": "^5.1.6",
     "vite-plugin-ms-clarity": "^1.0.0",
     "vscode-loc.git": "github:microsoft/vscode-loc",

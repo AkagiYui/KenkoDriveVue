@@ -9,7 +9,7 @@ const output = computed(() => marked(props.value))
 </script>
 
 <template>
-  <div class="output" v-html="output"></div>
+  <div v-dompurify-html="output" class="output"></div>
 </template>
 
 <style scoped>

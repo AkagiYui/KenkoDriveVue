@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "role-manage",
+  "meta": {
+    "title": "角色管理"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import type { FormInst, PaginationProps } from "naive-ui"

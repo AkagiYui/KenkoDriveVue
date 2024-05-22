@@ -1,11 +1,17 @@
+<route lang="json">
+{
+  "name": "video-preview",
+  "meta": {
+    "title": "视频预览",
+    "isPlayer": true
+  }
+}
+</route>
+
 <script lang="ts" setup>
-import { useRoute } from "vue-router"
+import { useRoute } from "vue-router/auto"
 
 const route = useRoute()
-
-onMounted(() => {
-  console.log(route.query.url)
-})
 </script>
 
 <template>

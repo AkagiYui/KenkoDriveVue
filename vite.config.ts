@@ -7,6 +7,11 @@ import AutoImport from "unplugin-auto-import/vite"
 import Components from "unplugin-vue-components/vite"
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
 import MsClarity from "vite-plugin-ms-clarity"
+import VueRouter from "unplugin-vue-router/vite"
+import {
+  getFileBasedRouteName,
+  VueRouterAutoImports,
+} from "unplugin-vue-router"
 
 // eslint-disable-next-line no-undef
 const env = process.env
@@ -28,11 +33,76 @@ const config = {
     host: "0.0.0.0",
   },
   plugins: [
+    VueRouter({
+      // 自动生成路由的文件夹
+      routesFolder: [
+        {
+          src: "src/pages",
+          path: "",
+          // override globals
+          exclude: (excluded) => {
+            // 排除任何大写字母开头的文件与文件夹，因为它们通常是组件
+            // 返回["**/A*", "**/B*", ...]
+            return excluded.concat(
+              Array.from(
+                { length: 26 },
+                (_, i) => `**/${String.fromCharCode(65 + i)}*`,
+              ),
+            )
+          },
+          filePatterns: (filePatterns) => filePatterns,
+          extensions: (extensions) => extensions,
+        },
+      ],
+
+      // 被作为页面的文件扩展名
+      extensions: [".vue"],
+
+      // 路径模式
+      filePatterns: ["**/*"],
+
+      // 排除的文件
+      exclude: [],
+
+      // 生成的类型声明文件
+      dts: "./typed-router.d.ts",
+
+      // 如何生成路由名称
+      getRouteName: (routeNode) => getFileBasedRouteName(routeNode),
+
+      // <route> 的默认语言
+      routeBlockLang: "json5",
+
+      // 同步或异步导入页面
+      importMode: "async",
+
+      // 相对于项目根目录的路径
+      root: process.cwd(),
+
+      // options for the path parser
+      pathParser: {
+        // should `users.[id]` be parsed as `users/:id`?
+        dotNesting: true,
+      },
+
+      // modify routes individually
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async extendRoute(route) {
+        // ...
+      },
+
+      // modify routes before writing
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async beforeWriteFiles(rootRoute) {
+        // ...
+      },
+    }),
     vue(),
     vueJsx(),
     AutoImport({
       imports: [
         "vue",
+        VueRouterAutoImports,
         {
           "naive-ui": [
             "useDialog",
@@ -107,11 +177,11 @@ const config = {
   },
   optimizeDeps: {
     include: [
-      `monaco-editor/esm/vs/language/json/json.worker`,
-      `monaco-editor/esm/vs/language/css/css.worker`,
-      `monaco-editor/esm/vs/language/html/html.worker`,
-      `monaco-editor/esm/vs/language/typescript/ts.worker`,
-      `monaco-editor/esm/vs/editor/editor.worker`,
+      "monaco-editor/esm/vs/language/json/json.worker",
+      "monaco-editor/esm/vs/language/css/css.worker",
+      "monaco-editor/esm/vs/language/html/html.worker",
+      "monaco-editor/esm/vs/language/typescript/ts.worker",
+      "monaco-editor/esm/vs/editor/editor.worker",
     ],
   },
 }

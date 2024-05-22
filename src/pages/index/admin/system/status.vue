@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "runtime-info",
+  "meta": {
+    "title": "系统状态"
+  }
+}
+</route>
+
 <script setup lang="ts">
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL
 const version = __APP_VERSION__

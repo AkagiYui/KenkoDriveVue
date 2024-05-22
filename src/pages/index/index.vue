@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "home",
+  "meta": {
+    "title": "概览"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { useUserInfo } from "@/stores/user-info"
 import { storeToRefs } from "pinia"

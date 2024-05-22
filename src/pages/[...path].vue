@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "404",
+  "meta": {
+    "title": "404"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { useRouter } from "vue-router"
 
@@ -30,8 +39,6 @@ const router = useRouter()
   top: 42%;
   transform: translate(-50%, -50%);
 }
-</style>
-<style>
 .page {
   height: 100vh;
 }

@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "files",
+  "meta": {
+    "title": "文件"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import type { DataTableColumns } from "naive-ui"
 import {
@@ -38,7 +47,7 @@ import {
   ReOrderDotsHorizontal16Regular as ReOrderIcon,
   Share24Regular as ShareIcon,
 } from "@vicons/fluent"
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router/auto"
 import { useAppConfig } from "@/stores/app-config"
 import { storeToRefs } from "pinia"
 import type { HTMLAttributes } from "vue"
@@ -281,7 +290,7 @@ function playFile(row: TableData) {
   if (fileType.startsWith("video") || fileType.startsWith("audio")) {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
-        name: "video",
+        name: "video-preview",
         query: { url: res },
       })
       window.open(route.href, "_blank")
@@ -303,7 +312,7 @@ function playFile(row: TableData) {
       //
       // 使用内置 PDF 阅读器
       const route = router.resolve({
-        name: "pdf",
+        name: "pdf-preview",
         query: { url: res },
       })
       window.open(route.href, "_blank")
@@ -318,7 +327,7 @@ function playFile(row: TableData) {
   ) {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
-        name: "docx",
+        name: "docx-preview",
         query: { url: res },
       })
       window.open(route.href, "_blank")
@@ -332,7 +341,7 @@ function playFile(row: TableData) {
   ) {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
-        name: "xlsx",
+        name: "xlsx-preview",
         query: { url: res },
       })
       window.open(route.href, "_blank")

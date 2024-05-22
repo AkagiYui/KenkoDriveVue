@@ -1,6 +1,16 @@
+<route lang="json">
+{
+  "name": "login",
+  "meta": {
+    "title": "登录"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import { type FormInst, type FormItemRule, NIcon } from "naive-ui"
+import type { FormInst, FormItemRule } from "naive-ui"
+import { NIcon } from "naive-ui"
 import {
   CheckmarkOutline,
   KeyOutline,
@@ -22,19 +32,15 @@ import {
 } from "@/api/user"
 import { getRegisterEnabled } from "@/api/server"
 import { hasText } from "@/utils/string"
+import useGlobal from "@/utils/useGlobal"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
-const { isLoggedIn } = storeToRefs(useUserInfo())
 const { setToken } = useUserInfo()
 const route = useRouter()
 
 const isRegisterEnabled = ref(false)
 
 onBeforeMount(() => {
-  // 如果已经登录，跳转到首页
-  if (isLoggedIn.value) {
-    route.push("/")
-  }
   getRegisterEnabled().then((res) => {
     isRegisterEnabled.value = res.data
   })
@@ -120,7 +126,7 @@ function onRegisterButtonClick() {
 }
 
 const codeInputRef = ref<HTMLInputElement | null>(null)
-const geetest = getCurrentInstance()!.proxy!.$geetest
+const { $geetest: geetest } = useGlobal()
 
 function onSendEmailCodeLogoClick() {
   if (isCooldown.value) return

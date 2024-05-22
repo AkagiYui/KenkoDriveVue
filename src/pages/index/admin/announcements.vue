@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "announcement-manage",
+  "meta": {
+    "title": "公告管理"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import type { PaginationProps } from "naive-ui"

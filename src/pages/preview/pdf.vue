@@ -1,3 +1,13 @@
+<route lang="json">
+{
+  "name": "pdf-preview",
+  "meta": {
+    "title": "PDF预览",
+    "isPlayer": true
+  }
+}
+</route>
+
 <script lang="ts" setup>
 import { useRoute } from "vue-router"
 
@@ -10,6 +20,10 @@ onBeforeUnmount(() => {
   }
 })
 
+function onOpenButtonClick() {
+  window.open(blobUrl.value)
+}
+
 if (route.query.url) {
   fetch(route.query.url as string)
     .then((res) => res.blob())
@@ -17,10 +31,6 @@ if (route.query.url) {
       const blob = new Blob([res], { type: "application/pdf" })
       blobUrl.value = URL.createObjectURL(blob)
     })
-}
-
-function onOpenButtonClick() {
-  window.open(blobUrl.value)
 }
 </script>
 

@@ -1,3 +1,12 @@
+<route lang="json">
+{
+  "name": "system-settings",
+  "meta": {
+    "title": "系统设置"
+  }
+}
+</route>
+
 <script setup lang="ts">
 import { getConfig, updateSetting } from "@/api/server"
 import { useDebounceFn } from "@vueuse/core"
