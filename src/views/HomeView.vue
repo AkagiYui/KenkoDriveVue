@@ -106,7 +106,7 @@ onBeforeMount(() => {
           :description="announcement.updateTime"
         >
           <div v-for="line in announcement.content.split('\n')" :key="line">
-            {{ line }}
+            {{ line }}<br />
           </div>
         </n-thing>
       </n-list-item>
