@@ -142,6 +142,10 @@ function onFileMove(fileId: string, targetId: string) {
 }
 
 function onFolderMove(folderId: string, targetId: string) {
+  if (folderId === targetId) {
+    window.$message.error("不能移动到自己")
+    return
+  }
   moveFolder(folderId, targetId).then(() => {
     window.$message.success("移动成功")
     loadFolder(currentFolderId.value)
