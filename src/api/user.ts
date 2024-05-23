@@ -80,7 +80,7 @@ export function getUserInfo() {
 }
 
 /** 获取用户头像*/
-export function getUserAvatar() {
+export function getUserAvatar(): RequestResponse<ArrayBuffer> {
   return Request.get("/user/avatar", { responseType: "blob" })
 }
 

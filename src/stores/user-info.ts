@@ -1,9 +1,8 @@
 import { computed, ref } from "vue"
-import { useRouter } from "vue-router/auto"
 import { defineStore } from "pinia"
-import type { AxiosResponse } from "axios"
 import { getUserAvatar, getUserInfo } from "@/api/user"
 import Permission from "@/types/permission"
+import { getJWTExpireTime, hasText } from "@/utils/string"
 
 export const useUserInfo = defineStore(
   "user-info",
@@ -18,22 +17,30 @@ export const useUserInfo = defineStore(
     const permissions = ref<Permission[]>([])
 
     const isLoggedIn = computed(() => {
-      if (requestToken.value !== "") {
-        if (Date.now() < tokenExpireTime.value) {
-          return true
-        }
-        deleteToken()
+      const token = requestToken.value
+      if (!hasText(token)) {
+        return false
       }
-      return false
+      if (tokenExpireTime.value < (Date.now() / 1000 + 60 * 60)) { // 60分钟内过期
+        return false
+      }
+      return true
     })
 
-    const setToken = (token: string) => {
+    /**
+     * 设置token，将自动更新用户信息
+     * @param token token
+     */
+    function setToken(token: string) {
       requestToken.value = token
-      tokenExpireTime.value = Date.now() + 1000 * 60 * 60 * 48 // 48小时
-
+      tokenExpireTime.value = getJWTExpireTime(token)
       renewUserInfo() // 获取用户信息
     }
-    const deleteToken = () => {
+
+    /**
+     * 清空信息
+     */
+    function removeInfo() {
       requestToken.value = ""
       tokenExpireTime.value = 0
       userId.value = ""
@@ -42,64 +49,85 @@ export const useUserInfo = defineStore(
       email.value = ""
       avatarUrl.value = ""
     }
-    const setAvatar = (imageData: ArrayBuffer) => {
+
+    /**
+     * 设置头像
+     * @param imageData 图片数据
+     */
+    function setAvatar(imageData: ArrayBuffer) {
       const imageUrl = URL.createObjectURL(
         new Blob([imageData], { type: "imageType" }),
       )
-      URL.revokeObjectURL(avatarUrl.value)
+      if (hasText(avatarUrl.value)) {
+        URL.revokeObjectURL(avatarUrl.value)
+      }
       avatarUrl.value = imageUrl
     }
-    const renewAvatar = () => {
+
+    /**
+     * 更新头像
+     */
+    function renewAvatar() {
       if (!isLoggedIn.value) return
-      getUserAvatar().then((res: AxiosResponse) => {
+      getUserAvatar().then((res) => {
         const data = res.data
         setAvatar(data)
       })
     }
-    const renewUserInfo = () => {
-      if (!isLoggedIn.value) return
-      const router = useRouter()
-      getUserInfo()
-        .then((res) => {
-          renewAvatar()
-          const data = res.data
-          username.value = data.username
-          userId.value = data.id
-          email.value = data.email
-          nickname.value = data.nickname || data.username
-          permissions.value = (data.permissions as string[]).map((item) => {
-            // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
-            return (Permission as Record<string, any>)[item]
+
+    /**
+     * 更新用户信息
+     * @returns Promise
+     */
+    function renewUserInfo() {
+      return new Promise<void>((_, reject) => {
+        if (!isLoggedIn.value) {
+          reject()
+          return
+        }
+        getUserInfo()
+          .then((res) => {
+            renewAvatar()
+            const data = res.data
+            username.value = data.username
+            userId.value = data.id
+            email.value = data.email
+            nickname.value = data.nickname || data.username
+            permissions.value = (data.permissions as string[]).map((item) => {
+              // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
+              return (Permission as Record<string, any>)[item]
+            })
           })
-        })
-        .catch((err) => {
-          const code = err.response.status
-          if (code === 401) {
-            deleteToken()
-            router.replace("/login")
-          }
-        })
+          .catch(() => {
+            reject()
+          })
+      })
     }
-    const hasPermission = (permission: Permission) => {
+
+    /**
+     * 判断是否有权限
+     * @param permission 权限
+     * @returns 是否有权限
+     */
+    function hasPermission(permission: Permission) {
       return permissions.value.includes(permission)
     }
 
     return {
       requestToken,
       tokenExpireTime,
-      isLoggedIn,
-      setToken,
-      deleteToken,
       userId,
       username,
       nickname,
       email,
       avatarUrl,
       permissions,
-      setAvatar,
+      isLoggedIn,
+      setToken,
       renewAvatar,
       renewUserInfo,
       hasPermission,
+      removeInfo,
     }
   },
   {

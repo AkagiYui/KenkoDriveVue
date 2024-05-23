@@ -16,7 +16,7 @@ import QrCode from "@/components/QrCode.vue"
 const { isDarkMode, isUploadDrawerShow, isDebugMode, uploadItemCount } =
   storeToRefs(useAppConfig())
 const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
-const { deleteToken } = useUserInfo()
+const { removeInfo } = useUserInfo()
 const router = useRouter()
 
 const isPlayer = ref(true)
@@ -46,7 +46,7 @@ const onSelect = (key: string) => {
       router.replace("/settings")
       break
     case "logout":
-      deleteToken()
+      removeInfo()
       router.replace("/login")
       break
   }

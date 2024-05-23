@@ -8,9 +8,15 @@
 import SideMenu from "@/components/SideMenu.vue"
 import UploadDrawer from "@/components/upload/UploadDrawer.vue"
 import { useUserInfo } from "@/stores/user-info"
+import { useRouter } from "vue-router/auto"
 
 const { renewUserInfo } = useUserInfo()
-renewUserInfo()
+renewUserInfo().catch(() => {
+  // 未登录
+  window.$message.error("登录失效，请重新登录")
+  const router = useRouter()
+  router.replace("/login")
+})
 </script>
 
 <template>

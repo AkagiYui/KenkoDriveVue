@@ -29,7 +29,6 @@ import { useGlobal } from "@/hooks"
 import { useUserInfo } from "@/stores/user-info"
 
 const { isLoggedIn, requestToken, avatarUrl } = storeToRefs(useUserInfo())
-const { setAvatar } = useUserInfo()
 
 const vv = ref("你好")
 const imgUrl = ref("")

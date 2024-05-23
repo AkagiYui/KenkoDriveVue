@@ -13,10 +13,14 @@ export const useAppConfig = defineStore(
     const isUploadDrawerShow = ref(false)
     const uploadItemCount = ref(0)
 
-    const toggleDarkMode = () => {
+    /**
+     * 切换暗黑模式
+     */
+    function toggleDarkMode() {
       isDarkMode.value = !isDarkMode.value
     }
-    const reset = () => {
+
+    function reset() {
       isDarkMode.value = false
       isMenuCollapsed.value = false
       currentRouteName.value = ""
@@ -30,12 +34,12 @@ export const useAppConfig = defineStore(
       isDarkMode,
       isMenuCollapsed,
       currentRouteName,
-      toggleDarkMode,
-      reset,
       isDebugMode,
       expandedMenuKeys,
       isUploadDrawerShow,
       uploadItemCount,
+      toggleDarkMode,
+      reset,
     }
   },
   {
