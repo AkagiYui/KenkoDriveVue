@@ -1,3 +1,29 @@
+<script lang="ts" setup>
+const emits = defineEmits<{
+  (e: "drop", file: FileSystemFileEntry[], event: DragEvent): void
+}>()
+
+const showDrag = ref(false)
+const dropFile = (e: any) => {
+  e.preventDefault()
+  showDrag.value = false
+  const files = Array.from(e.dataTransfer.items)
+    .map((item) => item as DataTransferItem)
+    .filter((item) => item.kind === "file")
+    .map((item) => item.webkitGetAsEntry()!)
+    .map((entry) => entry as FileSystemFileEntry)
+  emits("drop", files, e)
+}
+onMounted(() => {
+  document.ondragenter = () => {
+    showDrag.value = true
+  }
+})
+onBeforeUnmount(() => {
+  document.ondragenter = null
+})
+</script>
+
 <template>
   <div
     v-if="showDrag"
@@ -18,29 +44,6 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-const emits = defineEmits<{
-  (e: "drop", file: FileSystemEntry[], event: DragEvent): void
-}>()
-
-const showDrag = ref(false)
-const dropFile = (e: any) => {
-  e.preventDefault()
-  showDrag.value = false
-  const files = Array.from(e.dataTransfer.items)
-    .filter((item) => (item as DataTransferItem).kind === "file")
-    .map((item) => (item as DataTransferItem).webkitGetAsEntry()!)
-  emits("drop", files, e)
-}
-onMounted(() => {
-  document.ondragenter = () => {
-    showDrag.value = true
-  }
-})
-onBeforeUnmount(() => {
-  document.ondragenter = null
-})
-</script>
 <style lang="scss" scoped>
 .flex {
   display: flex;

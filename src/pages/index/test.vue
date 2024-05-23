@@ -12,7 +12,6 @@
 import { storeToRefs } from "pinia"
 import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
-import { useUserInfo } from "@/stores/user-info"
 import VueWordCloud from "vuewordcloud"
 // Chart.js
 import {
@@ -26,7 +25,8 @@ import {
 } from "chart.js"
 import { Bar } from "vue-chartjs"
 import GeetestCaptcha from "@/components/GeetestCaptcha.vue"
-import useGlobal from "@/utils/useGlobal"
+import { useGlobal } from "@/hooks"
+import { useUserInfo } from "@/stores/user-info"
 
 const { isLoggedIn, requestToken, avatarUrl } = storeToRefs(useUserInfo())
 const { setAvatar } = useUserInfo()

@@ -11,7 +11,6 @@
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import type { FormInst, PaginationProps } from "naive-ui"
 import { NButton, NInput, NSpace, NSwitch } from "naive-ui"
-import ConfirmModal from "@/components/ConfirmModal.vue"
 import {
   addRole,
   deleteRole,
@@ -20,6 +19,7 @@ import {
   updateRole,
   updateRoleStatus,
 } from "@/api/role"
+import ConfirmModal from "@/components/ConfirmModal.vue"
 import UserTable from "./UserTable.vue"
 
 // 数据变量

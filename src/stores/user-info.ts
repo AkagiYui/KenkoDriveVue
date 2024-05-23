@@ -1,8 +1,8 @@
 import { computed, ref } from "vue"
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router/auto"
 import { defineStore } from "pinia"
-import { getUserAvatar, getUserInfo } from "@/api/user"
 import type { AxiosResponse } from "axios"
+import { getUserAvatar, getUserInfo } from "@/api/user"
 import Permission from "@/types/permission"
 
 export const useUserInfo = defineStore(

@@ -1,3 +1,8 @@
+/**
+ * 将日期字符串转换为Date对象
+ * @param date 日期字符串
+ * @returns Date对象
+ */
 export function unmarshalDate(date: string | Date) {
   if (date instanceof Date) {
     return date

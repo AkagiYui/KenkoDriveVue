@@ -1,13 +1,16 @@
+/**
+ * 入口文件，创建Vue实例并挂载到DOM上
+ */
+
 import { createApp } from "vue"
 import { createPinia } from "pinia"
+import mitt from "mitt"
 import piniaPersist from "pinia-plugin-persistedstate"
 import VueDOMPurifyHTML from "vue-dompurify-html"
-import "./vfonts/Lato.css"
 import "normalize.css/normalize.css"
-//import "default-passive-events"
+import "./assets/Lato.css"
 import App from "./App.vue"
 import router from "./router"
-import mitt from "mitt"
 
 const pinia = createPinia()
 pinia.use(piniaPersist)
@@ -19,12 +22,12 @@ app.use(VueDOMPurifyHTML)
 
 // Catch unhandled errors.
 app.config.errorHandler = (err) => {
-  console.error("Vue Error Handler: " + err)
+  console.error("Vue Error Handler", err)
 }
 
 // Catch unhandled rejections.
 window.addEventListener("unhandledrejection", (event) => {
-  console.error("Unhandled Rejection: " + event.reason)
+  console.error("Unhandled Rejection", event.reason)
 })
 
 function injectUmami() {

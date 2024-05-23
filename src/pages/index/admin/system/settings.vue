@@ -8,8 +8,8 @@
 </route>
 
 <script setup lang="ts">
-import { getConfig, updateSetting } from "@/api/server"
 import { useDebounceFn } from "@vueuse/core"
+import { getConfig, updateSetting } from "@/api/server"
 
 // 全局变量
 const isLoading = ref(false)
@@ -56,7 +56,6 @@ const settings = ref<SettingsType>({
 })
 
 const updateSettingsDebounced = useDebounceFn(() => {
-  console.log("updateSettingsDebounced")
   const updatePromises: Promise<any>[] = []
 
   for (const key in settings.value) {

@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router/auto"
 import { storeToRefs } from "pinia"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
-import getAssetsUrl from "@/utils/pub-use"
-import renderIcon from "@/utils/render-icon"
 import {
   ArrowUpOutline,
   LogOutOutline,
@@ -12,15 +8,18 @@ import {
   PersonCircleOutline,
   SunnyOutline,
 } from "@vicons/ionicons5"
+import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
+import { renderIcon } from "@/utils/render"
 import QrCode from "@/components/QrCode.vue"
 
-const { isDarkMode, isDebugMode, isUploadDrawerShow, uploadItemCount } =
+const { isDarkMode, isUploadDrawerShow, isDebugMode, uploadItemCount } =
   storeToRefs(useAppConfig())
 const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
 const { deleteToken } = useUserInfo()
 const router = useRouter()
 
-const isPlayer = ref(false)
+const isPlayer = ref(true)
 onMounted(async () => {
   // 在路由完成后再判断是否为播放器页面
   await router.isReady()
@@ -133,7 +132,7 @@ const onSelect = (key: string) => {
             <n-avatar
               :size="32"
               :src="avatarUrl"
-              :fallback-src="getAssetsUrl('default-avatar.jpg')"
+              :render-fallback="() => ''"
               :img-props="{
                 alt: 'avatar',
               }"

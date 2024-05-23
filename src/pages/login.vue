@@ -8,9 +8,10 @@
 </route>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router"
-import type { FormInst, FormItemRule } from "naive-ui"
+import { useRouter } from "vue-router/auto"
+import { storeToRefs } from "pinia"
 import { NIcon } from "naive-ui"
+import type { FormInst, FormItemRule } from "naive-ui"
 import {
   CheckmarkOutline,
   KeyOutline,
@@ -19,10 +20,8 @@ import {
   PhonePortraitOutline,
   SendSharp,
 } from "@vicons/ionicons5"
-import { ResponseMessagesSimplifiedChinese } from "@/types/ResponseMessages"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
-import { storeToRefs } from "pinia"
 import {
   confirmRegisterEmailCode,
   confirmSmsCode,
@@ -31,8 +30,9 @@ import {
   sendSmsCode,
 } from "@/api/user"
 import { getRegisterEnabled } from "@/api/server"
+import { ResponseMessagesSimplifiedChinese } from "@/api/ResponseMessages"
 import { hasText } from "@/utils/string"
-import useGlobal from "@/utils/useGlobal"
+import { useGlobal } from "@/hooks"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { setToken } = useUserInfo()
@@ -189,7 +189,6 @@ const smsFormRules = {
 const smsFormRef = ref<FormInst | null>(null)
 const onSmsLoginButtonClick = () => {
   smsFormRef.value?.validate().then(() => {
-    console.log(123)
     confirmSmsCode(smsLoginForm.value.phone, smsLoginForm.value.code)
       .then((res) => {
         setToken(res.data.token)

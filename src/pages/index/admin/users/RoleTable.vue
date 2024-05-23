@@ -3,6 +3,8 @@ import { NButton, type PaginationProps } from "naive-ui"
 import { getRoles } from "@/api/role"
 import { assignRoles, getUserRoles, removeRoles } from "@/api/user"
 
+/** 是否显示模态框 */
+const show = defineModel<boolean>("show", { default: false })
 /** 组件参数 */
 const props = withDefaults(
   defineProps<{
@@ -10,8 +12,7 @@ const props = withDefaults(
   }>(),
   {},
 )
-/** 是否显示模态框 */
-const show = defineModel<boolean>("show", { default: false })
+
 /** 组件挂载前发起获取用户信息请求 */
 onBeforeMount(() => {
   getRole()

@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from "vue-router"
-import { type MenuOption, NIcon } from "naive-ui"
+import { RouterLink, useRoute } from "vue-router/auto"
+import type { MenuOption } from "naive-ui"
 import { storeToRefs } from "pinia"
-import { useAppConfig } from "@/stores/app-config"
-import renderIcon from "@/utils/render-icon"
 import {
   BulbOutline,
   CaretDownOutline,
@@ -27,11 +25,13 @@ import {
   TerminalOutline,
   TimeOutline,
   TrashOutline,
+  CogOutline,
 } from "@vicons/ionicons5"
+import { useAppConfig } from "@/stores/app-config"
+import { renderIcon } from "@/utils/render"
 
-const { expandedMenuKeys } = storeToRefs(useAppConfig())
-
-const { isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
+const { expandedMenuKeys, isMenuCollapsed, isDebugMode } =
+  storeToRefs(useAppConfig())
 
 const menuOptions = ref([
   {
@@ -78,12 +78,14 @@ const menuOptions = ref([
     key: "like",
     icon: renderIcon(HeartOutline),
     disabled: true,
+    show: false,
   },
   {
     label: "密码箱",
     key: "vault",
     icon: renderIcon(LockClosedOutline),
     disabled: true,
+    show: false,
   },
   {
     label: "回收站",
@@ -123,11 +125,13 @@ const menuOptions = ref([
             label: "文件分析",
             key: "file-analysis",
             disabled: true,
+            show: false,
           },
           {
             label: "用户分析",
             key: "user-analysis",
             disabled: true,
+            show: false,
           },
         ],
       },
@@ -165,7 +169,7 @@ const menuOptions = ref([
         label: "系统设置",
         key: "system-settings",
         path: "/admin/system/settings",
-        icon: renderIcon(SettingsOutline),
+        icon: renderIcon(CogOutline),
       },
     ],
   },
@@ -208,10 +212,6 @@ const menuOptions = ref([
   },
 ])
 
-const expandIcon = () => {
-  return h(NIcon, null, { default: () => h(CaretDownOutline) })
-}
-
 const renderMenuLabel = (option: MenuOption) => {
   if (option.path && !option.disabled) {
     return h(
@@ -230,15 +230,13 @@ const renderMenuLabel = (option: MenuOption) => {
 
 <template>
   <n-layout-sider
+    v-model:collapsed="isMenuCollapsed"
     bordered
+    show-trigger
     collapse-mode="width"
     :collapsed-width="64"
     :width="240"
-    :collapsed="isMenuCollapsed"
-    show-trigger
     :native-scrollbar="false"
-    @collapse="isMenuCollapsed = true"
-    @expand="isMenuCollapsed = false"
   >
     <n-menu
       style="height: 100%; width: 100%"
@@ -248,7 +246,7 @@ const renderMenuLabel = (option: MenuOption) => {
       :indent="22"
       :options="menuOptions"
       :render-label="renderMenuLabel"
-      :expand-icon="expandIcon"
+      :expand-icon="renderIcon(CaretDownOutline)"
       :value="useRoute().name as string"
       :expanded-keys="expandedMenuKeys"
       @update:expanded-keys="expandedMenuKeys = $event"

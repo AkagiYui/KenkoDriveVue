@@ -9,10 +9,10 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
 import { WeatherMoon16Regular, WeatherSunny16Regular } from "@vicons/fluent"
 import type { UploadFileInfo } from "naive-ui"
+import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
 import { uploadUserAvatar } from "@/api/user"
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
@@ -36,7 +36,6 @@ const reset = () => {
 
 const avatarFileList = ref<UploadFileInfo[]>([])
 const uploadAvatar = (fileList: UploadFileInfo[]) => {
-  console.log("fileList: ", fileList)
   const fileInfo = fileList[0] ?? null
   const file = fileInfo?.file ?? null
   if (!file) {
@@ -49,7 +48,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
     })
     .catch((err) => {
       window.$message.error("头像上传失败")
-      console.log("err: ", err)
+      console.error("upload avatar error", err)
     })
     .finally(() => {
       // 移除元素

@@ -8,7 +8,9 @@
 </route>
 
 <script setup lang="ts">
-import type { DataTableColumns } from "naive-ui"
+import { useRouter } from "vue-router/auto"
+import { storeToRefs } from "pinia"
+import type { HTMLAttributes } from "vue"
 import {
   NButton,
   NDropdown,
@@ -17,6 +19,7 @@ import {
   NImage,
   useThemeVars,
 } from "naive-ui"
+import type { DataTableColumns } from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
 import {
   AddOutline,
@@ -26,10 +29,26 @@ import {
 } from "@vicons/ionicons5"
 import {
   AndroidTwotone,
-  FolderOpenTwotone,
+  AudiotrackOutlined,
+  FeedOutlined,
+  FolderOpenOutlined,
   GifBoxTwotone,
-  InsertDriveFileTwotone,
+  ImageOutlined,
+  InsertDriveFileOutlined,
+  QueueMusicOutlined,
+  SmartDisplayOutlined,
+  SpaceDashboardOutlined,
 } from "@vicons/material"
+import {
+  ArrowDownload24Regular as DownloadIcon,
+  Delete24Regular as DeleteIcon,
+  Play24Regular as PlayIcon,
+  Rename24Regular as RenameIcon,
+  ReOrderDotsHorizontal16Regular as ReOrderIcon,
+  Share24Regular as ShareIcon,
+  DocumentPdf32Regular,
+} from "@vicons/fluent"
+import { Java, Markdown, Vuejs } from "@vicons/fa"
 import { filesize } from "filesize"
 import {
   deleteFile as deleteFileEndpoint,
@@ -38,37 +57,39 @@ import {
   moveFile,
 } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
-import renderIcon from "@/utils/render-icon"
-import {
-  ArrowDownload24Regular as DownloadIcon,
-  Delete24Regular as DeleteIcon,
-  Play24Regular as PlayIcon,
-  Rename24Regular as RenameIcon,
-  ReOrderDotsHorizontal16Regular as ReOrderIcon,
-  Share24Regular as ShareIcon,
-} from "@vicons/fluent"
-import { useRouter } from "vue-router/auto"
+import { renderIcon } from "@/utils/render"
 import { useAppConfig } from "@/stores/app-config"
-import { storeToRefs } from "pinia"
-import type { HTMLAttributes } from "vue"
-import useGlobal from "@/utils/useGlobal"
-import { EVENT_ADD_ENTRIES, EVENT_UPLOAD_SUCCESS } from "@/utils/string"
+import { emitBusEvent, useBusEvent } from "@/hooks"
 import { moveFolder } from "@/api/folder"
-
+import { BusEvent } from "@/types"
 const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()
 
-const { $bus } = useGlobal()
-onMounted(() => {
-  $bus.on(EVENT_UPLOAD_SUCCESS, (folderId) => {
-    if (currentFolderId.value === folderId) {
-      loadFolder(folderId)
-    }
-  })
+useBusEvent(BusEvent.UPLOAD_SUCCESS, (folderId) => {
+  if (currentFolderId.value === folderId) {
+    loadFolder(folderId)
+  }
 })
-onBeforeUnmount(() => {
-  $bus.off(EVENT_UPLOAD_SUCCESS)
-})
+
+const codeFileSuffix = [
+  "js",
+  "jsx",
+  "tsx",
+  "vue",
+  "json",
+  "html",
+  "yaml",
+  "yml",
+  "css",
+  "scss",
+  "less",
+  "lrc",
+  "txt",
+  "ass",
+  "srt",
+  "xml",
+  "sql",
+]
 
 /**
  * 主题相关变量
@@ -79,15 +100,44 @@ const themeVars = useThemeVars()
  * 根据文件类型取图标
  * @param type 文件类型
  */
-function type2Icon(type: string) {
+function type2Icon(type: string | undefined, name: string) {
   switch (type) {
     case "apk":
       return AndroidTwotone
     case "image/gif":
       return GifBoxTwotone
-    default:
-      return InsertDriveFileTwotone
+    case "application/pdf":
+      return DocumentPdf32Regular
+    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+      return SpaceDashboardOutlined
+    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      return FeedOutlined
   }
+  if (type?.startsWith("image")) {
+    return ImageOutlined
+  }
+  if (type?.startsWith("video")) {
+    return SmartDisplayOutlined
+  }
+  if (type?.startsWith("audio")) {
+    return AudiotrackOutlined
+  }
+
+  if (name.endsWith("vue")) {
+    return Vuejs
+  }
+  if (name.endsWith("md")) {
+    return Markdown
+  }
+  if (name.endsWith("lrc")) {
+    return QueueMusicOutlined
+  }
+  if (name.endsWith("jar") || name.endsWith("java")) {
+    return Java
+  }
+
+  console.log("unknown type", type, name)
+  return InsertDriveFileOutlined
 }
 
 /**
@@ -190,7 +240,11 @@ const columns: DataTableColumns<TableData> = [
               { size: 30, color: themeVars.value.primaryColor, depth: 2 },
               {
                 default: () =>
-                  h(isFolder ? FolderOpenTwotone : type2Icon(row.fileType!)),
+                  h(
+                    isFolder
+                      ? FolderOpenOutlined
+                      : type2Icon(row.fileType, row.name),
+                  ),
               },
             ),
             h(
@@ -368,7 +422,7 @@ function playFile(row: TableData) {
     })
     return
   }
-  if (["js", "txt", "ass", "srt", "xml", "sql", "vue"].includes(suffix!)) {
+  if (codeFileSuffix.includes(suffix!)) {
     getFileTemporaryUrl(row.id).then((res) => {
       window.$loadingbar.start()
       fetch(res)
@@ -385,7 +439,7 @@ function playFile(row: TableData) {
 
   // 不支持的文件类型
   window.$message.error("暂不支持该文件类型的预览")
-  console.log("play file", row)
+  console.log("unknown file type", fileType, row.name)
 }
 
 function downloadFile(row: TableData) {
@@ -526,9 +580,9 @@ const monacoLanguage = ref("plaintext")
 
 const allowDrop = ref(true)
 
-function onDrop(file: FileSystemEntry[]) {
+function onDrop(file: FileSystemFileEntry[]) {
   const folderId = currentFolderId.value
-  $bus.emit(EVENT_ADD_ENTRIES, { file, folderId })
+  emitBusEvent(BusEvent.ADD_ENTRIES, { file, folderId })
 }
 </script>
 

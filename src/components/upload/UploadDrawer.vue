@@ -1,66 +1,18 @@
-<template>
-  <input v-show="false" ref="fileInputRef" MULTIPLE type="file" />
-  <input
-    v-show="false"
-    ref="folderInputRef"
-    mozdirectory
-    odirectory
-    type="file"
-    webkitdirectory
-  />
-  <n-drawer v-model:show="isUploadDrawerShow" :placement="'right'" :width="502">
-    <n-drawer-content id="content" :native-scrollbar="false" title="">
-      <template #header> 上传列表</template>
-      <n-empty v-if="fileList.length === 0" id="empty" />
-      <UploadItem
-        v-for="(item, index) in fileList"
-        :key="index"
-        :file="item"
-        @on-pause-button-click="console.log('on-pause-button-click', item)"
-        @on-remove-button-click="console.log('on-remove-button-click', item)"
-      />
-      <template #footer>
-        <n-flex>
-          <n-button @click="onUploadFileButtonClick"
-            >上传文件
-            <template #icon>
-              <n-icon :component="DocumentOutline" />
-            </template>
-          </n-button>
-          <n-button @click="onUploadFolderButtonClick"
-            >上传文件夹
-            <template #icon>
-              <n-icon :component="FolderOutline" />
-            </template>
-          </n-button>
-        </n-flex>
-      </template>
-    </n-drawer-content>
-  </n-drawer>
-</template>
-
 <script lang="ts" setup>
-import { useAppConfig } from "@/stores/app-config"
 import { storeToRefs } from "pinia"
-import UploadItem from "./UploadItem.vue"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
+import { useAppConfig } from "@/stores/app-config"
 import { uploadFile } from "@/api/file"
-import useGlobal from "@/utils/useGlobal"
-import { EVENT_ADD_ENTRIES, EVENT_UPLOAD_SUCCESS } from "@/utils/string"
+import { emitBusEvent, useBusEvent, useEventListener } from "@/hooks"
+import UploadItem from "./UploadItem.vue"
+import { BusEvent } from "@/types"
 
-const { $bus } = useGlobal()
-
+const running = ref(false)
 // 阻止关闭页面
-function onBeforeUnload(event: BeforeUnloadEvent) {
+useEventListener(window, "beforeunload", (e) => {
   if (running.value) {
-    event.preventDefault()
+    e.preventDefault()
   }
-}
-onMounted(() => {
-  window.addEventListener("beforeunload", onBeforeUnload)
-})
-onBeforeUnmount(() => {
-  window.removeEventListener("beforeunload", onBeforeUnload)
 })
 
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
@@ -69,19 +21,16 @@ const fileInputRef = ref<HTMLInputElement | null>(null)
 const folderInputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
   fileInputRef.value?.addEventListener("change", onFileInputChange)
-  $bus.on(EVENT_ADD_ENTRIES, ({ file, folderId }: AddEntriesEvent) => {
-    file
-      .filter((f) => f.isFile)
-      .map((f) =>
-        f.file((f) => {
-          addFile(f, folderId)
-        }),
-      )
-  })
 })
-onBeforeUnmount(() => {
-  $bus.off(EVENT_ADD_ENTRIES)
-  $bus.off(EVENT_UPLOAD_SUCCESS)
+
+useBusEvent(BusEvent.ADD_ENTRIES, ({ file, folderId }) => {
+  file
+    .filter((f) => f.isFile)
+    .map((f) =>
+      f.file((f) => {
+        addFile(f, folderId)
+      }),
+    )
 })
 
 function onUploadFileButtonClick() {
@@ -133,8 +82,6 @@ function addFile(file: File, folderId?: string) {
   upload()
 }
 
-const running = ref(false)
-
 function upload() {
   if (running.value) {
     return
@@ -161,11 +108,52 @@ function upload() {
   request.then(() => {
     fileList.shift()
     running.value = false
-    $bus.emit(EVENT_UPLOAD_SUCCESS, file.folderId)
+    emitBusEvent(BusEvent.UPLOAD_SUCCESS, file.folderId)
     upload()
   })
 }
 </script>
+
+<template>
+  <input v-show="false" ref="fileInputRef" MULTIPLE type="file" />
+  <input
+    v-show="false"
+    ref="folderInputRef"
+    mozdirectory
+    odirectory
+    type="file"
+    webkitdirectory
+  />
+  <n-drawer v-model:show="isUploadDrawerShow" :placement="'right'" :width="502">
+    <n-drawer-content id="content" :native-scrollbar="false" title="">
+      <template #header> 上传列表</template>
+      <n-empty v-if="fileList.length === 0" id="empty" />
+      <UploadItem
+        v-for="(item, index) in fileList"
+        :key="index"
+        :file="item"
+        @on-pause-button-click="console.log('on-pause-button-click', item)"
+        @on-remove-button-click="console.log('on-remove-button-click', item)"
+      />
+      <template #footer>
+        <n-flex>
+          <n-button @click="onUploadFileButtonClick"
+            >上传文件
+            <template #icon>
+              <n-icon :component="DocumentOutline" />
+            </template>
+          </n-button>
+          <n-button @click="onUploadFolderButtonClick"
+            >上传文件夹
+            <template #icon>
+              <n-icon :component="FolderOutline" />
+            </template>
+          </n-button>
+        </n-flex>
+      </template>
+    </n-drawer-content>
+  </n-drawer>
+</template>
 
 <style scoped>
 #content {

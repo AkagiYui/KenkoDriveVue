@@ -8,24 +8,6 @@ import * as monaco from "monaco-editor"
 import { getHighlighter } from "shiki"
 import { shikiToMonaco } from "@shikijs/monaco"
 
-self.MonacoEnvironment = {
-  getWorker(_: string, label: string) {
-    if (label === "json") {
-      return new jsonWorker()
-    }
-    if (["css", "scss", "less"].includes(label)) {
-      return new cssWorker()
-    }
-    if (["html", "handlebars", "razor"].includes(label)) {
-      return new htmlWorker()
-    }
-    if (["typescript", "javascript"].includes(label)) {
-      return new tsWorker()
-    }
-    return new EditorWorker()
-  },
-}
-
 const content = defineModel<string>("content", { default: "" })
 const props = withDefaults(
   defineProps<{
@@ -48,7 +30,6 @@ const emits = defineEmits<{
 }>()
 
 const theme = computed(() => {
-  console.log("暗色切换", props.dark)
   return props.dark ? "vitesse-dark" : "vitesse-light"
 })
 watch(theme, () => monaco.editor.setTheme(theme.value))
@@ -65,6 +46,24 @@ const language = computed(() => {
       return props.language
   }
 })
+
+self.MonacoEnvironment = {
+  getWorker(_: string, label: string) {
+    if (label === "json") {
+      return new jsonWorker()
+    }
+    if (["css", "scss", "less"].includes(label)) {
+      return new cssWorker()
+    }
+    if (["html", "handlebars", "razor"].includes(label)) {
+      return new htmlWorker()
+    }
+    if (["typescript", "javascript"].includes(label)) {
+      return new tsWorker()
+    }
+    return new EditorWorker()
+  },
+}
 
 let editor: monaco.editor.IStandaloneCodeEditor
 const codeEditBox = ref()

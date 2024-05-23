@@ -15,12 +15,12 @@ import {
 const props = defineProps<{
   file: UploadFileInfo
 }>()
-const file = computed<UploadFileInfo>(() => props.file)
 const emit = defineEmits<{
   onPauseButtonClick: []
   onRemoveButtonClick: []
 }>()
 
+const file = computed<UploadFileInfo>(() => props.file)
 const isConfirming = ref(false)
 const icon = computed(() => {
   switch (file.value.type) {

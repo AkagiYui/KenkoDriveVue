@@ -4,6 +4,15 @@
 }
 </route>
 
+<script lang="ts" setup>
+import SideMenu from "@/components/SideMenu.vue"
+import UploadDrawer from "@/components/upload/UploadDrawer.vue"
+import { useUserInfo } from "@/stores/user-info"
+
+const { renewUserInfo } = useUserInfo()
+renewUserInfo()
+</script>
+
 <template>
   <SideMenu />
   <UploadDrawer />
@@ -14,15 +23,3 @@
     </n-scrollbar>
   </n-layout>
 </template>
-
-<script setup lang="ts">
-import SideMenu from "@/components/SideMenu.vue"
-import UploadDrawer from "@/components/upload/UploadDrawer.vue"
-import { useUserInfo } from "@/stores/user-info"
-
-const { renewUserInfo } = useUserInfo()
-
-onBeforeMount(() => {
-  renewUserInfo()
-})
-</script>

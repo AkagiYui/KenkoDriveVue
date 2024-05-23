@@ -18,7 +18,6 @@ import {
   NText,
   NTooltip,
 } from "naive-ui"
-import ConfirmModal from "@/components/ConfirmModal.vue"
 import {
   addAnnouncement,
   deleteAnnouncement,
@@ -26,6 +25,7 @@ import {
   updateAnnouncement,
   updateAnnouncementStatus,
 } from "@/api/announcement"
+import ConfirmModal from "@/components/ConfirmModal.vue"
 import { renderTooltip } from "@/utils/render"
 
 /** 表格加载中 */

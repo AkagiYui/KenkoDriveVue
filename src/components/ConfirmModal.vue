@@ -1,15 +1,10 @@
 <script setup lang="ts">
 /** 是否显示模态框 */
 const show = defineModel<boolean>("show", { default: false })
-
 const emit = defineEmits<{
   (e: "positiveClick"): void
   (e: "negativeClick"): void
 }>()
-
-const onNegativeClick = () => {
-  emit("negativeClick")
-}
 </script>
 
 <template>
@@ -26,7 +21,7 @@ const onNegativeClick = () => {
       type: 'error',
     }"
     @positive-click="emit('positiveClick')"
-    @negative-click="onNegativeClick"
+    @negative-click="emit('negativeClick')"
   />
 </template>
 

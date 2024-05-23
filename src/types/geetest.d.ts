@@ -5,10 +5,16 @@ declare interface Window {
   ) => void
 }
 
+/**
+ * 极验组件
+ */
 type GeetestComponent = {
   validate(onFail?: (w: GeetestFailInfo) => void): Promise<GeetestSuccessInfo>
 }
 
+/**
+ * 极验配置
+ */
 type GeetestConfig = {
   captchaId: string
   product?: "popup" | "float" | "bind"
@@ -73,8 +79,8 @@ type GeetestFailInfo = {
 }
 
 type GeetestSuccessInfo = {
-  captcha_id?: string // 仅在在线模式下存在
-  isOffline?: boolean // 仅在离线模式下存在
+  captcha_id?: string // 仅在线模式下存在
+  isOffline?: boolean // 仅离线模式下存在
   captcha_output: string
   gen_time: string
   lot_number: string

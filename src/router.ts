@@ -1,3 +1,7 @@
+/**
+ * 路由配置
+ */
+
 import { createRouter, createWebHistory } from "vue-router/auto"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
@@ -6,6 +10,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
 })
 
+// 路由守卫
 router.beforeEach((to, from) => {
   const config = useUserInfo()
   // 未登录则跳转到登录页
@@ -33,7 +38,6 @@ router.beforeEach(async () => {
 })
 
 router.afterEach((to) => {
-  console.log("after", to)
   if (to.name === "404") {
     window.$loadingbar.error()
   } else {
@@ -54,7 +58,7 @@ router.afterEach(async (to: any) => {
 
 router.onError((error: any) => {
   window.$loadingbar.error()
-  console.log(error)
+  console.log("router error", error)
 })
 
 router.isReady().then(() => {

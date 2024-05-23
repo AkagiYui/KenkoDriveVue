@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { createFolder } from "@/api/folder"
+import { hasText } from "@/utils/string"
 
 /** 组件参数 */
 const props = withDefaults(
@@ -19,8 +20,10 @@ const isLoading = ref(false)
 const folderName = ref("")
 const create = () => {
   isLoading.value = true
-  console.log("create folder" + folderName.value + props.parent)
-  createFolder(folderName.value || "新建文件夹", props.parent)
+  createFolder(
+    hasText(folderName.value) ? folderName.value : undefined,
+    props.parent,
+  )
     .then(() => {
       emit("success")
       show.value = false

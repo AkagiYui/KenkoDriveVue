@@ -1,7 +1,8 @@
-import { useUserInfo } from "@/stores/user-info"
 import axios from "axios"
 import { NIcon } from "naive-ui"
 import { BugReportOutlined } from "@vicons/material"
+import { useUserInfo } from "@/stores/user-info"
+import { hasText } from "@/utils/string"
 
 const isDev = import.meta.env.DEV
 export const config = {
@@ -16,14 +17,11 @@ const request = axios.create(config)
 
 request.interceptors.request.use(
   (config) => {
-    if (isDev) {
-      console.log("request", config)
-    }
-    window.$loadingbar.start()
-    const userInfo = useUserInfo()
-    const token = userInfo.requestToken
-    if (token) {
-      config.headers["Authorization"] = "Bearer " + token
+    window.$loadingbar.start() // 显示加载条
+    const token = useUserInfo().requestToken // 获取token
+    if (hasText(token)) {
+      // 如果token存在
+      config.headers["Authorization"] = `Bearer ${token}` // 设置请求头
     }
     return config
   },
@@ -33,36 +31,43 @@ request.interceptors.request.use(
   },
 )
 
-function responseSuccess(response: any) {
+function responseSuccess(response) {
   // 2xx 范围内的状态码都会触发该函数。
-  if (isDev) {
-    console.log("response", response)
-  }
   window.$loadingbar.finish()
   const contentType = response.headers["content-type"]
   if (contentType && contentType.indexOf("application/json") !== -1) {
+    // 如果返回的数据是 JSON 格式，取消外层的 data 包裹
     response.data = response.data["data"]
   }
   return response
 }
 
 // 超出 2xx 范围的状态码都会触发该函数。
-function responseFailed(error: any) {
+function responseFailed(error) {
   window.$loadingbar.error()
+
+  // 请求超时
   if (error.code === "ECONNABORTED") {
-    return Promise.reject(Error("请求超时"))
+    return Promise.reject(error)
   }
+
   const statusCode = error.response?.status
+
+  // 401 未认证
   if (statusCode === 401) {
-    // 未认证，删除token并跳转到登录页
-    // ! todo 如果用户在编辑内容时，会丢失编辑内容，需要提示用户
-    const { deleteToken } = useUserInfo()
-    deleteToken()
-  } else if (statusCode === 403) {
-    // 无权限
+    window.$message.error("登录超时，请重新登录")
+    return Promise.reject(error)
+  }
+
+  // 403 无权限
+  if (statusCode === 403) {
     window.$message.error("无权限")
-  } else if (statusCode === 400) {
-    // 参数错误、业务异常
+    return Promise.reject(error)
+  }
+
+  // 400 参数错误、业务异常
+  if (statusCode === 400) {
+    // 如果是开发环境，弹出错误提示
     if (isDev) {
       const contentType = error.response.headers["content-type"]
       if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -74,10 +79,11 @@ function responseFailed(error: any) {
         })
       }
     }
-  } else {
-    console.log("response error", error)
+    return Promise.reject(error)
   }
 
+  // 未知错误
+  console.error("unknown response error", error)
   return Promise.reject(error)
 }
 

@@ -8,12 +8,12 @@
 </route>
 
 <script setup lang="ts">
-import { useUserInfo } from "@/stores/user-info"
 import { storeToRefs } from "pinia"
-import { onBeforeMount, onMounted, ref } from "vue"
-import { getIndexAnnouncements } from "@/api/announcement"
 import { MdSave } from "@vicons/ionicons4"
+import { getIndexAnnouncements } from "@/api/announcement"
+import { useUserInfo } from "@/stores/user-info"
 import { useAppConfig } from "@/stores/app-config"
+import { useInterval } from "@/hooks"
 
 const { nickname } = storeToRefs(useUserInfo())
 const { isDebugMode } = useAppConfig()
@@ -49,21 +49,10 @@ const updateHelloText = () => {
     }
   }
   helloText.value = closestHelloText
-  console.log(`currentHour: ${currentHour}, helloText: ${helloText.value}`)
 }
 
-let intervalId: number | null = null
-onMounted(() => {
-  updateHelloText()
-  // 每一分钟执行一次更新问候语的操作
-  intervalId = setInterval(updateHelloText, 60000)
-})
-onBeforeUnmount(() => {
-  if (intervalId) {
-    clearInterval(intervalId)
-    console.debug("clearInterval")
-  }
-})
+// 每一分钟执行一次更新问候语
+useInterval(updateHelloText, 60000)
 
 const announcements = ref<DisplayAnnouncement[]>([])
 

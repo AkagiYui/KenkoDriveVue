@@ -8,16 +8,8 @@
 </route>
 
 <script setup lang="ts">
+import { changeColor } from "seemly"
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import {
-  addUser,
-  deleteUser,
-  getUsers,
-  updateUserDisabled,
-  updateUserInfo,
-  updateUserPassword,
-} from "@/api/user"
-import type { FormInst, PaginationProps } from "naive-ui"
 import {
   NButton,
   NInput,
@@ -27,8 +19,16 @@ import {
   NTooltip,
   useThemeVars,
 } from "naive-ui"
+import type { FormInst, PaginationProps } from "naive-ui"
+import {
+  addUser,
+  deleteUser,
+  getUsers,
+  updateUserDisabled,
+  updateUserInfo,
+  updateUserPassword,
+} from "@/api/user"
 import RoleTable from "./RoleTable.vue"
-import { changeColor } from "seemly"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import { renderTooltip } from "@/utils/render"
 
@@ -335,10 +335,9 @@ const onDeleteUserConfirm = () => {
 const onResetPasswordClick = () => {
   resetPasswordFormRef.value?.validate().then((valid: any) => {
     if (valid) {
-      console.log("resetPasswordData: ", resetPasswordData.value)
-      const selecteId = selectRow.value?.id
-      if (!selecteId) return
-      updateUserPassword(selecteId, resetPasswordData.value.password)
+      const selectedId = selectRow.value?.id
+      if (!selectedId) return
+      updateUserPassword(selectedId, resetPasswordData.value.password)
         .then(() => {
           window.$message.success("密码重置成功")
           showResetPasswordModal.value = false
