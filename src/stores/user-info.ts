@@ -2,7 +2,7 @@ import { computed, ref } from "vue"
 import { defineStore } from "pinia"
 import { getUserAvatar, getUserInfo } from "@/api/user"
 import Permission from "@/types/permission"
-import { getJWTExpireTime, hasText } from "@/utils/string"
+import { getJWTExpireTime, hasText } from "@/utils"
 
 export const useUserInfo = defineStore(
   "user-info",
@@ -21,7 +21,8 @@ export const useUserInfo = defineStore(
       if (!hasText(token)) {
         return false
       }
-      if (tokenExpireTime.value < (Date.now() / 1000 + 60 * 60)) { // 60分钟内过期
+      if (tokenExpireTime.value < Date.now() / 1000 + 60 * 60) {
+        // 60分钟内过期
         return false
       }
       return true

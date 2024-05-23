@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createFolder } from "@/api/folder"
-import { hasText } from "@/utils/string"
+import { hasText } from "@/utils"
 
 /** 组件参数 */
 const props = withDefaults(

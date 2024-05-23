@@ -10,6 +10,7 @@ declare global {
     $dialog: DialogApiInjection
     $loadingbar: LoadingBarInst
     $notify: NotificationApiInjection
+    $modal: ModalApiInjection
   }
 
   /** 项目版本号 */

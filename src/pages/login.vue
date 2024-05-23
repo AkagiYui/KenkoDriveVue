@@ -31,7 +31,7 @@ import {
 } from "@/api/user"
 import { getRegisterEnabled } from "@/api/server"
 import { ResponseMessagesSimplifiedChinese } from "@/api/ResponseMessages"
-import { hasText } from "@/utils/string"
+import { hasText } from "@/utils"
 import { useGlobal } from "@/hooks"
 
 const { isDarkMode } = storeToRefs(useAppConfig())

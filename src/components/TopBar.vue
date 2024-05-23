@@ -10,7 +10,7 @@ import {
 } from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
-import { renderIcon } from "@/utils/render"
+import { renderIcon } from "@/utils"
 import QrCode from "@/components/QrCode.vue"
 
 const { isDarkMode, isUploadDrawerShow, isDebugMode, uploadItemCount } =

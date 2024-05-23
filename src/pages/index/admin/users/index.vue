@@ -30,7 +30,7 @@ import {
 } from "@/api/user"
 import RoleTable from "./RoleTable.vue"
 import ConfirmModal from "@/components/ConfirmModal.vue"
-import { renderTooltip } from "@/utils/render"
+import { renderTooltip } from "@/utils"
 
 /** naiveui主题相关变量 */
 const themeVars = useThemeVars()

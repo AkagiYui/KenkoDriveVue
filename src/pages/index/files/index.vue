@@ -57,9 +57,9 @@ import {
   moveFile,
 } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
-import { renderIcon } from "@/utils/render"
+import { renderIcon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
-import { emitBusEvent, useBusEvent } from "@/hooks"
+import { emitBusEvent, useBusEvent, useConfirmModal } from "@/hooks"
 import { moveFolder } from "@/api/folder"
 import { BusEvent } from "@/types"
 const { isDarkMode } = storeToRefs(useAppConfig())
@@ -319,11 +319,13 @@ function onActionSelect(key: string, row: TableData) {
       break
   }
 }
-
+const { openConfirmModal } = useConfirmModal()
 function deleteFile(row: TableData) {
-  deleteFileEndpoint(row.id).then(() => {
-    window.$message.success("删除成功")
-    loadFolder(currentFolderId.value)
+  openConfirmModal(() => {
+    deleteFileEndpoint(row.id).then(() => {
+      window.$message.success("删除成功")
+      loadFolder(currentFolderId.value)
+    })
   })
 }
 

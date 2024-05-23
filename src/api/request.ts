@@ -2,7 +2,7 @@ import axios from "axios"
 import { NIcon } from "naive-ui"
 import { BugReportOutlined } from "@vicons/material"
 import { useUserInfo } from "@/stores/user-info"
-import { hasText } from "@/utils/string"
+import { hasText } from "@/utils"
 
 const isDev = import.meta.env.DEV
 export const config = {

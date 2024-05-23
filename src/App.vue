@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
-import Message from "@/components/MessageApi.vue"
 import { createLocale, darkTheme, dateZhCN, zhCN } from "naive-ui"
 import { useAppConfig } from "@/stores/app-config"
 
@@ -46,27 +45,20 @@ onMounted(() => {
     :date-locale="dateZhCN"
     :theme="isDarkMode ? darkTheme : null"
   >
-    <n-loading-bar-provider>
-      <n-message-provider>
-        <n-dialog-provider>
-          <n-notification-provider>
-            <Message />
-          </n-notification-provider>
-        </n-dialog-provider>
-      </n-message-provider>
-    </n-loading-bar-provider>
-    <div class="container">
-      <div v-show="banner" class="banner">
-        我未来可能是一个广告位，或者是一个banner
-        <n-button type="error" @click="banner = false"> 关闭</n-button>
-      </div>
-      <n-layout class="main">
-        <TopBar />
-        <n-layout position="absolute" style="top: 64px" has-sider>
-          <router-view />
+    <FeedbackProvider>
+      <div class="container">
+        <div v-show="banner" class="banner">
+          我未来可能是一个广告位，或者是一个banner
+          <n-button type="error" @click="banner = false"> 关闭</n-button>
+        </div>
+        <n-layout class="main">
+          <TopBar />
+          <n-layout position="absolute" style="top: 64px" has-sider>
+            <router-view />
+          </n-layout>
         </n-layout>
-      </n-layout>
-    </div>
+      </div>
+    </FeedbackProvider>
   </n-config-provider>
 </template>
 

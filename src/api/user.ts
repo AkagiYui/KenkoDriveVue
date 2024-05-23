@@ -1,4 +1,4 @@
-import { hasText } from "@/utils/string"
+import { hasText } from "@/utils"
 import Request from "./request"
 
 /** 获取用户分页 */

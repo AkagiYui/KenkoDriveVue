@@ -28,7 +28,7 @@ import {
   CogOutline,
 } from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
-import { renderIcon } from "@/utils/render"
+import { renderIcon } from "@/utils"
 
 const { expandedMenuKeys, isMenuCollapsed, isDebugMode } =
   storeToRefs(useAppConfig())

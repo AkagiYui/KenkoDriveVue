@@ -1,5 +1,5 @@
 import Request from "./request"
-import { hasText } from "@/utils/string"
+import { hasText } from "@/utils"
 
 /** 获取首页公告 */
 export function getIndexAnnouncements(): Promise<any> {

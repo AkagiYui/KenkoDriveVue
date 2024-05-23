@@ -26,7 +26,7 @@ import {
   updateAnnouncementStatus,
 } from "@/api/announcement"
 import ConfirmModal from "@/components/ConfirmModal.vue"
-import { renderTooltip } from "@/utils/render"
+import { renderTooltip } from "@/utils"
 
 /** 表格加载中 */
 const isLoading = ref(false)

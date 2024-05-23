@@ -1,3 +1,7 @@
+export * from "./date"
+export * from "./render"
+export * from "./string"
+
 /**
  * 获取 assets 静态资源
  * @param path 资源相对于assets目录的路径
