@@ -16,7 +16,7 @@ import { useAppConfig } from "@/stores/app-config"
 import { useInterval } from "@/hooks"
 
 const { nickname } = storeToRefs(useUserInfo())
-const { isDebugMode } = useAppConfig()
+const { isDebugMode } = storeToRefs(useAppConfig())
 
 // 每个问候语对应的时间点
 const helloLabel = {

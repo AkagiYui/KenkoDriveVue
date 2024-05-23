@@ -39,6 +39,7 @@ onBeforeUnmount(() => {
       }
     "
     @drop="dropFile"
+    @click="showDrag = false"
   >
     <div class="drag-text">松手上传</div>
   </div>

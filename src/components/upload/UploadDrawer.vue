@@ -143,7 +143,7 @@ function upload() {
               <n-icon :component="DocumentOutline" />
             </template>
           </n-button>
-          <n-button @click="onUploadFolderButtonClick"
+          <n-button v-if="false" @click="onUploadFolderButtonClick"
             >上传文件夹
             <template #icon>
               <n-icon :component="FolderOutline" />
