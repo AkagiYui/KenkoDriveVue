@@ -584,10 +584,24 @@ function onDrop(file: FileSystemFileEntry[]) {
   const folderId = currentFolderId.value
   emitBusEvent(BusEvent.ADD_ENTRIES, { file, folderId })
 }
+
+const fileInputRef = ref<HTMLInputElement | null>(null)
+function onUploadFileButtonClick() {
+  fileInputRef.value?.click()
+}
+onMounted(() => {
+  fileInputRef.value?.addEventListener("change", (event: any) => {
+    emitBusEvent(BusEvent.ADD_FILELIST, {
+      file: event.target.files,
+      folderId: currentFolderId.value,
+    })
+  })
+})
 </script>
 
 <template>
   <FullScreenDrag v-if="allowDrop" @drop="onDrop"></FullScreenDrag>
+  <input v-show="false" ref="fileInputRef" MULTIPLE type="file" />
   <n-image
     ref="imageRef"
     :show-toolbar-tooltip="true"
@@ -644,7 +658,7 @@ function onDrop(file: FileSystemFileEntry[]) {
           </template>
           刷新
         </n-button>
-        <n-button type="success">
+        <n-button type="success" @click="onUploadFileButtonClick">
           <template #icon>
             <n-icon :component="ArrowUpOutline" />
           </template>

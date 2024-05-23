@@ -12,3 +12,15 @@ interface AddEntriesEvent {
    */
   folderId: string | undefined
 }
+
+interface AddFileListEvent {
+  /**
+   * 文件句柄
+   */
+  file: FileList
+
+  /**
+   * 目标文件夹ID
+   */
+  folderId: string | undefined
+}

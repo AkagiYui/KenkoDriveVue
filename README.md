@@ -20,9 +20,27 @@
 
 ## 功能点
 
-- [x] [更新检查](src/updateChecker.ts)
+此处仅列出前端部分特有的功能点，业务相关功能请查看[后端仓库](https://github.com/AkagiYui/KenkoDrive)。
 
-## 技术栈
+- [x] [自动更新检查(Web Worker)](src/updateChecker.ts)
+- [x] [路由页面缓存(KeepAlive)](src/pages/index.vue)
+- [x] [路由守卫](src/router.ts)
+- [x] [极验行为验V4](src/main.ts)
+- [x] [Umami统计](src/main.ts)
+- [x] [打包文件分类](vite.config.ts)
+- [x] [文件预览](src/pages/preview)
+
+## 使用的库
+
+[![Vue 3](https://img.shields.io/badge/Vue%203-4fc08d?logo=vue.js&logoColor=white&style=flat-square)](https://cn.vuejs.org/)
+[![Vite 5](https://img.shields.io/badge/Vite%205-646c7f?logo=vite&logoColor=white&style=flat-square)](https://cn.vitejs.dev/)
+[![Naive UI](https://img.shields.io/badge/Naive%20UI-0081ff?logo=naive-ui&logoColor=white&style=flat-square)](https://www.naiveui.com/)
+[![Pinia](https://img.shields.io/badge/Pinia-4fc08d?logo=vue.js&logoColor=white&style=flat-square)](https://pinia.vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007acc?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
+[![ESLint](https://img.shields.io/badge/ESLint-4b32c3?logo=eslint&logoColor=white&style=flat-square)](https://eslint.org/)
+[![Prettier](https://img.shields.io/badge/Prettier-f7b93e?logo=prettier&logoColor=white&style=flat-square)](https://prettier.io/)
+[![Axios](https://img.shields.io/badge/Axios-5a2ee0?logo=axios&logoColor=white&style=flat-square)](https://axios-http.com/)
+[![Vue Router](https://img.shields.io/badge/Vue%20Router-4fc08d?logo=vue.js&logoColor=white&style=flat-square)](https://router.vuejs.org/)
 
 - [Vue 3](https://cn.vuejs.org/): JavaScript 框架
 - [Vite 5](https://cn.vitejs.dev/): 构建工具
@@ -37,9 +55,16 @@
 - [vue-pdf](https://github.com/TaTo30/vue-pdf): PDF 阅读器（PDF.js封装）
 - [VueUse](https://vueuse.org/): Vue 工具库
 - [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
-- [mitt](https://github.com/developit/mitt) 事件总线
-- [vue-office](https://github.com/501351981/vue-office) Office 预览
-- [unplugin-vue-router](https://uvr.esm.is/) 基于文件的路由配置
+- [mitt](https://github.com/developit/mitt): 事件总线
+- [vue-office](https://github.com/501351981/vue-office): Office 预览
+- [shiki](https://shiki.matsu.io/): 代码高亮
+- [filesize](https://filesizejs.com/): 文件大小格式化
+- [marked](https://marked.js.org/): Markdown 渲染
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/): 代码编辑器
+- [normalize.css](https://necolas.github.io/normalize.css/): 样式统一
+- [unplugin-vue-router](https://uvr.esm.is/): 基于文件的路由配置
+- unplugin-auto-import: 自动导入
+- vite-plugin-ms-clarity: Clarity统计
 
 ## TODO
 

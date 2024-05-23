@@ -32,6 +32,9 @@ useBusEvent(BusEvent.ADD_ENTRIES, ({ file, folderId }) => {
       }),
     )
 })
+useBusEvent(BusEvent.ADD_FILELIST, ({ file, folderId }) => {
+  addFileList(file, folderId)
+})
 
 function onUploadFileButtonClick() {
   fileInputRef.value?.click()
@@ -54,8 +57,7 @@ watch(fileList, () => {
   uploadItemCount.value = fileList.length
 })
 
-function addFileList(files: FileList) {
-  console.log(files, files)
+function addFileList(files: FileList, folderId?: string) {
   Array.from(files).forEach((file) => {
     fileList.push({
       name: file.name,
@@ -64,6 +66,7 @@ function addFileList(files: FileList) {
       file: file,
       status: "waiting",
       progress: 0,
+      folderId,
     })
   })
   upload()
