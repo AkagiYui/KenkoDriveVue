@@ -20,16 +20,9 @@ const frontendRepoUrl = "https://github.com/AkagiYui/KenkoDriveVue"
 const backendRepoUrl = "https://github.com/AkagiYui/KenkoDrive"
 
 const backendVersion = ref<string>("")
-
-onBeforeMount(() => {
-  getBackendVersion().then((res) => {
-    backendVersion.value = res.data
-  })
-})
-
 const showRoadMap = ref(false)
-
 const road: OneVersion[] = []
+
 onBeforeMount(async () => {
   // 从assets/changelog.json中读取更新日志
   fetch(useAssetUrl("changelog.json"))
@@ -54,6 +47,9 @@ onBeforeMount(async () => {
       })
       frontendVersion.value = road[0].version
     })
+  getBackendVersion().then((res) => {
+    backendVersion.value = res.data
+  })
 })
 </script>
 

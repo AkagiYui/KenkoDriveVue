@@ -25,7 +25,11 @@ renewUserInfo().catch(() => {
   <n-layout id="app-layout" content-style="height: 100%;" :style="{}">
     <n-scrollbar :class="{ 'block-scrollbar': false }">
       <n-back-top :right="50" />
-      <router-view />
+      <router-view v-slot="{ Component }">
+          <KeepAlive>
+            <component :is="Component" :key="$route.fullPath" />
+          </KeepAlive>
+      </router-view>
     </n-scrollbar>
   </n-layout>
 </template>

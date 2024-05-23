@@ -13,7 +13,7 @@ import { getConfig, updateSetting } from "@/api/server"
 
 // 全局变量
 const isLoading = ref(false)
-onBeforeMount(() => {
+onActivated(() => {
   isLoading.value = true
   getConfig()
     .then((res) => {
