@@ -65,6 +65,7 @@
 - [unplugin-vue-router](https://uvr.esm.is/): 基于文件的路由配置
 - unplugin-auto-import: 自动导入
 - vite-plugin-ms-clarity: Clarity统计
+- [aplayer](https://aplayer.js.org/): 音频播放器
 
 ## TODO
 

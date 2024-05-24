@@ -11,7 +11,7 @@
 
 let previousTimeTag: string | null // 时间戳，响应头中的etag和last-modified字段其中之一
 let url: string // 请求的url
-let interval: number // 轮询的定时器
+let interval: NodeJS.Timeout | number // 轮询的定时器
 
 /** 获取当前最新的时间戳 */
 async function getTimeTag() {

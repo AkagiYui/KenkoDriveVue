@@ -5,12 +5,14 @@
 </route>
 
 <script lang="ts" setup>
+import { useRouter } from "vue-router/auto"
 import SideMenu from "@/components/SideMenu.vue"
+import MusicPlayer from "./MusicPlayer.vue"
 import UploadDrawer from "@/components/upload/UploadDrawer.vue"
 import { useUserInfo } from "@/stores/user-info"
-import { useRouter } from "vue-router/auto"
 
 const { renewUserInfo } = useUserInfo()
+
 renewUserInfo().catch(() => {
   // 未登录
   window.$message.error("登录失效，请重新登录")
@@ -22,6 +24,7 @@ renewUserInfo().catch(() => {
 <template>
   <SideMenu />
   <UploadDrawer />
+  <MusicPlayer />
   <n-layout id="app-layout" content-style="height: 100%;" :style="{}">
     <n-scrollbar :class="{ 'block-scrollbar': false }">
       <n-back-top :right="50" />

@@ -10,7 +10,7 @@ export function useBusEvent<T extends BusEvent>(
   callback: (...args: EventParams[T]) => void,
 ) {
   const { $bus } = useGlobal()
-  onMounted(() => $bus.on(event, callback as (...args: any[]) => void))
+  $bus.on(event, callback as (...args: any[]) => void)
   onUnmounted(() => $bus.off(event, callback as (...args: any[]) => void))
 }
 
@@ -22,5 +22,6 @@ export function emitBusEvent<T extends BusEvent>(
   ...args: EventParams[T]
 ) {
   const { $bus } = useGlobal()
+  console.debug(`[Bus] Emit event: ${event}`, ...args)
   $bus.emit(event, ...args)
 }

@@ -347,13 +347,20 @@ function playFile(row: TableData) {
   }
 
   // 视频、音频播放
-  if (fileType.startsWith("video") || fileType.startsWith("audio")) {
+  if (fileType.startsWith("video")) {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
         name: "video-preview",
         query: { url: res },
       })
       window.open(route.href, "_blank")
+      emitBusEvent(BusEvent.PAUSE_MUSIC)
+    })
+    return
+  }
+  if (fileType.startsWith("audio")) {
+    getFileTemporaryUrl(row.id).then((res) => {
+      emitBusEvent(BusEvent.PLAY_MUSIC, res)
     })
     return
   }

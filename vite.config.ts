@@ -12,6 +12,7 @@ import {
   getFileBasedRouteName,
   VueRouterAutoImports,
 } from "unplugin-vue-router"
+import { nodePolyfills } from "vite-plugin-node-polyfills"
 
 // eslint-disable-next-line no-undef
 const env = process.env
@@ -97,6 +98,7 @@ const config = {
         // ...
       },
     }),
+    nodePolyfills(),
     vue(),
     vueJsx(),
     AutoImport({

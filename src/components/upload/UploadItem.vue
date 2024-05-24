@@ -45,7 +45,7 @@ const icon = computed(() => {
   console.log("unknown file type", file.value.type, suffix)
   return DocumentOutline
 })
-let timer = 0
+let timer: NodeJS.Timeout | number = 0
 
 function onRemoveButtonClick() {
   if (isConfirming.value) {
