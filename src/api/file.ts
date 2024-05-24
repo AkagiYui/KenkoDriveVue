@@ -90,14 +90,19 @@ export function deleteFile(id: string): RequestResponse<null> {
  * @param id 文件ID
  * @param folderId 目标文件夹ID
  */
-export function moveFile(id: string, folderId: string): RequestResponse<null> {
+export function moveFile(
+  id: string,
+  folderId: string | undefined,
+): RequestResponse<null> {
   return Request.put(
     `/file/${id}/move`,
     {},
     {
-      params: {
-        folder: folderId,
-      },
+      params: folderId
+        ? {
+            folder: folderId,
+          }
+        : {},
     },
   )
 }

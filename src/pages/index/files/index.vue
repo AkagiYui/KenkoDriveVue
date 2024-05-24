@@ -184,14 +184,14 @@ function rowProps(row: TableData): HTMLAttributes {
   }
 }
 
-function onFileMove(fileId: string, targetId: string) {
+function onFileMove(fileId: string, targetId: string | undefined) {
   moveFile(fileId, targetId).then(() => {
     window.$message.success("移动成功")
     loadFolder(currentFolderId.value)
   })
 }
 
-function onFolderMove(folderId: string, targetId: string) {
+function onFolderMove(folderId: string, targetId: string | undefined) {
   if (folderId === targetId) {
     window.$message.error("不能移动到自己")
     return
@@ -599,6 +599,16 @@ onMounted(() => {
     })
   })
 })
+
+function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
+  const id = event.dataTransfer!.getData("id")
+  const type = event.dataTransfer!.getData("type")
+  if (type === "folder") {
+    onFolderMove(id, folderId)
+  } else {
+    onFileMove(id, folderId)
+  }
+}
 </script>
 
 <template>
@@ -682,6 +692,7 @@ onMounted(() => {
 
       <!-- 面包屑导航 -->
       <n-breadcrumb style="margin: 0 0 0 10px">
+        <!-- 返回上级目录 -->
         <n-breadcrumb-item
           :clickable="!!breadcrumbLastItem"
           @click="
@@ -693,10 +704,26 @@ onMounted(() => {
               currentFolderId = lastItem ? lastItem.id : undefined
             }
           "
+          @dragover="
+            (e) => {
+              // 如果当前目录不是根目录，则允许拖放
+              if (currentFolderId) {
+                e.preventDefault()
+              }
+            }
+          "
+          @drop="
+            (e) => {
+              const lastItem = breadcrumbItems[breadcrumbItems.length - 1]
+              onBreadcrumbDrop(lastItem ? lastItem.id : undefined, e)
+            }
+          "
         >
           <n-icon :depth="1" :component="ArrowUp" />
           <template #separator> |</template>
         </n-breadcrumb-item>
+
+        <!-- 根目录 -->
         <n-breadcrumb-item
           @click="
             () => {
@@ -706,6 +733,15 @@ onMounted(() => {
               currentFolderId = undefined
             }
           "
+          @dragover="
+            (e) => {
+              // 如果当前目录不是根目录，则允许拖放
+              if (currentFolderId) {
+                e.preventDefault()
+              }
+            }
+          "
+          @drop="(e) => onBreadcrumbDrop(undefined, e)"
         >
           <n-icon :component="Folder" />
         </n-breadcrumb-item>
@@ -714,10 +750,15 @@ onMounted(() => {
           v-for="item in breadcrumbItems"
           :key="item.id"
           @click="currentFolderId = item.id"
-          >{{ item.name }}
+          @dragover="(e) => e.preventDefault()"
+          @drop="(e) => onBreadcrumbDrop(item.id, e)"
+        >
+          {{ item.name }}
         </n-breadcrumb-item>
-        <n-breadcrumb-item v-if="breadcrumbLastItem"
-          >{{ breadcrumbLastItem.name }}
+
+        <!-- 当前目录 -->
+        <n-breadcrumb-item v-if="breadcrumbLastItem">
+          {{ breadcrumbLastItem.name }}
         </n-breadcrumb-item>
       </n-breadcrumb>
 

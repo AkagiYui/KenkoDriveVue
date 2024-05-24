@@ -15,15 +15,13 @@ export function createFolder(
  */
 export function moveFolder(
   id: string,
-  parent: string,
+  parent: string | undefined,
 ): RequestResponse<undefined> {
   return Request.put(
     `/folder/${id}/move`,
     {},
     {
-      params: {
-        parent,
-      },
+      params: parent ? { parent } : {},
     },
   )
 }
