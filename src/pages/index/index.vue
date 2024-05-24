@@ -55,8 +55,9 @@ const updateHelloText = () => {
 useInterval(updateHelloText, 60000)
 
 const announcements = ref<DisplayAnnouncement[]>([])
+const lastFetchTime = ref(0)
 
-onBeforeMount(() => {
+function fetchAnnouncements() {
   getIndexAnnouncements().then((res) => {
     announcements.value = res.data as DisplayAnnouncement[]
     // 把 时间 字符串转换为 Date 对象
@@ -69,7 +70,19 @@ onBeforeMount(() => {
         announcement.updateTime,
       ).toLocaleString()
     })
+    lastFetchTime.value = Date.now()
   })
+}
+
+onBeforeMount(() => {
+  fetchAnnouncements()
+})
+
+onActivated(() => {
+  // 如果距离上次获取公告超过一分钟，就重新获取
+  if (Date.now() - lastFetchTime.value > 60000) {
+    fetchAnnouncements()
+  }
 })
 </script>
 
