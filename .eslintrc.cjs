@@ -14,7 +14,10 @@ const config = {
   },
   rules: {
     semi: ["warn", "never"], // 分号
-    indent: ["error", 2, { SwitchCase: 1 }], // 缩进，2个空格，switch语句缩进1个单位
+    indent: ["error", 2, { // 缩进，2个空格
+      SwitchCase: 1, // switch语句缩进1个单位
+      offsetTernaryExpressions: true //三元表达式缩进
+    }],
     quotes: ["error", "double"], // 引号
 
     "no-unused-vars": "off", // 禁止未使用过的变量。已禁用，使用typescript检查
