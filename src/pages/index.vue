@@ -11,13 +11,17 @@ import MusicPlayer from "./MusicPlayer.vue"
 import UploadDrawer from "@/components/upload/UploadDrawer.vue"
 import { useUserInfo } from "@/stores/user-info"
 
-const { renewUserInfo } = useUserInfo()
+const { renewUserInfo, isLoggedIn } = useUserInfo()
+const router = useRouter()
 
 renewUserInfo().catch(() => {
   // 未登录
-  window.$message.error("登录失效，请重新登录")
-  const router = useRouter()
-  router.replace("/login")
+  if (isLoggedIn) {
+    window.$message.error("服务器连接失败，请检查网络连接")
+  } else {
+    window.$message.error("登录失效，请重新登录")
+    router.replace("/login")
+  }
 })
 </script>
 

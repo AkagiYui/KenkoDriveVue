@@ -592,6 +592,7 @@ const monacoLanguage = ref("plaintext")
 const allowDrop = ref(true)
 
 function onDrop(file: FileSystemFileEntry[]) {
+  if (!file.length) return
   const folderId = currentFolderId.value
   emitBusEvent(BusEvent.ADD_ENTRIES, { file, folderId })
 }
@@ -602,6 +603,7 @@ function onUploadFileButtonClick() {
 }
 onMounted(() => {
   fileInputRef.value?.addEventListener("change", (event: any) => {
+    if(!event.target.files) return
     emitBusEvent(BusEvent.ADD_FILELIST, {
       file: event.target.files,
       folderId: currentFolderId.value,
