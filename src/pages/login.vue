@@ -170,7 +170,7 @@ const smsFormRules = {
   phone: {
     required: true,
     trigger: ["input", "blur"],
-    validator(rule: FormItemRule, value: string) {
+    validator: (rule: FormItemRule, value: string) => {
       if (!value) {
         return new Error("请输入手机号")
       }

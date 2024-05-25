@@ -5,7 +5,7 @@ export function createFolder(
   name: string | undefined,
   parent?: string,
 ): RequestResponse<undefined> {
-  return Request.post("/folder", { name, parent: parent || null })
+  return Request.post("/folder", { name: name, parent: parent || null })
 }
 
 /**
@@ -24,4 +24,12 @@ export function moveFolder(
       params: parent ? { parent } : {},
     },
   )
+}
+
+/**
+ * 删除文件夹
+ * @param id 文件夹ID
+ */
+export function deleteFolder(id: string): RequestResponse<undefined> {
+  return Request.delete(`/folder/${id}`)
 }

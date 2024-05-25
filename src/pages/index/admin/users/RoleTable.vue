@@ -42,7 +42,7 @@ const columns = [
     title: "操作",
     key: "actions",
     width: "100px",
-    render(row: Role) {
+    render: (row: Role) => {
       return h(
         NButton,
         {

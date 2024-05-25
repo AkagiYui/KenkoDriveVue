@@ -41,7 +41,7 @@ const columns = [
     title: "操作",
     key: "actions",
     width: 100,
-    render(row: User) {
+    render: (row: User) => {
       return h(
         NButton,
         {

@@ -69,7 +69,7 @@ const tableColumns = [
     title: "状态",
     key: "disabled",
     width: "80px",
-    render(row: Role) {
+    render: (row: Role) => {
       return h(
         NButton,
         {
@@ -88,7 +88,7 @@ const tableColumns = [
     title: "操作",
     key: "action",
     width: "230px",
-    render(row: Role) {
+    render: (row: Role) => {
       return h(
         NSpace,
         {},
@@ -240,7 +240,7 @@ const onModalConfirm = () => {
             window.$message.success("添加成功")
             const id = response.data
             tableData.value.push({
-              id,
+              id: id,
               name: modalData.value.name,
               description: modalData.value.description,
               default: modalData.value.default,

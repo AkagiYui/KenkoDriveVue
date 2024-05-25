@@ -158,7 +158,7 @@ const tableColumns = [
     title: "配额",
     key: "capacity",
     minWidth: "100px",
-    render() {
+    render: () => {
       return h(
         NTooltip,
         {
@@ -202,7 +202,7 @@ const tableColumns = [
     },
     key: "isDisabled",
     width: "0",
-    render(row: User) {
+    render: (row: User) => {
       return h(
         NButton,
         {
@@ -230,7 +230,7 @@ const tableColumns = [
     title: "操作",
     key: "actions",
     width: "250px",
-    render(row: User) {
+    render: (row: User) => {
       return h(
         NSpace,
         {},

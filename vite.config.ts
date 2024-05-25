@@ -88,13 +88,13 @@ const config = {
 
       // modify routes individually
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      async extendRoute(route) {
+      extendRoute: async (route) => {
         // ...
       },
 
       // modify routes before writing
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      async beforeWriteFiles(rootRoute) {
+      beforeWriteFiles: async (rootRoute) => {
         // ...
       },
     }),
@@ -138,7 +138,7 @@ const config = {
     },
     rollupOptions: {
       output: {
-        manualChunks(id: string): string | undefined {
+        manualChunks: (id: string): string | undefined => {
           // 从 node_modules 中引入的模块，按模块名称拆分
           if (id.includes("node_modules")) {
             const packagePath = id.split("node_modules/")[1].split("/")
@@ -153,7 +153,7 @@ const config = {
         },
         entryFileNames: "js/[name]-[hash].js",
         chunkFileNames: "js/[name]-[hash].js",
-        assetFileNames(chunkInfo: any) {
+        assetFileNames: (chunkInfo: any) => {
           if (chunkInfo.name.endsWith(".css")) {
             return "css/[name]-[hash][extname]"
           }

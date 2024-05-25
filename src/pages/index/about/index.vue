@@ -33,7 +33,7 @@ onBeforeMount(async () => {
           const versionStr = res[version].version
           const date = res[version].date
           const content = res[version].content
-          road.push({ version: versionStr, date, content })
+          road.push({ version: versionStr, date: date, content: content })
         }
       }
       road.sort((a, b) => {

@@ -60,7 +60,7 @@ import CreateFolderModal from "./CreateFolderModal.vue"
 import { renderIcon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
 import { emitBusEvent, useBusEvent, useConfirmModal } from "@/hooks"
-import { moveFolder } from "@/api/folder"
+import { moveFolder, deleteFolder as deleteFolderEndpoint } from "@/api/folder"
 import { BusEvent } from "@/types"
 const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()
@@ -309,7 +309,7 @@ function onActionSelect(key: string, row: TableData) {
       window.$message.success("重命名文件 " + row)
       break
     case "delete":
-      deleteFile(row)
+      deleteItem(row)
       break
     case "play":
       playFile(row)
@@ -320,9 +320,11 @@ function onActionSelect(key: string, row: TableData) {
   }
 }
 const { openConfirmModal } = useConfirmModal()
-function deleteFile(row: TableData) {
+function deleteItem(row: TableData) {
   openConfirmModal(() => {
-    deleteFileEndpoint(row.id).then(() => {
+    const endpoint =
+      row.type === "folder" ? deleteFolderEndpoint : deleteFileEndpoint
+    endpoint(row.id).then(() => {
       window.$message.success("删除成功")
       loadFolder(currentFolderId.value)
     })
