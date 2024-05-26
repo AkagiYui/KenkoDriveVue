@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import "APlayer/dist/APlayer.min.css"
+import "aplayer/dist/APlayer.min.css"
 import APlayer from "APlayer"
 import * as musicMetadata from "music-metadata-browser"
 import { useBusEvent } from "@/hooks"
