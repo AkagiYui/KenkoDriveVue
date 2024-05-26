@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia"
-import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
-import { useAppConfig } from "@/stores/app-config"
-import { emitBusEvent, useBusEvent, useEventListener } from "@/hooks"
-import UploadItem from "./UploadItem.vue"
-import { BusEvent } from "@/types"
-import { useUserInfo } from "@/stores/user-info"
 import { config as requestConfig } from "@/api/request"
+import { emitBusEvent, useBusEvent, useEventListener } from "@/hooks"
+import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
+import { BusEvent } from "@/types"
+import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
+import { storeToRefs } from "pinia"
+import UploadItem from "./UploadItem.vue"
 
 const { requestToken } = useUserInfo()
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
@@ -67,7 +67,7 @@ uploader.onmessage = (e) => {
     const info = displayMap.get(id)
     if (info) {
       info.status = "mirrored"
-      info.progress = 0
+      info.progress = 100
       emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
     }
   } else if (event === "completed") {
@@ -75,7 +75,7 @@ uploader.onmessage = (e) => {
     const info = displayMap.get(id)
     if (info) {
       info.status = "uploaded"
-      info.progress = 0
+      info.progress = 100
       emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
     }
   } else if (event === "failed") {
