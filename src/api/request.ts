@@ -19,7 +19,7 @@ request.interceptors.request.use(
   (config) => {
     window.$loadingbar.start() // 显示加载条
     const token = useUserInfo().requestToken // 获取token
-    if (hasText(token)) {
+    if (config.url! !== "/user/token" && hasText(token)) {
       // 如果token存在
       config.headers["Authorization"] = `Bearer ${token}` // 设置请求头
     }
