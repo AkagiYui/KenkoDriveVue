@@ -1,6 +1,6 @@
 /** @type {import("prettier").Config} */
 const config = {
-  printWidth: 80, // 每行字符数
+  printWidth: 120, // 每行字符数
   tabWidth: 2, // 缩进空格数
   useTabs: false, // 使用tab缩进
   semi: false, // 在语句末尾使用分号

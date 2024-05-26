@@ -29,9 +29,7 @@ export const useGlobal = (() => {
  * @param fn 需要缓存的函数
  * @returns 带缓存的函数
  */
-export function useComputedFn<T>(
-  fn: (...args: unknown[]) => T,
-): (...args: unknown[]) => ComputedRef<T> {
+export function useComputedFn<T>(fn: (...args: unknown[]) => T): (...args: unknown[]) => ComputedRef<T> {
   const cache: Map<string, ComputedRef<T>> = new Map()
   return (...args: unknown[]) => {
     const cacheKey = JSON.stringify(args)

@@ -79,11 +79,7 @@ onBeforeMount(async () => {
           Kenko Drive Vue 前端
           <n-popover trigger="hover">
             <template #trigger>
-              <n-tag
-                style="cursor: pointer"
-                type="info"
-                @click="showRoadMap = !showRoadMap"
-              >
+              <n-tag style="cursor: pointer" type="info" @click="showRoadMap = !showRoadMap">
                 {{ frontendVersion }}
               </n-tag>
             </template>
@@ -105,20 +101,8 @@ onBeforeMount(async () => {
         <p>MIT License</p>
         <p>
           <n-space>
-            <n-button
-              :href="`${frontendRepoUrl}/issues`"
-              tag="a"
-              target="_blank"
-            >
-              问题反馈
-            </n-button>
-            <n-button
-              :href="`${frontendRepoUrl}/releases`"
-              tag="a"
-              target="_blank"
-            >
-              发布日志
-            </n-button>
+            <n-button :href="`${frontendRepoUrl}/issues`" tag="a" target="_blank"> 问题反馈 </n-button>
+            <n-button :href="`${frontendRepoUrl}/releases`" tag="a" target="_blank"> 发布日志 </n-button>
           </n-space>
         </p>
       </div>
@@ -147,20 +131,8 @@ onBeforeMount(async () => {
         <p>MIT License</p>
         <p>
           <n-space>
-            <n-button
-              :href="`${backendRepoUrl}/issues`"
-              tag="a"
-              target="_blank"
-            >
-              问题反馈
-            </n-button>
-            <n-button
-              :href="`${backendRepoUrl}/releases`"
-              tag="a"
-              target="_blank"
-            >
-              发布日志
-            </n-button>
+            <n-button :href="`${backendRepoUrl}/issues`" tag="a" target="_blank"> 问题反馈 </n-button>
+            <n-button :href="`${backendRepoUrl}/releases`" tag="a" target="_blank"> 发布日志 </n-button>
           </n-space>
         </p>
       </div>

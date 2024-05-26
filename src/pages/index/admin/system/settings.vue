@@ -84,18 +84,10 @@ const updateSettingsDebounced = useDebounceFn(() => {
 <template>
   <div style="padding: 20px; width: 500px; margin: 0 auto">
     <n-flex vertical>
-      <n-form
-        label-placement="left"
-        label-width="auto"
-        require-mark-placement="right-hanging"
-        :show-feedback="true"
-      >
+      <n-form label-placement="left" label-width="auto" require-mark-placement="right-hanging" :show-feedback="true">
         <n-h3>用户注册</n-h3>
         <n-form-item label="开放注册">
-          <n-switch
-            v-model:value="settings.registerEnabled"
-            :disabled="isLoading"
-          />
+          <n-switch v-model:value="settings.registerEnabled" :disabled="isLoading" />
         </n-form-item>
         <n-form-item label="注册需要邮箱验证">
           <n-switch :disabled="true" :value="true" />
@@ -153,8 +145,7 @@ const updateSettingsDebounced = useDebounceFn(() => {
             :disabled="true"
             :options="[
               {
-                label:
-                  'Everybody\'s Got Something to Hide Except Me and My Monkey',
+                label: 'Everybody\'s Got Something to Hide Except Me and My Monkey',
                 value: 'song0',
                 disabled: true,
               },

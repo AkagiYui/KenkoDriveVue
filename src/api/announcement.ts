@@ -26,10 +26,7 @@ export function getAnnouncements(
 /**
  * 更新公告状态
  */
-export function updateAnnouncementStatus(
-  id: string,
-  disabled: boolean,
-): RequestResponse<undefined> {
+export function updateAnnouncementStatus(id: string, disabled: boolean): RequestResponse<undefined> {
   return Request.put(
     `/announcement/${id}/status`,
     {
@@ -53,11 +50,7 @@ export function deleteAnnouncement(id: string): RequestResponse<undefined> {
 /**
  * 修改公告
  */
-export function updateAnnouncement(
-  id: string,
-  title?: string,
-  content?: string,
-): RequestResponse<undefined> {
+export function updateAnnouncement(id: string, title?: string, content?: string): RequestResponse<undefined> {
   const requestData: { title?: string; content?: string } = {}
   if (hasText(title)) {
     requestData.title = title
@@ -74,9 +67,6 @@ export function updateAnnouncement(
  * @param data 公告信息
  * @returns 公告ID
  */
-export function addAnnouncement(data: {
-  title: string
-  content: string
-}): RequestResponse<string> {
+export function addAnnouncement(data: { title: string; content: string }): RequestResponse<string> {
   return Request.post("/announcement", data)
 }

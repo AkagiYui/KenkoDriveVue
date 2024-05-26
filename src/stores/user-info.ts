@@ -56,9 +56,7 @@ export const useUserInfo = defineStore(
      * @param imageData 图片数据
      */
     function setAvatar(imageData: ArrayBuffer) {
-      const imageUrl = URL.createObjectURL(
-        new Blob([imageData], { type: "imageType" }),
-      )
+      const imageUrl = URL.createObjectURL(new Blob([imageData], { type: "imageType" }))
       if (hasText(avatarUrl.value)) {
         URL.revokeObjectURL(avatarUrl.value)
       }

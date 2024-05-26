@@ -25,11 +25,7 @@ const displayMap = reactive(new Map<number, UploadDisplayInfo>())
 watch(displayMap, () => {
   let notDoneCount = 0
   displayMap.forEach((value) => {
-    if (
-      value.status !== "mirrored" &&
-      value.status !== "merged" &&
-      value.status !== "canceled"
-    ) {
+    if (value.status !== "mirrored" && value.status !== "merged" && value.status !== "canceled") {
       notDoneCount++
     }
   })
@@ -156,12 +152,7 @@ function onPauseButtonClick(taskId: number) {
 function onRemoveButtonClick(taskId: number) {
   const info = displayMap.get(taskId)
   if (!info) return
-  if (
-    info.status === "mirrored" ||
-    info.status === "merged" ||
-    info.status === "canceled" ||
-    info.status === "error"
-  ) {
+  if (info.status === "mirrored" || info.status === "merged" || info.status === "canceled" || info.status === "error") {
     displayMap.delete(taskId)
   } else {
     uploader.postMessage({
@@ -174,20 +165,8 @@ function onRemoveButtonClick(taskId: number) {
 
 <template>
   <input v-show="false" ref="fileInputRef" MULTIPLE type="file" />
-  <input
-    v-show="false"
-    ref="folderInputRef"
-    mozdirectory
-    odirectory
-    type="file"
-    webkitdirectory
-  />
-  <n-drawer
-    v-model:show="isUploadDrawerShow"
-    :placement="'right'"
-    :width="502"
-    :auto-focus="false"
-  >
+  <input v-show="false" ref="folderInputRef" mozdirectory odirectory type="file" webkitdirectory />
+  <n-drawer v-model:show="isUploadDrawerShow" :placement="'right'" :width="502" :auto-focus="false">
     <n-drawer-content
       id="content"
       :native-scrollbar="false"

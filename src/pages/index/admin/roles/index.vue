@@ -11,14 +11,7 @@
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import type { FormInst, PaginationProps } from "naive-ui"
 import { NButton, NInput, NSpace, NSwitch } from "naive-ui"
-import {
-  addRole,
-  deleteRole,
-  getPermissions,
-  getRoles,
-  updateRole,
-  updateRoleStatus,
-} from "@/api/role"
+import { addRole, deleteRole, getPermissions, getRoles, updateRole, updateRoleStatus } from "@/api/role"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import UserTable from "./UserTable.vue"
 
@@ -213,9 +206,7 @@ const onModalConfirm = () => {
           .then(() => {
             showEditModal.value = false
             window.$message.success("修改成功")
-            const index = tableData.value.findIndex(
-              (r) => r.id === modalData.value.id,
-            )
+            const index = tableData.value.findIndex((r) => r.id === modalData.value.id)
             if (index !== -1) {
               tableData.value[index] = {
                 ...tableData.value[index],
@@ -298,9 +289,7 @@ const onDeleteConfirm = () => {
   deleteRole(selectedRow.value.id)
     .then(() => {
       window.$message.success("删除成功")
-      tableData.value = tableData.value.filter(
-        (r) => r.id !== selectedRow.value?.id,
-      )
+      tableData.value = tableData.value.filter((r) => r.id !== selectedRow.value?.id)
     })
     .catch(() => {
       window.$message.error("删除失败")
@@ -349,10 +338,7 @@ const getData = () => {
 <template>
   <div style="padding: 12px">
     <!-- 确认删除模态框 -->
-    <ConfirmModal
-      v-model:show="showDeleteConfirmModal"
-      @positive-click="onDeleteConfirm"
-    />
+    <ConfirmModal v-model:show="showDeleteConfirmModal" @positive-click="onDeleteConfirm" />
 
     <!-- 新增编辑模态框 -->
     <n-modal
@@ -367,26 +353,12 @@ const getData = () => {
       @after-leave="onModalClosed"
     >
       <n-flex vertical>
-        <n-form
-          ref="modalFormRef"
-          :model="modalData"
-          :rules="rules"
-          label-placement="left"
-          label-width="auto"
-        >
+        <n-form ref="modalFormRef" :model="modalData" :rules="rules" label-placement="left" label-width="auto">
           <n-form-item path="name" label="角色名">
-            <n-input
-              v-model:value="modalData.name"
-              clearable
-              placeholder="输入角色名"
-            />
+            <n-input v-model:value="modalData.name" clearable placeholder="输入角色名" />
           </n-form-item>
           <n-form-item path="description" label="描述">
-            <n-input
-              v-model:value="modalData.description"
-              clearable
-              placeholder="可空"
-            />
+            <n-input v-model:value="modalData.description" clearable placeholder="可空" />
           </n-form-item>
           <n-form-item path="default" label="设为默认">
             <n-switch v-model:value="modalData.default" />
@@ -421,12 +393,7 @@ const getData = () => {
       <n-form :show-label="false" inline :show-feedback="false">
         <n-formItem>
           <n-space>
-            <n-button
-              tertiary
-              type="info"
-              :disabled="isLoading"
-              @click="getData"
-            >
+            <n-button tertiary type="info" :disabled="isLoading" @click="getData">
               <template #icon>
                 <n-icon>
                   <RefreshOutline />
@@ -445,17 +412,12 @@ const getData = () => {
             </n-button>
 
             <n-input-group>
-              <n-input
-                v-model:value="searchExpression"
-                placeholder="角色名、描述"
-              >
+              <n-input v-model:value="searchExpression" placeholder="角色名、描述">
                 <template #prefix>
                   <n-icon :component="SearchOutline" />
                 </template>
               </n-input>
-              <n-button ghost :disabled="isLoading" @click="getData">
-                搜索
-              </n-button>
+              <n-button ghost :disabled="isLoading" @click="getData"> 搜索 </n-button>
             </n-input-group>
           </n-space>
         </n-formItem>

@@ -2,9 +2,7 @@ import Request, { config } from "./request"
 import type { AxiosProgressEvent } from "axios"
 
 /** 获取目录内容 */
-export function getFolderContent(
-  id: string | null = null,
-): RequestResponse<FolderContent> {
+export function getFolderContent(id: string | null = null): RequestResponse<FolderContent> {
   return Request.get("/file", { params: { folder: id } })
 }
 
@@ -22,11 +20,7 @@ export function getFileTemporaryToken(id: string): RequestResponse<string> {
  * @param single 是否单线程下载
  * @param name 文件名
  */
-export function getFileTemporaryUrl(
-  id: string,
-  single: boolean = false,
-  name?: string,
-): Promise<string> {
+export function getFileTemporaryUrl(id: string, single: boolean = false, name?: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     getFileTemporaryToken(id)
       .then((response) => {
@@ -90,10 +84,7 @@ export function deleteFile(id: string): RequestResponse<null> {
  * @param id 文件ID
  * @param folderId 目标文件夹ID
  */
-export function moveFile(
-  id: string,
-  folderId: string | undefined,
-): RequestResponse<null> {
+export function moveFile(id: string, folderId: string | undefined): RequestResponse<null> {
   return Request.put(
     `/file/${id}/move`,
     {},

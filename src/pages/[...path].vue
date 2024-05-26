@@ -15,13 +15,7 @@ const router = useRouter()
 
 <template>
   <n-card class="page">
-    <n-result
-      class="center"
-      status="error"
-      title="404 页面不存在"
-      size="huge"
-      description="需要帮助请联系管理员"
-    >
+    <n-result class="center" status="error" title="404 页面不存在" size="huge" description="需要帮助请联系管理员">
       <template #footer>
         <n-space justify="center">
           <n-button @click="router.replace('/')"> 回到首页 </n-button>

@@ -11,22 +11,10 @@
 import { useRouter } from "vue-router/auto"
 import { storeToRefs } from "pinia"
 import type { HTMLAttributes } from "vue"
-import {
-  NButton,
-  NDropdown,
-  NFlex,
-  NIcon,
-  NImage,
-  useThemeVars,
-} from "naive-ui"
+import { NButton, NDropdown, NFlex, NIcon, NImage, useThemeVars } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
-import {
-  AddOutline,
-  ArrowUpOutline,
-  RefreshOutline,
-  TrashBinOutline,
-} from "@vicons/ionicons5"
+import { AddOutline, ArrowUpOutline, RefreshOutline, TrashBinOutline } from "@vicons/ionicons5"
 import { FolderOpenOutlined } from "@vicons/material"
 import {
   ArrowDownload24Regular as DownloadIcon,
@@ -37,12 +25,7 @@ import {
   Share24Regular as ShareIcon,
 } from "@vicons/fluent"
 import { filesize } from "filesize"
-import {
-  deleteFile as deleteFileEndpoint,
-  getFileTemporaryUrl,
-  getFolderContent,
-  moveFile,
-} from "@/api/file"
+import { deleteFile as deleteFileEndpoint, getFileTemporaryUrl, getFolderContent, moveFile } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import { renderIcon, type2Icon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
@@ -182,12 +165,7 @@ const columns: DataTableColumns<TableData> = [
               NIcon,
               { size: 30, color: themeVars.value.primaryColor, depth: 2 },
               {
-                default: () =>
-                  h(
-                    isFolder
-                      ? FolderOpenOutlined
-                      : type2Icon(row.fileType, row.name),
-                  ),
+                default: () => h(isFolder ? FolderOpenOutlined : type2Icon(row.fileType, row.name)),
               },
             ),
             h(
@@ -265,8 +243,7 @@ function onActionSelect(key: string, row: TableData) {
 const { openConfirmModal } = useConfirmModal()
 function deleteItem(row: TableData) {
   openConfirmModal(() => {
-    const endpoint =
-      row.type === "folder" ? deleteFolderEndpoint : deleteFileEndpoint
+    const endpoint = row.type === "folder" ? deleteFolderEndpoint : deleteFileEndpoint
     endpoint(row.id).then(() => {
       window.$message.success("删除成功")
       loadFolder(currentFolderId.value)
@@ -333,10 +310,7 @@ function playFile(row: TableData) {
   }
 
   // docx
-  if (
-    fileType ===
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  ) {
+  if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
         name: "docx-preview",
@@ -347,10 +321,7 @@ function playFile(row: TableData) {
     return
   }
   // xlsx
-  if (
-    fileType ===
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  ) {
+  if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
     getFileTemporaryUrl(row.id).then((res) => {
       const route = router.resolve({
         name: "xlsx-preview",
@@ -572,34 +543,14 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
     ref="imageRef"
     :show-toolbar-tooltip="true"
     :src="imagePreviewUrl"
-    style="
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    "
+    style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%)"
     @load="onImageLoaded"
   />
-  <n-modal
-    v-model:show="showMarkdownPreview"
-    preset="card"
-    style="width: 70%"
-    title="Markdown 预览"
-  >
+  <n-modal v-model:show="showMarkdownPreview" preset="card" style="width: 70%" title="Markdown 预览">
     <MarkdownPreview :value="markdownPreviewValue" />
   </n-modal>
-  <n-modal
-    v-model:show="showMonaco"
-    preset="card"
-    style="width: 80%; height: 80vh"
-    title="代码预览"
-  >
-    <MonacoEditor
-      :content="monacoPreviewValue"
-      :dark="isDarkMode"
-      :language="monacoLanguage"
-    />
+  <n-modal v-model:show="showMonaco" preset="card" style="width: 80%; height: 80vh" title="代码预览">
+    <MonacoEditor :content="monacoPreviewValue" :dark="isDarkMode" :language="monacoLanguage" />
   </n-modal>
   <div style="padding-top: 10px">
     <CreateFolderModal
@@ -610,15 +561,8 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
     <!-- 页面内容 -->
     <n-flex vertical>
       <!-- 操作按钮 -->
-      <n-flex
-        class="buttons-container"
-        :style="{ '--color': themeVars.dividerColor }"
-      >
-        <n-button
-          tertiary
-          type="info"
-          @click="() => loadFolder(currentFolderId)"
-        >
+      <n-flex class="buttons-container" :style="{ '--color': themeVars.dividerColor }">
+        <n-button tertiary type="info" @click="() => loadFolder(currentFolderId)">
           <template #icon>
             <n-icon :component="RefreshOutline" />
           </template>

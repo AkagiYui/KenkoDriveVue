@@ -63,12 +63,8 @@ function fetchAnnouncements() {
     // 把 时间 字符串转换为 Date 对象
     // 格式：2023-08-25T09:05:13.497+00:00
     announcements.value.forEach((announcement) => {
-      announcement.createTime = new Date(
-        announcement.createTime,
-      ).toLocaleString()
-      announcement.updateTime = new Date(
-        announcement.updateTime,
-      ).toLocaleString()
+      announcement.createTime = new Date(announcement.createTime).toLocaleString()
+      announcement.updateTime = new Date(announcement.updateTime).toLocaleString()
     })
     lastFetchTime.value = Date.now()
   })
@@ -107,18 +103,13 @@ onActivated(() => {
     </n-flex>
 
     <n-list v-show="announcements.length > 0" bordered>
-      <n-list-item
-        v-for="announcement in announcements"
-        :key="announcement.title"
-      >
+      <n-list-item v-for="announcement in announcements" :key="announcement.title">
         <n-thing
           :title="announcement.title"
           :title-extra="announcement.userNickname"
           :description="announcement.updateTime"
         >
-          <div v-for="line in announcement.content.split('\n')" :key="line">
-            {{ line }}<br />
-          </div>
+          <div v-for="line in announcement.content.split('\n')" :key="line">{{ line }}<br /></div>
         </n-thing>
       </n-list-item>
     </n-list>

@@ -40,11 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-config-provider
-    :locale="customizedLocale"
-    :date-locale="dateZhCN"
-    :theme="isDarkMode ? darkTheme : null"
-  >
+  <n-config-provider :locale="customizedLocale" :date-locale="dateZhCN" :theme="isDarkMode ? darkTheme : null">
     <FeedbackProvider>
       <div class="container">
         <div v-show="banner" class="banner">

@@ -248,12 +248,9 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
             log("upload finished")
             // 轮询检查合并状态
             const checkMergeStatus = async () => {
-              const response = await fetch(
-                `${config.createTaskUrl}/${taskId}`,
-                {
-                  headers: requestHeader,
-                },
-              )
+              const response = await fetch(`${config.createTaskUrl}/${taskId}`, {
+                headers: requestHeader,
+              })
               const responseJson = await response.json()
               log("checkMergeStatus", responseJson)
               const merged = responseJson["data"]["merged"]
@@ -268,9 +265,7 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
           }
         } else {
           log("upload failed", xhr.responseText)
-          reject(
-            new Error(`Failed to upload chunk ${index}: ${xhr.statusText}`),
-          )
+          reject(new Error(`Failed to upload chunk ${index}: ${xhr.statusText}`))
         }
       }
       xhr.onerror = function () {
@@ -290,8 +285,7 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
   function onProgress(event, index) {
     log(`Chunk ${index} progress: ${event.loaded}/${event.total}`)
     progressList[index] = event.loaded
-    const overallProgress =
-      progressList.reduce((acc, cur) => acc + cur, 0) / file.size
+    const overallProgress = progressList.reduce((acc, cur) => acc + cur, 0) / file.size
     log(`Overall progress: ${overallProgress * 100}%`)
     postMessage({
       event: "progress",

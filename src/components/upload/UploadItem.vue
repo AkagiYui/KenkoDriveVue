@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import {
-  ArchiveOutline,
-  CheckmarkOutline,
-  CloseOutline,
-  HelpOutline,
-  PauseOutline,
-  PlayOutline,
-} from "@vicons/ionicons5"
+import { CheckmarkOutline, CloseOutline, HelpOutline, PauseOutline, PlayOutline } from "@vicons/ionicons5"
 import { useThemeVars } from "naive-ui"
 import { type2Icon } from "@/utils"
 
@@ -24,18 +17,18 @@ const info = computed<UploadDisplayInfo>(() => props.data)
 const themeVars = useThemeVars()
 const progress = computed(() => info.value.progress)
 const progressText = computed(() => `${progress.value.toFixed(2)}%`)
-const finished = computed(() => info.value.status === 'mirrored' || info.value.status === 'uploaded')
+const finished = computed(() => info.value.status === "mirrored" || info.value.status === "merged")
 const progressColor = computed(() => {
   switch (info.value.status) {
-    case 'uploading':
-    case 'waiting':
+    case "uploading":
+    case "waiting":
       return `${themeVars.value.primaryColor}50`
-    case 'paused':
+    case "paused":
       return `${themeVars.value.warningColor}50`
-    case 'error':
+    case "error":
       return `${themeVars.value.errorColor}50`
   }
-  return `transparent`
+  return "transparent"
 })
 
 // 根据文件类型选择图标
@@ -64,7 +57,7 @@ const onRemoveButtonClick = (() => {
 const text = computed(() => {
   switch (info.value.status) {
     case "uploading":
-      return `${Math.min(info.value.progress, 100).toFixed(0)}%`
+      return `${Math.min(progress.value, 100).toFixed(0)}%`
     case "paused":
       return "已暂停"
     case "waiting":
@@ -100,8 +93,14 @@ const buttonIcon = computed(() => {
     <n-button v-show="false" circle quaternary size="small" :disabled="finished" @click="emit('onPauseButtonClick')">
       <n-icon :component="info.status == 'paused' ? PlayOutline : PauseOutline" />
     </n-button>
-    <n-button style="margin-right: 24px" :quaternary="!isConfirming" circle size="small"
-      :type="finished ? 'success' : 'error'" @click="onRemoveButtonClick">
+    <n-button
+      style="margin-right: 24px"
+      :quaternary="!isConfirming"
+      circle
+      size="small"
+      :type="finished ? 'success' : 'error'"
+      @click="onRemoveButtonClick"
+    >
       <n-icon :component="buttonIcon" />
     </n-button>
   </n-flex>
@@ -111,7 +110,7 @@ const buttonIcon = computed(() => {
 .container {
   width: 100%;
   height: 50px;
-  position: relative
+  position: relative;
 }
 
 .container::before {
@@ -124,6 +123,8 @@ const buttonIcon = computed(() => {
   transform: scaleX(v-bind(progressText));
   transform-origin: left;
   background-color: v-bind(progressColor);
-  transition: transform 0.2s linear, background-color 0.5s;
+  transition:
+    transform 0.2s linear,
+    background-color 0.5s;
 }
 </style>

@@ -10,14 +10,7 @@
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import type { PaginationProps } from "naive-ui"
-import {
-  type FormInst,
-  NButton,
-  NInput,
-  NSpace,
-  NText,
-  NTooltip,
-} from "naive-ui"
+import { type FormInst, NButton, NInput, NSpace, NText, NTooltip } from "naive-ui"
 import {
   addAnnouncement,
   deleteAnnouncement,
@@ -272,11 +265,7 @@ function onModalPositiveButtonClick() {
         if (!selectRow.value.id) {
           throw new Error("未获取到用户ID")
         }
-        updateAnnouncement(
-          selectRow.value.id,
-          modalData.value.title,
-          modalData.value.content,
-        )
+        updateAnnouncement(selectRow.value.id, modalData.value.title, modalData.value.content)
           .then(() => {
             getData()
             window.$message.success("修改成功")
@@ -313,11 +302,7 @@ function onEditButtonClick(row: Announcement) {
 /** 获取表格数据 */
 function getData() {
   isLoading.value = true
-  getAnnouncements(
-    pagination.page - 1,
-    pagination.pageSize,
-    searchExpression.value,
-  )
+  getAnnouncements(pagination.page - 1, pagination.pageSize, searchExpression.value)
     .then((res) => {
       let data: Page<any> = res.data
       requestData.value = data.list
@@ -334,10 +319,7 @@ function getData() {
 <template>
   <div style="padding: 12px">
     <!-- 确认删除模态框 -->
-    <ConfirmModal
-      v-model:show="showDeleteConfirmModal"
-      @positive-click="onDeleteConfirm"
-    />
+    <ConfirmModal v-model:show="showDeleteConfirmModal" @positive-click="onDeleteConfirm" />
 
     <!-- 新增删除模态框 -->
     <n-modal
@@ -350,30 +332,17 @@ function getData() {
       @after-leave="onAfterEditModalLeave"
     >
       <n-space vertical>
-        <n-form
-          ref="modalFormRef"
-          :model="modalData"
-          :rules="rules"
-          label-placement="left"
-          label-width="auto"
-        >
+        <n-form ref="modalFormRef" :model="modalData" :rules="rules" label-placement="left" label-width="auto">
           <n-form-item label="标题" path="title">
             <n-input v-model:value="modalData.title" placeholder="输入标题" />
           </n-form-item>
           <n-form-item label="内容" path="content">
-            <n-input
-              v-model:value="modalData.content"
-              placeholder="输入内容"
-              type="textarea"
-            />
+            <n-input v-model:value="modalData.content" placeholder="输入内容" type="textarea" />
           </n-form-item>
         </n-form>
       </n-space>
       <n-space justify="end" style="width: 100%">
-        <n-button
-          :type="isEdit ? 'warning' : 'success'"
-          @click="onModalPositiveButtonClick"
-        >
+        <n-button :type="isEdit ? 'warning' : 'success'" @click="onModalPositiveButtonClick">
           {{ isEdit ? "修改" : "确定" }}
         </n-button>
       </n-space>
@@ -408,13 +377,7 @@ function getData() {
               <n-icon :component="SearchOutline" />
             </template>
           </n-input>
-          <n-button
-            :disabled="isLoading || searchExpression.length === 0"
-            ghost
-            @click="getData"
-          >
-            搜索
-          </n-button>
+          <n-button :disabled="isLoading || searchExpression.length === 0" ghost @click="getData"> 搜索 </n-button>
         </n-input-group>
       </n-space>
 

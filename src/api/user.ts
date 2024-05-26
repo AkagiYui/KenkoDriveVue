@@ -18,12 +18,7 @@ export function deleteUser(id: string) {
 }
 
 /** 新增用户 */
-export function addUser(data: {
-  username: string
-  password: string
-  nickname?: string
-  email?: string
-}) {
+export function addUser(data: { username: string; password: string; nickname?: string; email?: string }) {
   // 检查undefined，不发送
   const requestData: any = {}
   if (hasText(data.nickname)) {
@@ -40,10 +35,7 @@ export function addUser(data: {
 }
 
 /** 更新用户信息 */
-export function updateUserInfo(
-  id: string,
-  data: { password?: string; nickname?: string; email?: string },
-) {
+export function updateUserInfo(id: string, data: { password?: string; nickname?: string; email?: string }) {
   // 检查undefined，不发送
   const requestData: any = {}
   if (hasText(data.nickname)) {
@@ -107,10 +99,7 @@ export function uploadUserAvatar(file: File) {
 /**
  * 更新用户禁用状态
  */
-export function updateUserDisabled(
-  id: string,
-  disabled: boolean,
-): Promise<any> {
+export function updateUserDisabled(id: string, disabled: boolean): Promise<any> {
   return Request.put(
     `/user/${id}/disable`,
     {
@@ -127,10 +116,7 @@ export function updateUserDisabled(
 /**
  * (管理员)重置密码
  */
-export function updateUserPassword(
-  id: string,
-  newPassword: string,
-): Promise<any> {
+export function updateUserPassword(id: string, newPassword: string): Promise<any> {
   return Request.put(`/user/${id}/password`, {
     newPassword: newPassword,
   })
@@ -146,32 +132,21 @@ export function getUserRoles(id: string): RequestResponse<string[]> {
 /**
  * (管理员)分配用户角色
  */
-export function assignRoles(
-  id: string,
-  roles: string[],
-): RequestResponse<null> {
+export function assignRoles(id: string, roles: string[]): RequestResponse<null> {
   return Request.put(`/user/${id}/role`, roles)
 }
 
 /**
  * (管理员)移除用户角色
  */
-export function removeRoles(
-  id: string,
-  roles: string[],
-): RequestResponse<null> {
+export function removeRoles(id: string, roles: string[]): RequestResponse<null> {
   return Request.delete(`/user/${id}/role`, { data: roles })
 }
 
 /**
  * 获取注册邮件验证码
  */
-export function sendRegisterEmailCode(
-  username: string,
-  password: string,
-  email: string,
-  captcha: GeetestSuccessInfo,
-) {
+export function sendRegisterEmailCode(username: string, password: string, email: string, captcha: GeetestSuccessInfo) {
   return Request.post(
     "/user/register/email",
     {

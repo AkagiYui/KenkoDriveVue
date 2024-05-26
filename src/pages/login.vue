@@ -22,13 +22,7 @@ import {
 } from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
-import {
-  confirmRegisterEmailCode,
-  confirmSmsCode,
-  getToken,
-  sendRegisterEmailCode,
-  sendSmsCode,
-} from "@/api/user"
+import { confirmRegisterEmailCode, confirmSmsCode, getToken, sendRegisterEmailCode, sendSmsCode } from "@/api/user"
 import { getRegisterEnabled } from "@/api/server"
 import { ResponseMessagesSimplifiedChinese } from "@/api/ResponseMessages"
 import { hasText } from "@/utils"
@@ -134,12 +128,7 @@ function onSendEmailCodeLogoClick() {
     ?.validate()
     .then(() => {
       geetest.validate().then((w) => {
-        sendRegisterEmailCode(
-          loginForm.value.username,
-          loginForm.value.password,
-          loginForm.value.email,
-          w,
-        )
+        sendRegisterEmailCode(loginForm.value.username, loginForm.value.password, loginForm.value.email, w)
           .then(() => {
             window.$message.success("验证码已发送，请查收")
             isCooldown.value = true
@@ -252,11 +241,7 @@ const onSendSmsCodeLogoClick = () => {
           :show-require-mark="false"
         >
           <n-form-item-row label="手机号" path="phone">
-            <n-input
-              v-model:value="smsLoginForm.phone"
-              :input-props="{ autocomplete: 'phone' }"
-              placeholder="手机号"
-            >
+            <n-input v-model:value="smsLoginForm.phone" :input-props="{ autocomplete: 'phone' }" placeholder="手机号">
               <template #prefix>
                 <n-icon :component="PhonePortraitOutline" />
               </template>
@@ -282,24 +267,10 @@ const onSendSmsCodeLogoClick = () => {
             </n-input>
           </n-form-item-row>
         </n-form>
-        <n-button
-          block
-          secondary
-          strong
-          type="primary"
-          @click="onSmsLoginButtonClick"
-        >
-          登录
-        </n-button>
+        <n-button block secondary strong type="primary" @click="onSmsLoginButtonClick"> 登录 </n-button>
       </n-tab-pane>
       <n-tab-pane name="signin" tab="登录">
-        <n-form
-          ref="modalFormRef"
-          :show-require-mark="false"
-          :show-label="false"
-          :model="loginForm"
-          :rules="rules"
-        >
+        <n-form ref="modalFormRef" :show-require-mark="false" :show-label="false" :model="loginForm" :rules="rules">
           <n-form-item-row path="username" label="账号">
             <n-input
               v-model:value="loginForm.username"
@@ -326,23 +297,10 @@ const onSendSmsCodeLogoClick = () => {
             </n-input>
           </n-form-item-row>
         </n-form>
-        <n-button
-          block
-          secondary
-          strong
-          type="primary"
-          @click="onLoginButtonClick"
-        >
-          登录
-        </n-button>
+        <n-button block secondary strong type="primary" @click="onLoginButtonClick"> 登录 </n-button>
       </n-tab-pane>
       <n-tab-pane v-if="isRegisterEnabled" name="signup" tab="注册">
-        <n-form
-          ref="registerFormRef"
-          :model="loginForm"
-          :rules="rules"
-          :show-require-mark="false"
-        >
+        <n-form ref="registerFormRef" :model="loginForm" :rules="rules" :show-require-mark="false">
           <n-form-item-row path="username" label="用户名">
             <n-input
               v-model:value="loginForm.username"
@@ -368,11 +326,7 @@ const onSendSmsCodeLogoClick = () => {
             />
           </n-form-item-row>
           <n-form-item-row label="邮箱" path="email">
-            <n-input
-              v-model:value="loginForm.email"
-              :disabled="isCooldown"
-              @keyup.enter="onSendEmailCodeLogoClick"
-            >
+            <n-input v-model:value="loginForm.email" :disabled="isCooldown" @keyup.enter="onSendEmailCodeLogoClick">
               <template #suffix>
                 <n-icon
                   :component="isCooldown ? CheckmarkOutline : SendSharp"
@@ -383,20 +337,10 @@ const onSendSmsCodeLogoClick = () => {
             </n-input>
           </n-form-item-row>
           <n-form-item-row label="验证码" path="code">
-            <n-input
-              ref="codeInputRef"
-              v-model:value="loginForm.code"
-              :disabled="!sentEmailCode"
-            />
+            <n-input ref="codeInputRef" v-model:value="loginForm.code" :disabled="!sentEmailCode" />
           </n-form-item-row>
         </n-form>
-        <n-button
-          :disabled="!sentEmailCode"
-          block
-          secondary
-          strong
-          type="primary"
-          @click="onRegisterButtonClick"
+        <n-button :disabled="!sentEmailCode" block secondary strong type="primary" @click="onRegisterButtonClick"
           >注册
         </n-button>
       </n-tab-pane>

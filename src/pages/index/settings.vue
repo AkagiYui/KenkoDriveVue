@@ -73,9 +73,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
             @update:file-list="uploadAvatar"
           >
             <n-space vertical>
-              <n-upload-dragger
-                style="margin: 0; padding: 0; height: 100px; width: 100px"
-              >
+              <n-upload-dragger style="margin: 0; padding: 0; height: 100px; width: 100px">
                 <n-image
                   object-fit="fill"
                   preview-disabled
@@ -94,9 +92,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
           <n-space>
             <n-space vertical>
               <n-input-group>
-                <n-input-group-label class="info-label">
-                  用户名
-                </n-input-group-label>
+                <n-input-group-label class="info-label"> 用户名 </n-input-group-label>
                 <n-tooltip trigger="hover" placement="top">
                   <template #trigger>
                     <n-input :value="username" disabled />
@@ -105,15 +101,11 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 </n-tooltip>
               </n-input-group>
               <n-input-group>
-                <n-input-group-label class="info-label">
-                  昵称
-                </n-input-group-label>
+                <n-input-group-label class="info-label"> 昵称 </n-input-group-label>
                 <n-input v-model:value="personalInfo.nickname" />
               </n-input-group>
               <n-input-group>
-                <n-input-group-label class="info-label">
-                  邮箱
-                </n-input-group-label>
+                <n-input-group-label class="info-label"> 邮箱 </n-input-group-label>
                 <n-input v-model:value="personalInfo.email" />
               </n-input-group>
             </n-space>
@@ -127,10 +119,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
           <n-space style="display: flex">
             <n-button-group>
               <span style="align-self: center; margin-right: 10px">主题</span>
-              <n-button
-                :type="!isDarkMode ? 'primary' : 'default'"
-                @click="toggleDarkMode"
-              >
+              <n-button :type="!isDarkMode ? 'primary' : 'default'" @click="toggleDarkMode">
                 <template #icon>
                   <n-icon>
                     <WeatherSunny16Regular />
@@ -138,10 +127,7 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 </template>
                 亮色
               </n-button>
-              <n-button
-                :type="isDarkMode ? 'primary' : 'default'"
-                @click="toggleDarkMode"
-              >
+              <n-button :type="isDarkMode ? 'primary' : 'default'" @click="toggleDarkMode">
                 <template #icon>
                   <n-icon>
                     <WeatherMoon16Regular />

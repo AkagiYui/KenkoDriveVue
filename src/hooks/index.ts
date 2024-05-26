@@ -8,11 +8,7 @@ export * from "./vue"
  * @param event 事件名称
  * @param callback 事件回调
  */
-export function useEventListener(
-  target: EventTarget,
-  event: string,
-  callback: EventListenerOrEventListenerObject,
-) {
+export function useEventListener(target: EventTarget, event: string, callback: EventListenerOrEventListenerObject) {
   onMounted(() => target.addEventListener(event, callback))
   onUnmounted(() => target.removeEventListener(event, callback))
 }

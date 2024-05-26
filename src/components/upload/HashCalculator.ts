@@ -19,9 +19,7 @@ export class SHA256Calculator {
       throw new Error("Data must be a string or ArrayBuffer")
     }
 
-    const combinedData = new Uint8Array(
-      this.digestBuffer.length + newData.length,
-    )
+    const combinedData = new Uint8Array(this.digestBuffer.length + newData.length)
     combinedData.set(this.digestBuffer, 0)
     combinedData.set(newData, this.digestBuffer.length)
     this.digestBuffer = combinedData

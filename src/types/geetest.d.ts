@@ -1,8 +1,5 @@
 declare interface Window {
-  initGeetest4: (
-    options: GeetestConfig,
-    callback: (captchaObj: Geetest) => void,
-  ) => void
+  initGeetest4: (options: GeetestConfig, callback: (captchaObj: Geetest) => void) => void
 }
 
 /**

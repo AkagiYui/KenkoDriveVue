@@ -45,13 +45,7 @@ export const useAppConfig = defineStore(
   {
     persist: {
       storage: localStorage,
-      paths: [
-        "isDarkMode",
-        "isMenuCollapsed",
-        "expandedMenuKeys",
-        "currentRouteName",
-        "isDebugMode",
-      ],
+      paths: ["isDarkMode", "isMenuCollapsed", "expandedMenuKeys", "currentRouteName", "isDebugMode"],
     },
   },
 )

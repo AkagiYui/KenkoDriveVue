@@ -20,10 +20,7 @@ const isLoading = ref(false)
 const folderName = ref("")
 const create = () => {
   isLoading.value = true
-  createFolder(
-    hasText(folderName.value) ? folderName.value : undefined,
-    props.parent,
-  )
+  createFolder(hasText(folderName.value) ? folderName.value : undefined, props.parent)
     .then(() => {
       emit("success")
       show.value = false
@@ -47,21 +44,11 @@ const create = () => {
     <n-flex vertical>
       <n-form :show-label="false" :disabled="isLoading">
         <n-form-item required>
-          <n-input
-            v-model:value="folderName"
-            placeholder="请输入文件夹名称"
-            @keyup.enter="create"
-          />
+          <n-input v-model:value="folderName" placeholder="请输入文件夹名称" @keyup.enter="create" />
         </n-form-item>
       </n-form>
       <n-flex justify="end" style="margin-top: -10px">
-        <n-button
-          type="primary"
-          :disabled="isLoading"
-          :loading="isLoading"
-          @click="create"
-          >确定</n-button
-        >
+        <n-button type="primary" :disabled="isLoading" :loading="isLoading" @click="create">确定</n-button>
       </n-flex>
     </n-flex>
   </n-modal>

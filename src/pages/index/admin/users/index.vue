@@ -10,24 +10,9 @@
 <script setup lang="ts">
 import { changeColor } from "seemly"
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import {
-  NButton,
-  NInput,
-  NProgress,
-  NSpace,
-  NText,
-  NTooltip,
-  useThemeVars,
-} from "naive-ui"
+import { NButton, NInput, NProgress, NSpace, NText, NTooltip, useThemeVars } from "naive-ui"
 import type { FormInst, PaginationProps } from "naive-ui"
-import {
-  addUser,
-  deleteUser,
-  getUsers,
-  updateUserDisabled,
-  updateUserInfo,
-  updateUserPassword,
-} from "@/api/user"
+import { addUser, deleteUser, getUsers, updateUserDisabled, updateUserInfo, updateUserPassword } from "@/api/user"
 import RoleTable from "./RoleTable.vue"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import { renderTooltip } from "@/utils"
@@ -446,10 +431,7 @@ const getData = () => {
 <template>
   <div style="padding: 12px">
     <!-- 确认删除模态框 -->
-    <ConfirmModal
-      v-model:show="showDeleteConfirmModal"
-      @positive-click="onDeleteUserConfirm"
-    />
+    <ConfirmModal v-model:show="showDeleteConfirmModal" @positive-click="onDeleteUserConfirm" />
 
     <!-- 重置密码模态框 -->
     <n-modal
@@ -473,12 +455,7 @@ const getData = () => {
           label-width="auto"
         >
           <n-form-item path="password" label="新密码">
-            <n-input
-              v-model:value="resetPasswordData.password"
-              clearable
-              placeholder="输入新密码"
-              type="password"
-            />
+            <n-input v-model:value="resetPasswordData.password" clearable placeholder="输入新密码" type="password" />
           </n-form-item>
           <n-form-item path="confirmPassword" label="确认密码">
             <n-input
@@ -490,15 +467,8 @@ const getData = () => {
           </n-form-item>
         </n-form>
         <n-space justify="end">
-          <n-button
-            type="error"
-            @click="() => (showResetPasswordModal = false)"
-          >
-            取消
-          </n-button>
-          <n-button type="primary" @click="onResetPasswordClick">
-            确定
-          </n-button>
+          <n-button type="error" @click="() => (showResetPasswordModal = false)"> 取消 </n-button>
+          <n-button type="primary" @click="onResetPasswordClick"> 确定 </n-button>
         </n-space>
       </n-space>
     </n-modal>
@@ -516,13 +486,7 @@ const getData = () => {
       @after-leave="onAfterEditModalLeave"
     >
       <n-space vertical>
-        <n-form
-          ref="modalFormRef"
-          :model="modalData"
-          :rules="rules"
-          label-placement="left"
-          label-width="auto"
-        >
+        <n-form ref="modalFormRef" :model="modalData" :rules="rules" label-placement="left" label-width="auto">
           <n-form-item path="username" label="用户名">
             <n-tooltip :disabled="!isEdit" trigger="hover" placement="top">
               <template #trigger>
@@ -547,34 +511,18 @@ const getData = () => {
             />
           </n-form-item>
           <n-form-item path="repeatPassword" label="确认密码">
-            <n-input
-              v-model:value="modalData.repeatPassword"
-              type="password"
-              clearable
-              placeholder="重复密码"
-            />
+            <n-input v-model:value="modalData.repeatPassword" type="password" clearable placeholder="重复密码" />
           </n-form-item>
           <n-form-item path="nickname" label="昵称">
-            <n-input
-              v-model:value="modalData.nickname"
-              clearable
-              placeholder="输入昵称"
-            />
+            <n-input v-model:value="modalData.nickname" clearable placeholder="输入昵称" />
           </n-form-item>
           <n-form-item path="email" label="邮箱">
-            <n-input
-              v-model:value="modalData.email"
-              clearable
-              placeholder="输入邮箱"
-            />
+            <n-input v-model:value="modalData.email" clearable placeholder="输入邮箱" />
           </n-form-item>
         </n-form>
       </n-space>
       <n-space justify="end" style="width: 100%">
-        <n-button
-          :type="isEdit ? 'warning' : 'success'"
-          @click="onModalPositiveButtonClick"
-        >
+        <n-button :type="isEdit ? 'warning' : 'success'" @click="onModalPositiveButtonClick">
           {{ isEdit ? "修改" : "确定" }}
         </n-button>
       </n-space>
@@ -615,13 +563,7 @@ const getData = () => {
               <n-icon :component="SearchOutline" />
             </template>
           </n-input>
-          <n-button
-            ghost
-            :disabled="isLoading || searchExpression.length === 0"
-            @click="getData"
-          >
-            搜索
-          </n-button>
+          <n-button ghost :disabled="isLoading || searchExpression.length === 0" @click="getData"> 搜索 </n-button>
         </n-input-group>
       </n-space>
 

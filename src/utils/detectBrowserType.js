@@ -28,23 +28,16 @@ export function detectBrowserTypeByComputedStyle() {
  */
 export function detectBrowserByFeature() {
   // Opera 8.0+
-  const isOpera =
-    (!!window.opr && !!opr.addons) ||
-    !!window.opera ||
-    navigator.userAgent.indexOf(" OPR/") >= 0
+  const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0
   // Firefox 1.0+
   const isFirefox = typeof InstallTrigger !== "undefined"
   // Safari 3.0+
   const isSafari =
     /constructor/i.test(window.HTMLElement) ||
-    (
-      typeof safari !== "undefined" && window["safari"].pushNotification
-    ).toString() === "[object SafariRemoteNotification]"
+    (typeof safari !== "undefined" && window["safari"].pushNotification).toString() ===
+      "[object SafariRemoteNotification]"
   // Internet Explorer 6-11
-  const isIE =
-    !!window.ActiveXObject ||
-    "ActiveXObject" in window ||
-    !!document.documentMode
+  const isIE = !!window.ActiveXObject || "ActiveXObject" in window || !!document.documentMode
   // 旧 Edge 20+
   const isEdge = !isIE && !!window.StyleMedia
   // Chrome 1 - 79

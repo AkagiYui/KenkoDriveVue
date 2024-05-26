@@ -49,11 +49,7 @@ const columns = [
           secondary: true,
           size: "small",
           disabled: loading.value,
-          type: loading.value
-            ? "tertiary"
-            : isUserInRole(row)
-              ? "error"
-              : "primary",
+          type: loading.value ? "tertiary" : isUserInRole(row) ? "error" : "primary",
           onClick: () => onActionClick(row),
         },
         { default: () => (isUserInRole(row) ? "移除角色" : "分配角色") },
@@ -116,9 +112,7 @@ const onActionClick = (user: User) => {
     unassignRoleUsers(props.role.id, [user.id])
       .then(() => {
         window.$message.success("移除成功")
-        selectedUserIds.value = selectedUserIds.value.filter(
-          (id) => id !== user.id,
-        )
+        selectedUserIds.value = selectedUserIds.value.filter((id) => id !== user.id)
       })
       .catch((e) => {
         window.$message.error("移除失败")

@@ -10,11 +10,7 @@ import {
   SpaceDashboardOutlined,
   TerminalOutlined,
 } from "@vicons/material"
-import {
-  DocumentPdf32Regular,
-  SlideLayout24Regular,
-  Gif24Regular,
-} from "@vicons/fluent"
+import { DocumentPdf32Regular, SlideLayout24Regular, Gif24Regular } from "@vicons/fluent"
 import { Java, Markdown, Vuejs } from "@vicons/fa"
 import {
   ArchiveOutline,
@@ -31,10 +27,7 @@ import {
  * @param content 提示内容
  * @returns 提示组件
  */
-export function renderTooltip(
-  trigger: VNode<RendererNode, RendererElement, { [key: string]: any }>,
-  content: string,
-) {
+export function renderTooltip(trigger: VNode<RendererNode, RendererElement, { [key: string]: any }>, content: string) {
   return h(NTooltip, null, {
     trigger: () => trigger,
     default: () => content,

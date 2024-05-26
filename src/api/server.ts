@@ -11,10 +11,7 @@ export function getConfig(): RequestResponse<Object> {
 }
 
 /** 更新设置 */
-export function updateSetting(
-  key: string,
-  value: string | number | boolean,
-): RequestResponse<undefined> {
+export function updateSetting(key: string, value: string | number | boolean): RequestResponse<undefined> {
   return Request.put(
     `/system/setting/${key}`,
     { value },

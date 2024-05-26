@@ -4,24 +4,17 @@ const props = defineProps<{
   config: GeetestConfig
 }>()
 defineExpose({
-  validate: (
-    onFail: (w: GeetestFailInfo) => void = () => {},
-  ): Promise<GeetestSuccessInfo> =>
-    new Promise<GeetestSuccessInfo>(
-      (
-        resolve: (value: GeetestSuccessInfo) => void = () => {},
-        reject = () => {},
-      ) => {
-        if (!geetest) {
-          reject(new Error("geetest not ready"))
-          return
-        }
-        geetest.onSuccess(() => resolve(geetest.getValidate()))
-        geetest.onFail(onFail)
-        geetest.onError(reject)
-        geetest.showCaptcha()
-      },
-    ),
+  validate: (onFail: (w: GeetestFailInfo) => void = () => {}): Promise<GeetestSuccessInfo> =>
+    new Promise<GeetestSuccessInfo>((resolve: (value: GeetestSuccessInfo) => void = () => {}, reject = () => {}) => {
+      if (!geetest) {
+        reject(new Error("geetest not ready"))
+        return
+      }
+      geetest.onSuccess(() => resolve(geetest.getValidate()))
+      geetest.onFail(onFail)
+      geetest.onError(reject)
+      geetest.showCaptcha()
+    }),
 })
 
 onBeforeMount(() => {

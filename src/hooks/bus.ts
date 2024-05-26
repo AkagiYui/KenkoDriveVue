@@ -5,10 +5,7 @@ import { useGlobal } from "./vue"
  * 使用事件总线
  * @returns 事件总线
  */
-export function useBusEvent<T extends BusEvent>(
-  event: T,
-  callback: (...args: EventParams[T]) => void,
-) {
+export function useBusEvent<T extends BusEvent>(event: T, callback: (...args: EventParams[T]) => void) {
   const { $bus } = useGlobal()
   $bus.on(event, callback as (...args: any[]) => void)
   onUnmounted(() => $bus.off(event, callback as (...args: any[]) => void))
@@ -17,10 +14,7 @@ export function useBusEvent<T extends BusEvent>(
 /**
  * 发出事件
  */
-export function emitBusEvent<T extends BusEvent>(
-  event: T,
-  ...args: EventParams[T]
-) {
+export function emitBusEvent<T extends BusEvent>(event: T, ...args: EventParams[T]) {
   const { $bus } = useGlobal()
   console.debug(`[Bus] Emit event: ${event}`, ...args)
   $bus.emit(event, ...args)

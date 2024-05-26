@@ -30,8 +30,7 @@ import {
 import { useAppConfig } from "@/stores/app-config"
 import { renderIcon } from "@/utils"
 
-const { expandedMenuKeys, isMenuCollapsed, isDebugMode } =
-  storeToRefs(useAppConfig())
+const { expandedMenuKeys, isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
 
 const menuOptions = ref([
   {
@@ -92,6 +91,7 @@ const menuOptions = ref([
     key: "recycle",
     icon: renderIcon(TrashOutline),
     disabled: true,
+    show: false,
   },
   {
     label: "设置",
@@ -108,6 +108,7 @@ const menuOptions = ref([
         label: "系统状态",
         key: "system-status",
         icon: renderIcon(SpeedometerOutline),
+        show: false,
         children: [
           {
             label: "运行信息",
