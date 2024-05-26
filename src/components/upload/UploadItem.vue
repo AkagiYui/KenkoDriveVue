@@ -1,18 +1,13 @@
 <script lang="ts" setup>
 import {
-  ArchiveOutline,
   CloseOutline,
-  CogOutline,
-  DocumentOutline,
-  DocumentTextOutline,
-  FilmOutline,
   HelpOutline,
-  ImageOutline,
   PauseOutline,
   PlayOutline,
   CheckmarkOutline,
 } from "@vicons/ionicons5"
 import { useThemeVars } from "naive-ui"
+import { type2Icon } from "@/utils"
 
 const props = defineProps<{
   data: UploadDisplayInfo
@@ -42,27 +37,7 @@ watch(
 
 // 根据文件类型选择图标
 const icon = computed(() => {
-  switch (info.value.type) {
-    case "image/png":
-    case "image/jpeg":
-    case "image/gif":
-      return ImageOutline
-    case "application/zip":
-    case "application/x-zip-compressed":
-    case "application/x-compressed":
-      return ArchiveOutline
-    case "application/x-msdownload":
-      return CogOutline
-    case "application/pdf":
-    case "text/csv":
-    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-      return DocumentTextOutline
-    case "video/mp4":
-      return FilmOutline
-  }
-  const suffix = info.value.name.split(".").pop()
-  console.log("unknown file type", info.value.type, suffix)
-  return DocumentOutline
+  return type2Icon(info.value.type, info.value.name)
 })
 
 // 确认删除

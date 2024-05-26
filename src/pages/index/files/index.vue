@@ -27,20 +27,7 @@ import {
   RefreshOutline,
   TrashBinOutline,
 } from "@vicons/ionicons5"
-import {
-  AndroidTwotone,
-  AppleOutlined,
-  AudiotrackOutlined,
-  FeedOutlined,
-  FolderOpenOutlined,
-  GifBoxTwotone,
-  ImageOutlined,
-  InsertDriveFileOutlined,
-  QueueMusicOutlined,
-  SmartDisplayOutlined,
-  SpaceDashboardOutlined,
-  TerminalOutlined,
-} from "@vicons/material"
+import { FolderOpenOutlined } from "@vicons/material"
 import {
   ArrowDownload24Regular as DownloadIcon,
   Delete24Regular as DeleteIcon,
@@ -48,9 +35,7 @@ import {
   Rename24Regular as RenameIcon,
   ReOrderDotsHorizontal16Regular as ReOrderIcon,
   Share24Regular as ShareIcon,
-  DocumentPdf32Regular,
 } from "@vicons/fluent"
-import { Java, Markdown, Vuejs } from "@vicons/fa"
 import { filesize } from "filesize"
 import {
   deleteFile as deleteFileEndpoint,
@@ -59,7 +44,7 @@ import {
   moveFile,
 } from "@/api/file"
 import CreateFolderModal from "./CreateFolderModal.vue"
-import { renderIcon } from "@/utils"
+import { renderIcon, type2Icon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
 import { emitBusEvent, useBusEvent, useConfirmModal } from "@/hooks"
 import { moveFolder, deleteFolder as deleteFolderEndpoint } from "@/api/folder"
@@ -97,56 +82,6 @@ const codeFileSuffix = [
  * 主题相关变量
  */
 const themeVars = useThemeVars()
-
-/**
- * 根据文件类型取图标
- * @param type 文件类型
- */
-function type2Icon(type: string | undefined, name: string) {
-  switch (type) {
-    case "apk":
-      return AndroidTwotone
-    case "image/gif":
-      return GifBoxTwotone
-    case "application/pdf":
-      return DocumentPdf32Regular
-    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-      return SpaceDashboardOutlined
-    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-      return FeedOutlined
-  }
-  if (type?.startsWith("image")) {
-    return ImageOutlined
-  }
-  if (type?.startsWith("video")) {
-    return SmartDisplayOutlined
-  }
-  if (type?.startsWith("audio")) {
-    return AudiotrackOutlined
-  }
-
-  if (name.endsWith("vue")) {
-    return Vuejs
-  }
-  if (name.endsWith("md")) {
-    return Markdown
-  }
-  if (name.endsWith("lrc")) {
-    return QueueMusicOutlined
-  }
-  if (name.endsWith("jar") || name.endsWith("java")) {
-    return Java
-  }
-  if (name.endsWith("ipa")) {
-    return AppleOutlined
-  }
-  if (name.endsWith("exe")) {
-    return TerminalOutlined
-  }
-
-  console.log("unknown type", type, name)
-  return InsertDriveFileOutlined
-}
 
 /**
  * 行样式
@@ -428,7 +363,7 @@ function playFile(row: TableData) {
 
   // 未知文件类型，使用后缀
   const suffix = row.name.split(".").pop()
-  if (["txt", "md", "markdown"].includes(suffix!)) {
+  if (["md", "markdown"].includes(suffix!)) {
     getFileTemporaryUrl(row.id).then((res) => {
       window.$loadingbar.start()
       fetch(res)

@@ -248,9 +248,12 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
             log("upload finished")
             // 轮询检查合并状态
             const checkMergeStatus = async () => {
-              const response = await fetch(`${config.createTaskUrl}/${taskId}`, {
-                headers: requestHeader,
-              })
+              const response = await fetch(
+                `${config.createTaskUrl}/${taskId}`,
+                {
+                  headers: requestHeader,
+                },
+              )
               const responseJson = await response.json()
               log("checkMergeStatus", responseJson)
               const merged = responseJson["data"]["merged"]
