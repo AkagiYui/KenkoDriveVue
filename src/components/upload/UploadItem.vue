@@ -86,13 +86,14 @@ const onRemoveButtonClick = (() => {
 const text = computed(() => {
   switch (info.value.status) {
     case "uploading":
-      // return `${info.value.progress.toFixed(2)}%` // 保留小数点后两位
-      return `${info.value.progress.toFixed(0)}%`
+      return `${Math.min(info.value.progress, 100).toFixed(0)}%`
     case "paused":
       return "已暂停"
     case "waiting":
       return "排队中"
     case "uploaded":
+      return "处理中"
+    case "merged":
       return "上传成功"
     case "mirrored":
       return "秒传成功"
@@ -116,7 +117,7 @@ const text = computed(() => {
       circle
       quaternary
       size="small"
-      :disabled="info.status === 'mirrored' || info.status === 'uploaded'"
+      :disabled="info.status === 'mirrored' || info.status === 'merged'"
       @click="emit('onPauseButtonClick')"
     >
       <n-icon
@@ -129,7 +130,7 @@ const text = computed(() => {
       circle
       size="small"
       :type="
-        info.status === 'mirrored' || info.status === 'uploaded'
+        info.status === 'mirrored' || info.status === 'merged'
           ? 'success'
           : 'error'
       "
@@ -138,7 +139,7 @@ const text = computed(() => {
       <n-icon
         :component="
           (() => {
-            if (info.status === 'mirrored' || info.status === 'uploaded') {
+            if (info.status === 'mirrored' || info.status === 'merged') {
               if (isConfirming) {
                 return CloseOutline
               } else {
