@@ -29,6 +29,7 @@ import {
 } from "@vicons/ionicons5"
 import {
   AndroidTwotone,
+  AppleOutlined,
   AudiotrackOutlined,
   FeedOutlined,
   FolderOpenOutlined,
@@ -38,6 +39,7 @@ import {
   QueueMusicOutlined,
   SmartDisplayOutlined,
   SpaceDashboardOutlined,
+  TerminalOutlined,
 } from "@vicons/material"
 import {
   ArrowDownload24Regular as DownloadIcon,
@@ -134,6 +136,12 @@ function type2Icon(type: string | undefined, name: string) {
   }
   if (name.endsWith("jar") || name.endsWith("java")) {
     return Java
+  }
+  if (name.endsWith("ipa")) {
+    return AppleOutlined
+  }
+  if (name.endsWith("exe")) {
+    return TerminalOutlined
   }
 
   console.log("unknown type", type, name)
