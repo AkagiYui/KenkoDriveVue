@@ -229,7 +229,7 @@ const contentResponse = ref<FolderContent>({
  * 表格列
  */
 const columns: DataTableColumns<TableData> = [
-  { type: "selection" },
+  // { type: "selection" },
   {
     title: "文件名",
     key: "name",
@@ -701,7 +701,7 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
           </template>
           新建文件夹
         </n-button>
-        <n-button type="error" @click="() => imageRef?.click()">
+        <n-button v-if="false" type="error">
           <template #icon>
             <n-icon :component="TrashBinOutline" />
           </template>
