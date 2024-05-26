@@ -2,118 +2,166 @@
 import { storeToRefs } from "pinia"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
-import { uploadFile } from "@/api/file"
 import { emitBusEvent, useBusEvent, useEventListener } from "@/hooks"
 import UploadItem from "./UploadItem.vue"
 import { BusEvent } from "@/types"
+import { useUserInfo } from "@/stores/user-info"
+import { config as requestConfig } from "@/api/request"
 
-const running = ref(false)
+const { requestToken } = useUserInfo()
+const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
+
+// 初始化上传器
+const uploader = new Worker(new URL("./uploadWorker.ts", import.meta.url), {
+  type: "module",
+})
+uploader.postMessage({
+  command: "init",
+  baseUrl: `${requestConfig.baseURL}/file`,
+  token: requestToken,
+})
+// 上传列表
+const displayMap = reactive(new Map<number, UploadDisplayInfo>())
+watch(displayMap, () => {
+  let notDoneCount = 0
+  displayMap.forEach((value) => {
+    if (
+      value.status !== "mirrored" &&
+      value.status !== "uploaded" &&
+      value.status !== "canceled"
+    ) {
+      notDoneCount++
+    }
+  })
+  uploadItemCount.value = notDoneCount
+  running = notDoneCount > 0
+})
+uploader.onmessage = (e) => {
+  const { event } = e.data
+  console.log(JSON.stringify(e.data))
+  if (event === "appended") {
+    const { task } = e.data
+    displayMap.set(task.id, {
+      id: task.id,
+      name: task.filename,
+      size: task.file.size,
+      type: task.file.type,
+      status: "waiting",
+      progress: 0,
+      folderId: task.folderId,
+    })
+  } else if (event === "started") {
+    const { id } = e.data
+    const info = displayMap.get(id)
+    if (info) {
+      info.status = "uploading"
+    }
+  } else if (event === "progress") {
+    const { id, progress } = e.data
+    const info = displayMap.get(id)
+    if (info) {
+      info.progress = progress * 100
+    }
+  } else if (event === "mirrored") {
+    const { id } = e.data
+    const info = displayMap.get(id)
+    if (info) {
+      info.status = "mirrored"
+      info.progress = 0
+      emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
+    }
+  } else if (event === "completed") {
+    const { id } = e.data
+    const info = displayMap.get(id)
+    if (info) {
+      info.status = "uploaded"
+      info.progress = 0
+      emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
+    }
+  } else if (event === "failed") {
+    const { id } = e.data
+    const info = displayMap.get(id)
+    if (info) {
+      info.status = "error"
+      info.progress = 0
+    }
+  }
+}
+
 // 阻止关闭页面
+let running = false
 useEventListener(window, "beforeunload", (e) => {
-  if (running.value) {
+  if (running) {
     e.preventDefault()
   }
 })
 
-const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
-
+// 设置文件选择器事件
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const folderInputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
-  fileInputRef.value?.addEventListener("change", onFileInputChange)
+  fileInputRef.value?.addEventListener("change", (event: any) => {
+    addFileList(event.target.files)
+  })
+  folderInputRef.value?.addEventListener("change", (event: any) => {
+    addFileList(event.target.files)
+  })
 })
 
+// 添加文件事件
 useBusEvent(BusEvent.ADD_ENTRIES, ({ file, folderId }) => {
-  file
-    .filter((f) => f.isFile)
-    .map((f) =>
-      f.file((f) => {
-        addFile(f, folderId)
-      }),
-    )
+  file.forEach((f: FileSystemFileEntry) => {
+    if (f.isFile) {
+      f.file((file: File) => {
+        addFile(file, folderId)
+      })
+    } else if (f.isDirectory) {
+      //
+    }
+  })
 })
 useBusEvent(BusEvent.ADD_FILELIST, ({ file, folderId }) => {
   addFileList(file, folderId)
 })
 
-function onUploadFileButtonClick() {
-  fileInputRef.value?.click()
-}
-
-function onUploadFolderButtonClick() {
-  folderInputRef.value?.click()
-}
-
-function onFileInputChange(event: any) {
-  const list = event.target.files
-  if (list.length === 0) {
-    return
-  }
-  addFileList(list)
-}
-
-const fileList = reactive<UploadFileInfo[]>([])
-watch(fileList, () => {
-  uploadItemCount.value = fileList.length
-})
-
+// 添加文件列表
 function addFileList(files: FileList, folderId?: string) {
   Array.from(files).forEach((file) => {
-    fileList.push({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file: file,
-      status: "waiting",
-      progress: 0,
-      folderId,
-    })
+    addFile(file, folderId)
   })
-  upload()
 }
-
 function addFile(file: File, folderId?: string) {
-  fileList.push({
-    name: file.name,
-    size: file.size,
-    type: file.type,
+  uploader.postMessage({
+    command: "append",
     file: file,
-    status: "waiting",
-    progress: 0,
-    folderId,
+    filename: file.name,
+    folderId: folderId,
   })
-  upload()
 }
 
-function upload() {
-  if (running.value) {
-    return
-  }
-  running.value = true
-  if (fileList.length === 0) {
-    running.value = false
-    return
-  }
-  const file = fileList[0]
-  const size = file.size
-  // 上传
-  console.log("upload", file)
-  const { requestPromise: request, cancelTrigger: cancel } = uploadFile(
-    file.file,
-    file.name,
-    file.folderId,
-    (progress) => {
-      console.log("progress", progress)
-      file.status = "uploading"
-      file.progress = progress.progress! * 100
-    },
-  )
-  request.then(() => {
-    fileList.shift()
-    running.value = false
-    emitBusEvent(BusEvent.UPLOAD_SUCCESS, file.folderId)
-    upload()
+// 组件事件
+function onPauseButtonClick(taskId: number) {
+  uploader.postMessage({
+    command: "pause",
+    id: taskId,
   })
+}
+function onRemoveButtonClick(taskId: number) {
+  const info = displayMap.get(taskId)
+  if (!info) return
+  if (
+    info.status === "mirrored" ||
+    info.status === "uploaded" ||
+    info.status === "canceled" ||
+    info.status === "error"
+  ) {
+    displayMap.delete(taskId)
+  } else {
+    uploader.postMessage({
+      command: "remove",
+      id: taskId,
+    })
+  }
 }
 </script>
 
@@ -127,27 +175,43 @@ function upload() {
     type="file"
     webkitdirectory
   />
-  <n-drawer v-model:show="isUploadDrawerShow" :placement="'right'" :width="502">
-    <n-drawer-content id="content" :native-scrollbar="false" title="">
+  <n-drawer
+    v-model:show="isUploadDrawerShow"
+    :placement="'right'"
+    :width="502"
+    :auto-focus="false"
+  >
+    <n-drawer-content
+      id="content"
+      :native-scrollbar="false"
+      title=""
+      :body-content-style="{
+        paddingRight: 0,
+        paddingLeft: 0,
+        paddingTop: 0,
+      }"
+    >
       <template #header> 上传列表</template>
-      <n-empty v-if="fileList.length === 0" id="empty" />
-      <UploadItem
-        v-for="(item, index) in fileList"
-        :key="index"
-        :file="item"
-        @on-pause-button-click="console.log('on-pause-button-click', item)"
-        @on-remove-button-click="console.log('on-remove-button-click', item)"
-      />
+      <n-empty v-if="displayMap.size === 0" id="empty" />
+      <div style="margin: 00px 0 0 0">
+        <UploadItem
+          v-for="(item, index) in displayMap"
+          :key="index"
+          :data="item[1]"
+          @on-pause-button-click="() => onPauseButtonClick(item[0])"
+          @on-remove-button-click="() => onRemoveButtonClick(item[0])"
+        />
+      </div>
       <template #footer>
         <n-flex>
-          <n-button @click="onUploadFileButtonClick"
-            >上传文件
+          <n-button @click="fileInputRef?.click()">
+            上传文件
             <template #icon>
               <n-icon :component="DocumentOutline" />
             </template>
           </n-button>
-          <n-button v-if="false" @click="onUploadFolderButtonClick"
-            >上传文件夹
+          <n-button @click="folderInputRef?.click()">
+            上传文件夹
             <template #icon>
               <n-icon :component="FolderOutline" />
             </template>

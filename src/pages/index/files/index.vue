@@ -611,7 +611,7 @@ function onUploadFileButtonClick() {
 }
 onMounted(() => {
   fileInputRef.value?.addEventListener("change", (event: any) => {
-    if(!event.target.files) return
+    if (!event.target.files) return
     emitBusEvent(BusEvent.ADD_FILELIST, {
       file: event.target.files,
       folderId: currentFolderId.value,
