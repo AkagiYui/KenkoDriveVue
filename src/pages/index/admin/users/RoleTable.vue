@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { NButton, type PaginationProps } from "naive-ui"
-import { getRoles } from "@/api/role"
-import { assignRoles, getUserRoles, removeRoles } from "@/api/user"
+import { assignRoles, getUserRoles, removeRoles, getRoles } from "@/api"
 
 /** 是否显示模态框 */
 const show = defineModel<boolean>("show", { default: false })

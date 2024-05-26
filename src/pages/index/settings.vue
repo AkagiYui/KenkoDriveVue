@@ -13,7 +13,7 @@ import { WeatherMoon16Regular, WeatherSunny16Regular } from "@vicons/fluent"
 import type { UploadFileInfo } from "naive-ui"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
-import { uploadUserAvatar } from "@/api/user"
+import { uploadUserAvatar } from "@/api"
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { toggleDarkMode, reset: resetConfig } = useAppConfig()

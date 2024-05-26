@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
 import { MdSave } from "@vicons/ionicons4"
-import { getIndexAnnouncements } from "@/api/announcement"
+import { getIndexAnnouncements } from "@/api"
 import { useUserInfo } from "@/stores/user-info"
 import { useAppConfig } from "@/stores/app-config"
 import { useInterval } from "@/hooks"

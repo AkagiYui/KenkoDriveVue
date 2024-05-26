@@ -11,7 +11,7 @@
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import type { FormInst, PaginationProps } from "naive-ui"
 import { NButton, NInput, NSpace, NSwitch } from "naive-ui"
-import { addRole, deleteRole, getPermissions, getRoles, updateRole, updateRoleStatus } from "@/api/role"
+import { addRole, deleteRole, getPermissions, getRoles, updateRole, updateRoleStatus } from "@/api"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import UserTable from "./UserTable.vue"
 

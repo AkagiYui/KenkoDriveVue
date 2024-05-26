@@ -1,6 +1,6 @@
 import { computed, ref } from "vue"
 import { defineStore } from "pinia"
-import { getUserAvatar, getUserInfo } from "@/api/user"
+import { getUserAvatar, getUserInfo } from "@/api"
 import Permission from "@/types/permission"
 import { getJWTExpireTime, hasText } from "@/utils"
 

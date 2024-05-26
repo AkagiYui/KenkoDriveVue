@@ -25,12 +25,18 @@ import {
   Share24Regular as ShareIcon,
 } from "@vicons/fluent"
 import { filesize } from "filesize"
-import { deleteFile as deleteFileEndpoint, getFileTemporaryUrl, getFolderContent, moveFile } from "@/api/file"
+import {
+  deleteFile as deleteFileEndpoint,
+  getFileTemporaryUrl,
+  getFolderContent,
+  moveFile,
+  moveFolder,
+  deleteFolder as deleteFolderEndpoint,
+} from "@/api"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import { renderIcon, type2Icon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
 import { emitBusEvent, useBusEvent, useConfirmModal } from "@/hooks"
-import { moveFolder, deleteFolder as deleteFolderEndpoint } from "@/api/folder"
 import { BusEvent } from "@/types"
 const { isDarkMode } = storeToRefs(useAppConfig())
 const router = useRouter()

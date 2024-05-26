@@ -22,8 +22,14 @@ import {
 } from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
-import { confirmRegisterEmailCode, confirmSmsCode, getToken, sendRegisterEmailCode, sendSmsCode } from "@/api/user"
-import { getRegisterEnabled } from "@/api/server"
+import {
+  confirmRegisterEmailCode,
+  confirmSmsCode,
+  getToken,
+  sendRegisterEmailCode,
+  sendSmsCode,
+  getRegisterEnabled,
+} from "@/api"
 import { ResponseMessagesSimplifiedChinese } from "@/api/ResponseMessages"
 import { hasText } from "@/utils"
 import { useGlobal } from "@/hooks"

@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core"
-import { getConfig, updateSetting } from "@/api/server"
+import { getConfig, updateSetting } from "@/api"
 
 // 全局变量
 const isLoading = ref(false)
