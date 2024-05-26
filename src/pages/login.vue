@@ -36,7 +36,7 @@ import { useGlobal } from "@/hooks"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { setToken } = useUserInfo()
-const route = useRouter()
+const router = useRouter()
 
 const isRegisterEnabled = ref(false)
 
@@ -89,7 +89,7 @@ const onLoginButtonClick = () => {
     getToken(loginForm.value.username, loginForm.value.password)
       .then((res) => {
         setToken(res.data.token)
-        route.replace("/") // 跳转到首页，使用replace以避免产生历史记录
+        router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
         loginForm.value.username = ""
         loginForm.value.password = ""
         loginForm.value.repeatPassword = ""
@@ -192,7 +192,7 @@ const onSmsLoginButtonClick = () => {
     confirmSmsCode(smsLoginForm.value.phone, smsLoginForm.value.code)
       .then((res) => {
         setToken(res.data.token)
-        route.replace("/") // 跳转到首页，使用replace以避免产生历史记录
+        router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
         smsLoginForm.value.phone = ""
         smsLoginForm.value.code = ""
       })
