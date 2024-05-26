@@ -22,7 +22,8 @@
  * - { event: "started", id: number } 文件开始上传
  * - { event: "progress", id: number, progress: number } 文件上传进度
  * - { event: "mirrored", id: number } 文件秒传成功
- * - { event: "completed", id: number } 文件上传成功
+ * - { event: "uploaded", id: number } 文件上传成功
+ * - { event: "merged", id: number } 文件合并成功
  * - { event: "failed", id: number } 文件上传失败
  */
 
@@ -236,10 +237,35 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
       xhr.upload.onprogress = function (event) {
         onProgress(event, index)
       }
-      xhr.onload = function () {
+      xhr.onload = async function () {
         if (xhr.status === 200) {
           log("upload success")
           resolve()
+          // 上传成功，获取data字段
+          const responseJson = JSON.parse(xhr.responseText)
+          const finished = responseJson["data"]
+          if (finished) {
+            log("upload finished")
+            // 轮询检查合并状态
+            const checkMergeStatus = async () => {
+              const response = await fetch(
+                `${config.createTaskUrl}/${taskId}`,
+                {
+                  headers: requestHeader,
+                },
+              )
+              const responseJson = await response.json()
+              log("checkMergeStatus", responseJson)
+              const merged = responseJson["data"]["merged"]
+              if (merged) {
+                log("merge success")
+                postMessage({ event: "merged", id: id })
+              } else {
+                setTimeout(checkMergeStatus, 1000)
+              }
+            }
+            checkMergeStatus()
+          }
         } else {
           log("upload failed", xhr.responseText)
           reject(
@@ -279,7 +305,7 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
       // 所有上传操作成功完成
       log("all chunks uploaded")
       postMessage({
-        event: "completed",
+        event: "uploaded",
         id: id,
       })
     })

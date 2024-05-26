@@ -3,16 +3,12 @@ import {
   ArchiveOutline,
   CheckmarkOutline,
   CloseOutline,
-  CogOutline,
-  DocumentOutline,
-  DocumentTextOutline,
-  FilmOutline,
   HelpOutline,
-  ImageOutline,
   PauseOutline,
   PlayOutline,
 } from "@vicons/ionicons5"
 import { useThemeVars } from "naive-ui"
+import { type2Icon } from "@/utils"
 
 const props = defineProps<{
   data: UploadDisplayInfo
@@ -44,27 +40,7 @@ const progressColor = computed(() => {
 
 // 根据文件类型选择图标
 const icon = computed(() => {
-  switch (info.value.type) {
-    case "image/png":
-    case "image/jpeg":
-    case "image/gif":
-      return ImageOutline
-    case "application/zip":
-    case "application/x-zip-compressed":
-    case "application/x-compressed":
-      return ArchiveOutline
-    case "application/x-msdownload":
-      return CogOutline
-    case "application/pdf":
-    case "text/csv":
-    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-      return DocumentTextOutline
-    case "video/mp4":
-      return FilmOutline
-  }
-  const suffix = info.value.name.split(".").pop()
-  console.log("unknown file type", info.value.type, suffix)
-  return DocumentOutline
+  return type2Icon(info.value.type, info.value.name)
 })
 
 // 确认删除
@@ -88,12 +64,14 @@ const onRemoveButtonClick = (() => {
 const text = computed(() => {
   switch (info.value.status) {
     case "uploading":
-      return `${progress.value.toFixed(0)}%`
+      return `${Math.min(info.value.progress, 100).toFixed(0)}%`
     case "paused":
       return "已暂停"
     case "waiting":
       return "排队中"
     case "uploaded":
+      return "处理中"
+    case "merged":
       return "上传成功"
     case "mirrored":
       return "秒传成功"

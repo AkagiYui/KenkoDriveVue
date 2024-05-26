@@ -27,7 +27,7 @@ watch(displayMap, () => {
   displayMap.forEach((value) => {
     if (
       value.status !== "mirrored" &&
-      value.status !== "uploaded" &&
+      value.status !== "merged" &&
       value.status !== "canceled"
     ) {
       notDoneCount++
@@ -70,11 +70,18 @@ uploader.onmessage = (e) => {
       info.progress = 100
       emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
     }
-  } else if (event === "completed") {
+  } else if (event === "uploaded") {
     const { id } = e.data
     const info = displayMap.get(id)
     if (info) {
       info.status = "uploaded"
+      info.progress = 100
+    }
+  } else if (event === "merged") {
+    const { id } = e.data
+    const info = displayMap.get(id)
+    if (info) {
+      info.status = "merged"
       info.progress = 100
       emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
     }
@@ -151,7 +158,7 @@ function onRemoveButtonClick(taskId: number) {
   if (!info) return
   if (
     info.status === "mirrored" ||
-    info.status === "uploaded" ||
+    info.status === "merged" ||
     info.status === "canceled" ||
     info.status === "error"
   ) {

@@ -4,13 +4,14 @@ interface UploadDisplayInfo {
   size: number
   type: string
   status:
-    | "uploading"
-    | "paused"
-    | "mirrored"
-    | "uploaded"
-    | "error"
-    | "canceled"
-    | "waiting"
+    | "uploading" // 上传中
+    | "paused" // 已暂停
+    | "mirrored" // 已秒传
+    | "uploaded" // 已上传
+    | "merged" // 文件在服务端已合并
+    | "error" // 发生错误
+    | "canceled" // 被取消
+    | "waiting" // 等待上传
   progress: number
   folderId?: string
 }
