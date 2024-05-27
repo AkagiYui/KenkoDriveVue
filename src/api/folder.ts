@@ -27,3 +27,20 @@ export function moveFolder(id: string, parent: string | undefined): RequestRespo
 export function deleteFolder(id: string): RequestResponse<undefined> {
   return Request.delete(`/folder/${id}`)
 }
+
+/**
+ * 重命名文文件夹
+ * @param id 文件夹ID
+ * @param name 新文件夹名
+ */
+export function renameFolder(id: string, name: string): RequestResponse<null> {
+  return Request.put(
+    `/folder/${id}/name`,
+    { name },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    },
+  )
+}

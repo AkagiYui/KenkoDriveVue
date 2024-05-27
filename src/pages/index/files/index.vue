@@ -34,6 +34,7 @@ import {
   moveFolder,
   deleteFolder as deleteFolderEndpoint,
   renameUserFile,
+  renameFolder,
 } from "@/api"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import { renderIcon, type2Icon } from "@/utils"
@@ -276,7 +277,8 @@ function renameItem(row: TableData) {
     if (!newName) {
       return
     }
-    renameUserFile(row.id, newName).then(() => {
+    const endpoint = row.type === "folder" ? renameFolder : renameUserFile
+    endpoint(row.id, newName).then(() => {
       loadFolder(currentFolderId.value)
     })
   })
@@ -425,11 +427,6 @@ function onImageLoaded() {
 
 const options = [
   {
-    label: "分享",
-    key: "share",
-    icon: renderIcon(ShareIcon),
-  },
-  {
     label: "重命名",
     key: "rename",
     icon: renderIcon(RenameIcon),
@@ -450,6 +447,11 @@ const fileOptions = [
     label: "下载",
     key: "download",
     icon: renderIcon(DownloadIcon),
+  },
+  {
+    label: "分享",
+    key: "share",
+    icon: renderIcon(ShareIcon),
   },
   ...options,
 ]
