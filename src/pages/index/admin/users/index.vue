@@ -139,38 +139,38 @@ const tableColumns = [
     title: "邮箱",
     key: "email",
   },
-  {
-    title: "配额",
-    key: "capacity",
-    minWidth: "100px",
-    render: () => {
-      return h(
-        NTooltip,
-        {
-          placement: "bottom",
-        },
-        {
-          trigger: () =>
-            h(
-              NProgress,
-              {
-                type: "line",
-                "indicator-placement": "outside",
-                color: themeVars.value.successColor,
-                "rail-color": changeColor(themeVars.value.successColor, {
-                  alpha: 0.2,
-                }),
-                percentage: 20,
-              },
-              {
-                default: () => "20%",
-              },
-            ),
-          default: () => "20G / 100G",
-        },
-      )
-    },
-  },
+  // {
+  //   title: "配额",
+  //   key: "capacity",
+  //   minWidth: "100px",
+  //   render: () => {
+  //     return h(
+  //       NTooltip,
+  //       {
+  //         placement: "bottom",
+  //       },
+  //       {
+  //         trigger: () =>
+  //           h(
+  //             NProgress,
+  //             {
+  //               type: "line",
+  //               "indicator-placement": "outside",
+  //               color: themeVars.value.successColor,
+  //               "rail-color": changeColor(themeVars.value.successColor, {
+  //                 alpha: 0.2,
+  //               }),
+  //               percentage: 20,
+  //             },
+  //             {
+  //               default: () => "20%",
+  //             },
+  //           ),
+  //         default: () => "20G / 100G",
+  //       },
+  //     )
+  //   },
+  // },
   {
     title: () => {
       return renderTooltip(
