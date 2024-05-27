@@ -5,10 +5,10 @@ import { hasText } from "@/utils"
 /** 组件参数 */
 const props = withDefaults(
   defineProps<{
-    parent?: string
+    parent?: string | null
   }>(),
   {
-    parent: "",
+    parent: null,
   },
 )
 const show = defineModel<boolean>("show", { default: false })

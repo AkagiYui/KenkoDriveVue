@@ -37,9 +37,11 @@ import {
 import CreateFolderModal from "./CreateFolderModal.vue"
 import { renderIcon, type2Icon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
+import { useUserInfo } from "@/stores/user-info"
 import { emitBusEvent, useBusEvent, useConfirmModal } from "@/hooks"
 import { BusEvent } from "@/types"
-const { isDarkMode } = storeToRefs(useAppConfig())
+const { isDarkMode, lastFolderIds } = storeToRefs(useAppConfig())
+const { userId } = storeToRefs(useUserInfo())
 const router = useRouter()
 
 useBusEvent(BusEvent.UPLOAD_SUCCESS, (folderId) => {
@@ -276,6 +278,7 @@ function playFile(row: TableData) {
   }
   if (row.locked) {
     window.$message.error("文件已锁定，无法加载")
+    return
   }
 
   const fileType = row.fileType!
@@ -482,21 +485,28 @@ const breadcrumbLastItem = computed(() => {
   return contentResponse.value.folderChain.slice(-1)[0]
 })
 
-/**
- * 当前文件夹id
- */
-const currentFolderId = ref<string | undefined>(undefined)
-/**
- * 监听文件夹id变化
- */
+/** 当前文件夹id */
+const currentFolderId = ref<string | null>(null)
+/** 监听文件夹id变化 */
 watch(currentFolderId, (id) => {
+  lastFolderIds.value[userId.value] = id
   loadFolder(id)
 })
-/**
- * 页面加载时请求数据
- */
-onBeforeMount(async () => {
-  loadFolder()
+function updateFolderIdAndLoad() {
+  const lastFolderId = lastFolderIds.value[userId.value]
+  currentFolderId.value = lastFolderId || null // 如果没有lastFolderId，则设置为null
+  if (currentFolderId.value) {
+    loadFolder(currentFolderId.value)
+  } else {
+    loadFolder() // 如果没有folderId，则调用loadFolder()加载默认数据
+  }
+}
+let firstLoaded = false
+watchEffect(() => {
+  // userId变化时，更新文件夹id并加载
+  if (!firstLoaded && userId.value) {
+    updateFolderIdAndLoad()
+  }
 })
 
 /**
@@ -515,7 +525,8 @@ function onDoubleClick(row: TableData) {
  * 加载文件夹内容
  * @param id 文件夹id
  */
-function loadFolder(id?: string): void {
+function loadFolder(id?: string | null): void {
+  firstLoaded = true
   getFolderContent(id).then((res) => {
     contentResponse.value = res.data
   })
@@ -626,7 +637,7 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
                 return
               }
               const lastItem = breadcrumbItems[breadcrumbItems.length - 1]
-              currentFolderId = lastItem ? lastItem.id : undefined
+              currentFolderId = lastItem ? lastItem.id : null
             }
           "
           @dragover="
@@ -655,7 +666,7 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
               if (!breadcrumbLastItem) {
                 return
               }
-              currentFolderId = undefined
+              currentFolderId = null
             }
           "
           @dragover="

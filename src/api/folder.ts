@@ -1,7 +1,7 @@
 import Request from "./request"
 
 /** 创建文件夹 */
-export function createFolder(name: string | undefined, parent?: string): RequestResponse<undefined> {
+export function createFolder(name: string | undefined, parent?: string | null): RequestResponse<undefined> {
   return Request.post("/folder", { name: name, parent: parent || null })
 }
 

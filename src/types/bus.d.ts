@@ -10,7 +10,7 @@ interface AddEntriesEvent {
   /**
    * 目标文件夹ID
    */
-  folderId: string | undefined
+  folderId?: string | null
 }
 
 interface AddFileListEvent {
@@ -22,5 +22,5 @@ interface AddFileListEvent {
   /**
    * 目标文件夹ID
    */
-  folderId: string | undefined
+  folderId?: string | null
 }

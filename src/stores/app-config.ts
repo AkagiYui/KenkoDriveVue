@@ -9,6 +9,7 @@ export const useAppConfig = defineStore(
     const currentRouteName = ref("home")
     const isDebugMode = ref(false)
     const expandedMenuKeys = ref<string[]>([])
+    const lastFolderIds = ref<Map<string, string | undefined>>(new Map())
 
     const isUploadDrawerShow = ref(false)
     const uploadItemCount = ref(0)
@@ -26,6 +27,8 @@ export const useAppConfig = defineStore(
       currentRouteName.value = ""
       isDebugMode.value = false
       expandedMenuKeys.value = []
+      lastFolderIds.value = new Map()
+
       isUploadDrawerShow.value = false
       uploadItemCount.value = 0
     }
@@ -36,6 +39,7 @@ export const useAppConfig = defineStore(
       currentRouteName,
       isDebugMode,
       expandedMenuKeys,
+      lastFolderIds,
       isUploadDrawerShow,
       uploadItemCount,
       toggleDarkMode,
@@ -45,7 +49,7 @@ export const useAppConfig = defineStore(
   {
     persist: {
       storage: localStorage,
-      paths: ["isDarkMode", "isMenuCollapsed", "expandedMenuKeys", "currentRouteName", "isDebugMode"],
+      paths: ["isDarkMode", "isMenuCollapsed", "expandedMenuKeys", "currentRouteName", "isDebugMode", "lastFolderIds"],
     },
   },
 )

@@ -12,7 +12,7 @@ export enum BusEvent {
 export interface EventParams {
   [BusEvent.ADD_ENTRIES]: [event: AddEntriesEvent]
   [BusEvent.ADD_FILELIST]: [event: AddFileListEvent]
-  [BusEvent.UPLOAD_SUCCESS]: [folderId: string | undefined]
+  [BusEvent.UPLOAD_SUCCESS]: [folderId?: string | null]
 
   [BusEvent.PLAY_MUSIC]: [url: string]
   [BusEvent.PAUSE_MUSIC]: []
