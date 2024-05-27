@@ -49,6 +49,7 @@ useBusEvent(BusEvent.UPLOAD_SUCCESS, (folderId) => {
 })
 
 const codeFileSuffix = [
+  "java",
   "js",
   "jsx",
   "tsx",
@@ -66,6 +67,7 @@ const codeFileSuffix = [
   "srt",
   "xml",
   "sql",
+  "kt",
 ]
 
 /**

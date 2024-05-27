@@ -38,8 +38,6 @@ const language = computed(() => {
   switch (props.language) {
     case "ts":
       return "typescript"
-    case "vue":
-      return "vue"
     case "js":
       return "javascript"
     default:
@@ -115,15 +113,16 @@ onMounted(async () => {
     allowNonTsExtensions: true,
   })
   // 创建一个可复用的语法高亮器
+  const langs = ["javascript", "typescript", "vue", "java"]
   const highlighter = await getHighlighter({
     themes: ["vitesse-dark", "vitesse-light"],
-    langs: ["javascript", "typescript", "vue"],
+    langs: langs,
   })
 
   // 首先注册需要的语言的 IDs
-  monaco.languages.register({ id: "vue" })
-  monaco.languages.register({ id: "typescript" })
-  monaco.languages.register({ id: "javascript" })
+  for (const lang of langs) {
+    monaco.languages.register({ id: lang })
+  }
 
   // 注册 Shiki 主题，并为 Monaco 提供语法高亮
   shikiToMonaco(highlighter, monaco)
