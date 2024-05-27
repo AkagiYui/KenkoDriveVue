@@ -97,3 +97,20 @@ export function moveFile(id: string, folderId: string | undefined): RequestRespo
     },
   )
 }
+
+/**
+ * 重命名文件
+ * @param id 用户文件ID
+ * @param name 新文件名
+ */
+export function renameUserFile(id: string, name: string): RequestResponse<null> {
+  return Request.put(
+    `/file/${id}/name`,
+    { name },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    },
+  )
+}

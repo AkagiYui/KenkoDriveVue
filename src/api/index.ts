@@ -1,3 +1,5 @@
+export { default as EMD } from "./ResponseMessages"
+
 export * from "./announcement"
 export * from "./file"
 export * from "./folder"

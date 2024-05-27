@@ -40,7 +40,7 @@ interface AppendFileRequest {
   /** 文件名 */
   filename: string
   /** 目标文件夹ID */
-  folderId: string | undefined
+  folderId: string | null
 }
 
 /** 上传任务 */

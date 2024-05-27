@@ -1,4 +1,4 @@
-const ResponseMessages: { [key: number]: string } = {
+export const ResponseMessages: { [key: number]: string } = {
   10000: "",
   10001: "General error",
   10002: "Internal error",
@@ -52,4 +52,14 @@ export const ResponseMessagesSimplifiedChinese: { [key: number]: string } = {
   10023: "用户不存在",
 }
 
-export default ResponseMessages
+export function getErrorMessageDict(language: string = "zh-CN"): { [key: number]: string } {
+  switch (language) {
+    case "zh-CN":
+      return ResponseMessagesSimplifiedChinese
+    default:
+      return ResponseMessages
+  }
+}
+
+const EMD = getErrorMessageDict()
+export default EMD

@@ -1,4 +1,4 @@
-import { useModal } from "naive-ui"
+import { NInput, useModal } from "naive-ui"
 
 export function useConfirmModal() {
   const modal = useModal()
@@ -27,4 +27,37 @@ export function useConfirmModal() {
   }
 
   return { openConfirmModal }
+}
+
+export function useRenameModal() {
+  const modal = useModal()
+
+  function openRenameModal(name: string, positive: (name: string) => void) {
+    let newName = name
+    const content = () => {
+      return h(NInput, {
+        defaultValue: newName,
+        autofocus: true,
+        onUpdateValue: (value) => {
+          newName = value
+        },
+        placeholder: "新名称",
+      })
+    }
+
+    const m = modal.create({
+      preset: "dialog",
+      title: "重命名",
+      positiveText: "确认",
+      negativeText: "取消",
+      closable: true,
+      content: content,
+      onPositiveClick: () => {
+        positive(newName)
+        m.destroy()
+      },
+    })
+  }
+
+  return { openRenameModal }
 }

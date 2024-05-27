@@ -33,12 +33,13 @@ import {
   moveFile,
   moveFolder,
   deleteFolder as deleteFolderEndpoint,
+  renameUserFile,
 } from "@/api"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import { renderIcon, type2Icon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
-import { emitBusEvent, useBusEvent, useConfirmModal } from "@/hooks"
+import { emitBusEvent, useBusEvent, useConfirmModal, useRenameModal } from "@/hooks"
 import { BusEvent } from "@/types"
 const { isDarkMode, lastFolderIds } = storeToRefs(useAppConfig())
 const { userId } = storeToRefs(useUserInfo())
@@ -246,7 +247,7 @@ function onActionSelect(key: string, row: TableData) {
       window.$message.success("分享文件 " + row)
       break
     case "rename":
-      window.$message.success("重命名文件 " + row)
+      renameItem(row)
       break
     case "delete":
       deleteItem(row)
@@ -265,6 +266,17 @@ function deleteItem(row: TableData) {
     const endpoint = row.type === "folder" ? deleteFolderEndpoint : deleteFileEndpoint
     endpoint(row.id).then(() => {
       window.$message.success("删除成功")
+      loadFolder(currentFolderId.value)
+    })
+  })
+}
+const { openRenameModal } = useRenameModal()
+function renameItem(row: TableData) {
+  openRenameModal(row.name, (newName) => {
+    if (!newName) {
+      return
+    }
+    renameUserFile(row.id, newName).then(() => {
       loadFolder(currentFolderId.value)
     })
   })

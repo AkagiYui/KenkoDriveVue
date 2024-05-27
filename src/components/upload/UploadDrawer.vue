@@ -124,21 +124,21 @@ useBusEvent(BusEvent.ADD_ENTRIES, ({ file, folderId }) => {
   })
 })
 useBusEvent(BusEvent.ADD_FILELIST, ({ file, folderId }) => {
-  addFileList(file, folderId)
+  addFileList(file, folderId || null)
 })
 
 // 添加文件列表
-function addFileList(files: FileList, folderId?: string) {
+function addFileList(files: FileList, folderId?: string | null) {
   Array.from(files).forEach((file) => {
     addFile(file, folderId)
   })
 }
-function addFile(file: File, folderId?: string) {
+function addFile(file: File, folderId?: string | null) {
   uploader.postMessage({
     command: "append",
     file: file,
     filename: file.name,
-    folderId: folderId,
+    folderId: folderId || null,
   })
 }
 

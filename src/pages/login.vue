@@ -29,8 +29,8 @@ import {
   sendRegisterEmailCode,
   sendSmsCode,
   getRegisterEnabled,
+  EMD,
 } from "@/api"
-import { ResponseMessagesSimplifiedChinese } from "@/api/ResponseMessages"
 import { hasText } from "@/utils"
 import { useGlobal } from "@/hooks"
 
@@ -148,7 +148,7 @@ function onSendEmailCodeLogoClick() {
             const code = err.response?.status
             if (code === 400) {
               const code = err.response?.data.code
-              window.$message.error(ResponseMessagesSimplifiedChinese[code])
+              window.$message.error(EMD[code])
             }
           })
       })
@@ -218,7 +218,7 @@ const onSendSmsCodeLogoClick = () => {
           const code = err.response?.status
           if (code === 400) {
             const code = err.response?.data.code
-            window.$message.error(ResponseMessagesSimplifiedChinese[code])
+            window.$message.error(EMD[code])
           }
         })
     })

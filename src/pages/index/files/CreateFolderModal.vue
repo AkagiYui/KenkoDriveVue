@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createFolder } from "@/api"
+import { EMD, createFolder } from "@/api"
 import { hasText } from "@/utils"
 
 /** 组件参数 */
@@ -17,13 +17,19 @@ const emit = defineEmits<{
 }>()
 
 const isLoading = ref(false)
-const folderName = ref("")
+const folderName = ref("新建文件夹")
 const create = () => {
   isLoading.value = true
   createFolder(hasText(folderName.value) ? folderName.value : undefined, props.parent)
     .then(() => {
       emit("success")
       show.value = false
+    })
+    .catch((e) => {
+      console.error(e)
+      const code = e.response?.data?.code
+      const message = EMD[code] || "创建失败"
+      window.$message.error(message)
     })
     .finally(() => {
       isLoading.value = false
@@ -39,7 +45,7 @@ const create = () => {
     :bordered="false"
     title="新建文件夹"
     style="width: 400px"
-    @after-leave="() => (folderName = '')"
+    @after-leave="() => (folderName = '新建文件夹')"
   >
     <n-flex vertical>
       <n-form :show-label="false" :disabled="isLoading">
