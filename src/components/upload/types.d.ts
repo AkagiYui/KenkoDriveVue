@@ -16,19 +16,6 @@ interface UploadDisplayInfo {
   folderId?: string
 }
 
-interface ChunkInfo {
-  blobStartIndex: number
-  blobEndIndex: number
-  chunkIndex: number
-  hash: string
-  blob: Blob
-}
-
-interface FileInfo {
-  hash: string
-  chunks: ChunkInfo[]
-}
-
 // interfaces in Worker
 /** 上传器配置 */
 interface UploaderWorkerConfig {

@@ -8,4 +8,5 @@ type TableData = {
   type: "folder" | "file"
   fileType?: string
   createTime: string
+  locked: boolean
 }

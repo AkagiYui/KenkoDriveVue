@@ -23,6 +23,7 @@ import {
   Rename24Regular as RenameIcon,
   ReOrderDotsHorizontal16Regular as ReOrderIcon,
   Share24Regular as ShareIcon,
+  DocumentLock24Regular,
 } from "@vicons/fluent"
 import { filesize } from "filesize"
 import {
@@ -159,6 +160,7 @@ const columns: DataTableColumns<TableData> = [
     key: "name",
     render: (row: TableData) => {
       const isFolder = row.type === "folder"
+      const isLocked = row.locked
       return h(
         NFlex,
         {
@@ -169,9 +171,16 @@ const columns: DataTableColumns<TableData> = [
           default: () => [
             h(
               NIcon,
-              { size: 30, color: themeVars.value.primaryColor, depth: 2 },
+              { size: 30, color: isLocked ? themeVars.value.errorColor : themeVars.value.primaryColor, depth: 2 },
               {
-                default: () => h(isFolder ? FolderOpenOutlined : type2Icon(row.fileType, row.name)),
+                default: () =>
+                  h(
+                    isFolder
+                      ? FolderOpenOutlined
+                      : isLocked
+                        ? DocumentLock24Regular
+                        : type2Icon(row.fileType, row.name),
+                  ),
               },
             ),
             h(
@@ -263,6 +272,10 @@ function playFile(row: TableData) {
   if (row.type === "folder") {
     return
   }
+  if (row.locked) {
+    window.$message.error("文件已锁定，无法加载")
+  }
+
   const fileType = row.fileType!
 
   // 图片预览
@@ -374,6 +387,10 @@ function playFile(row: TableData) {
 }
 
 function downloadFile(row: TableData) {
+  if (row.locked) {
+    window.$message.error("文件已锁定，无法下载")
+    return
+  }
   getFileTemporaryUrl(row.id, false, row.name).then((url) => {
     // 创建a标签
     const a = document.createElement("a")
@@ -435,6 +452,7 @@ const tableData = computed(() => {
       size: "-",
       type: "folder",
       createTime: new Date(folder.createTime).toLocaleString(),
+      locked: false,
     })),
     ...files.map((file) => ({
       id: file.id,
@@ -443,6 +461,7 @@ const tableData = computed(() => {
       type: "file",
       createTime: new Date(file.createTime).toLocaleString(),
       fileType: file.type,
+      locked: file.locked,
     })),
   ]
 })
@@ -574,13 +593,13 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
           </template>
           刷新
         </n-button>
-        <n-button type="success" @click="onUploadFileButtonClick">
+        <n-button type="success" secondary @click="onUploadFileButtonClick">
           <template #icon>
             <n-icon :component="ArrowUpOutline" />
           </template>
           上传
         </n-button>
-        <n-button @click="showCreateFolderModal = true">
+        <n-button secondary @click="showCreateFolderModal = true">
           <template #icon>
             <n-icon :component="AddOutline" />
           </template>

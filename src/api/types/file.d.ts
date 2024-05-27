@@ -1,7 +1,7 @@
 /**
  * 文件信息
  */
-interface FileInfo {
+interface FileUserResponse {
   /**
    * 文件ID
    */
@@ -26,6 +26,11 @@ interface FileInfo {
    * 创建时间
    */
   createTime: string
+
+  /**
+   * 已被锁定
+   */
+  locked: boolean
 }
 
 /**
@@ -55,7 +60,7 @@ type FolderContent = {
   /**
    * 文件列表
    */
-  files: FileInfo[]
+  files: FileUserResponse[]
 
   /**
    * 文件夹列表
