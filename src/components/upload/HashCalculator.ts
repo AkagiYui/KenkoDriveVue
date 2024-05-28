@@ -1,8 +1,10 @@
 /** SHA-256 计算器 */
 export class SHA256Calculator {
+  private textEncoder: TextEncoder
   private digestBuffer: Uint8Array
 
   public constructor() {
+    this.textEncoder = new TextEncoder()
     this.digestBuffer = new Uint8Array()
   }
 
@@ -10,9 +12,9 @@ export class SHA256Calculator {
    * 添加数据
    */
   public update(data: string | ArrayBuffer): void {
-    let newData
+    let newData: Uint8Array
     if (typeof data === "string") {
-      newData = new TextEncoder().encode(data)
+      newData = this.textEncoder.encode(data)
     } else if (data instanceof ArrayBuffer) {
       newData = new Uint8Array(data)
     } else {

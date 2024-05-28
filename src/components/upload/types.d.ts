@@ -1,8 +1,6 @@
 interface UploadDisplayInfo {
-  id: number
-  name: string
-  size: number
-  type: string
+  id: string
+  file: File
   status:
     | "uploading" // 上传中
     | "paused" // 已暂停
@@ -13,8 +11,12 @@ interface UploadDisplayInfo {
     | "canceled" // 被取消
     | "waiting" // 等待上传
   progress: number
-  folderId?: string
+  folderId?: string | null
+  uploaderIndex: number
 }
+
+type UploadWorkerCommand = "init" | "append"
+type UploadWorkerEventName = "started" | "progress" | "mirrored" | "uploaded" | "merged" | "failed"
 
 // interfaces in Worker
 /** 上传器配置 */
@@ -33,25 +35,14 @@ interface UploaderWorkerConfig {
   parallelCount?: number
 }
 
-/** 添加文件请求 */
-interface AppendFileRequest {
+/** 上传任务 */
+interface UploadTask extends AppendFileRequest {
+  /** 任务ID */
+  id: number
   /** 文件 */
   file: File
   /** 文件名 */
   filename: string
   /** 目标文件夹ID */
   folderId: string | null
-}
-
-/** 上传任务 */
-interface UploadTask extends AppendFileRequest {
-  /** 任务ID */
-  id: number
-}
-
-/** 线程池任务 */
-interface ThreadPoolTask {
-  task: () => Promise<unknown>
-  resolve: (value: unknown) => void
-  reject: (reason?: any) => void
 }
