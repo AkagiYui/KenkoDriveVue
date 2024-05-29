@@ -11,16 +11,15 @@ export class SHA256Calculator {
   /**
    * 添加数据
    */
-  public update(data: string | ArrayBuffer): void {
+  public update(data: string | Uint8Array): void {
     let newData: Uint8Array
     if (typeof data === "string") {
       newData = this.textEncoder.encode(data)
-    } else if (data instanceof ArrayBuffer) {
-      newData = new Uint8Array(data)
+    } else if (data instanceof Uint8Array) {
+      newData = data
     } else {
       throw new Error("Data must be a string or ArrayBuffer")
     }
-
     const combinedData = new Uint8Array(this.digestBuffer.length + newData.length)
     combinedData.set(this.digestBuffer, 0)
     combinedData.set(newData, this.digestBuffer.length)

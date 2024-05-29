@@ -36,7 +36,7 @@ interface UploaderWorkerConfig {
 }
 
 /** 上传任务 */
-interface UploadTask extends AppendFileRequest {
+interface UploadTask  {
   /** 任务ID */
   id: number
   /** 文件 */

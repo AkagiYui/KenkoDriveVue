@@ -26,6 +26,16 @@
 
 import { SHA256Calculator } from "./HashCalculator"
 
+interface UploadWorkerTask extends UploadTask {
+  buffer: ArrayBuffer
+}
+
+interface FileChunk {
+  index: number
+  hash: string
+  blob: Blob
+}
+
 /** logger */
 function log(message: string, ...optionalParams: any[]) {
   console.debug("UploadWorker", message, ...optionalParams)
@@ -59,7 +69,7 @@ function onInit({ baseUrl, token }: { baseUrl: string; token: string }) {
   config.mirrorUrl = `${baseUrl}/mirror`
   config.createTaskUrl = `${baseUrl}/task`
   config.sendChunkUrl = `${baseUrl}/task`
-  log("inited", config)
+  log("initd", config)
 }
 
 /**
@@ -67,12 +77,15 @@ function onInit({ baseUrl, token }: { baseUrl: string; token: string }) {
  */
 async function onAppendFile(task: UploadTask) {
   log("start task", task)
-  const [hash, success] = await tryMirrorFile(task)
+  // 一个文件只读取一次 ArrayBuffer
+  const buffer = await task.file.arrayBuffer()
+  const workerTask: UploadWorkerTask = { buffer, ...task }
+  const [hash, success] = await tryMirrorFile(workerTask)
   if (success) {
     postMessage({ event: "mirrored", id: task.id })
     return
   }
-  await uploadByTask(task, hash)
+  await uploadByTask(workerTask, hash)
 }
 
 /**
@@ -80,9 +93,10 @@ async function onAppendFile(task: UploadTask) {
  * @param task 上传任务
  * @returns {boolean} 是否成功
  */
-async function tryMirrorFile(task: UploadTask): Promise<[string, boolean]> {
-  const { id, file, filename, folderId } = task
-  const hash = await getFileHash(file)
+async function tryMirrorFile({ id, file, filename, folderId, buffer }: UploadWorkerTask): Promise<[string, boolean]> {
+  const hashCalculator = new SHA256Calculator()
+  hashCalculator.update(new Uint8Array(buffer))
+  const hash = await hashCalculator.digest()
   try {
     const responseJson = await postData(config.mirrorUrl, {
       hash,
@@ -106,30 +120,16 @@ async function tryMirrorFile(task: UploadTask): Promise<[string, boolean]> {
 }
 
 /**
- * 计算文件哈希
- */
-async function getFileHash(file: File) {
-  const hashCalculator = new SHA256Calculator()
-  await new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(hashCalculator.update(reader.result!))
-    reader.onerror = (error) => reject(error)
-    reader.readAsArrayBuffer(file)
-  })
-  return hashCalculator.digest()
-}
-
-/**
  * 上传文件
  */
-async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
+async function uploadByTask(task: UploadWorkerTask, hash: string): Promise<void> {
   log("createUploadTask", task)
   // 创建上传任务
-  const { id, file, filename, folderId } = task
+  const { id, file, filename, folderId, buffer } = task
   const chunkSize = 1024 * 1024 * 2 // 2MB
   const chunkCount = Math.ceil(file.size / chunkSize)
   const responseJson = await postData(config.createTaskUrl, {
-    hash: fileHash,
+    hash,
     filename,
     filesize: file.size,
     type: file.type,
@@ -141,15 +141,17 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
   const taskId = responseJson.data
   log("taskId", taskId)
   // 分片
-  const chunks: { index: number; hash: string; blob: Blob }[] = []
+  const chunks: FileChunk[] = []
   for (let i = 0; i < chunkCount; i++) {
     const start = i * chunkSize
-    const end = Math.min(start + chunkSize, file.size)
-    const blob = file.slice(start, end)
+    const intactCount = chunkCount - 1
+    const len = i === intactCount ? file.size - chunkSize * intactCount : chunkSize
+    // 使用视图对象操作，防止多次复制
+    const u8 = new Uint8Array(buffer, start, len)
     const hashCalculator = new SHA256Calculator()
-    hashCalculator.update(await blob.arrayBuffer())
+    hashCalculator.update(u8)
     const hash = await hashCalculator.digest()
-    chunks.push({ index: i, hash: hash, blob: blob })
+    chunks.push({ index: i, hash: hash, blob: new Blob([u8]) })
   }
   // 进度监控
   const progressList = new Array(chunkCount).fill(0)
@@ -184,7 +186,7 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
 }
 
 // 封装上传
-function uploadChunkTask(taskId: any, { index, hash, blob }: any, onProgress: Function) {
+function uploadChunkTask(taskId: any, { index, hash, blob }: FileChunk, onProgress: Function) {
   return new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open("POST", `${config.sendChunkUrl}/${taskId}/chunk`, true)
