@@ -19,7 +19,7 @@ const config = {
       offsetTernaryExpressions: true //三元表达式缩进
     }],
     quotes: ["error", "double"], // 引号
-    "object-shorthand": ["error", "consistent"], // 对象字面量简写语法
+    "object-shorthand": ["off", "consistent"], // 对象字面量简写语法
 
     "no-unused-vars": "off", // 禁止未使用过的变量。已禁用，使用typescript检查
     "no-undef": "off", // 禁止未声明的变量。已禁用，使用typescript检查

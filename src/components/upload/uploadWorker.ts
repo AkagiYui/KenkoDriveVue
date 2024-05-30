@@ -219,7 +219,7 @@ function uploadChunkTask(taskId: any, { index, hash, blob }: FileChunk, onProgre
   })
 }
 
-function checkMergeStatus(taskId) {
+function checkMergeStatus(taskId: number) {
   return new Promise<void>((resolve) => {
     // 轮询检查合并状态
     const f = async () => {
@@ -271,6 +271,7 @@ async function postData<T = any>(url: string, data: unknown) {
 function retry(f: Function, count: number) {
   let retryCount = 0
   return async (...args: any) => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         retryCount += 1

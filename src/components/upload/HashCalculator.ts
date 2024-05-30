@@ -18,7 +18,7 @@ export class SHA256Calculator {
     } else if (data instanceof Uint8Array) {
       newData = data
     } else {
-      throw new Error("Data must be a string or ArrayBuffer")
+      throw new Error("Data must be a string or Uint8Array")
     }
     const combinedData = new Uint8Array(this.digestBuffer.length + newData.length)
     combinedData.set(this.digestBuffer, 0)
