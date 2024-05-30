@@ -1,5 +1,15 @@
 import Request from "./request"
 
+/**
+ * 获取文件夹内容
+ */
+export function getFolderContent(id: string | null = null): RequestResponse<FolderContent> {
+  if (id) {
+    return Request.get(`/folder/${id}`)
+  }
+  return Request.get("/folder")
+}
+
 /** 创建文件夹 */
 export function createFolder(name: string | undefined, parent?: string | null): RequestResponse<undefined> {
   return Request.post("/folder", { name: name, parent: parent || null })
