@@ -14,12 +14,13 @@ export const config = {
 }
 
 const request = axios.create(config)
+const loginUrl = "/user/token"
 
 request.interceptors.request.use(
   (config) => {
     window.$loadingbar.start() // 显示加载条
     const token = useUserInfo().requestToken // 获取token
-    if (config.url! !== "/user/token" && hasText(token)) {
+    if (config.url! !== loginUrl && hasText(token)) {
       // 如果token存在
       config.headers["Authorization"] = `Bearer ${token}` // 设置请求头
     }
@@ -55,7 +56,10 @@ function responseFailed(error) {
 
   // 401 未认证
   if (statusCode === 401) {
-    window.$message.error("登录超时，请重新登录")
+    console.log(error)
+    if (error.config.url !== loginUrl) {
+      window.$message.error("登录超时，请重新登录")
+    }
     return Promise.reject(error)
   }
 
