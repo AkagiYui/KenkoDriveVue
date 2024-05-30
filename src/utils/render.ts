@@ -10,7 +10,7 @@ import {
   SpaceDashboardOutlined,
   TerminalOutlined,
 } from "@vicons/material"
-import { DocumentPdf32Regular, SlideLayout24Regular, Gif24Regular } from "@vicons/fluent"
+import { DocumentPdf32Regular, SlideLayout24Regular, Gif24Regular, DrawImage24Regular } from "@vicons/fluent"
 import { Java, Markdown, Vuejs } from "@vicons/fa"
 import {
   ArchiveOutline,
@@ -110,6 +110,8 @@ export function type2Icon(mime?: string, filename?: string): Component {
       return AppleOutlined
     case "exe":
       return TerminalOutlined
+    case "drawio":
+      return DrawImage24Regular
   }
 
   console.log(`unknown mime: ${mime}, filename: ${filename}`)
