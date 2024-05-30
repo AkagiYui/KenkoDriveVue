@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import { type2Icon } from "@/utils"
 import { CheckmarkOutline, CloseOutline, HelpOutline, PauseOutline, PlayOutline } from "@vicons/ionicons5"
 import { useThemeVars } from "naive-ui"
-import { type2Icon } from "@/utils"
 
 const props = defineProps<{
   data: UploadDisplayInfo
@@ -33,7 +33,7 @@ const progressColor = computed(() => {
 
 // 根据文件类型选择图标
 const icon = computed(() => {
-  return type2Icon(info.value.type, info.value.name)
+  return type2Icon(info.value.file.type, info.value.file.name)
 })
 
 // 确认删除
@@ -88,7 +88,7 @@ const buttonIcon = computed(() => {
 <template>
   <n-flex class="container" :wrap="false" align="center">
     <n-icon :component="icon" size="30" style="margin-left: 24px" />
-    <n-ellipsis :line-clamp="1" style="width: 100%">{{ info.name }}</n-ellipsis>
+    <n-ellipsis :line-clamp="1" style="width: 100%">{{ info.file.name }}</n-ellipsis>
     <n-text style="margin-left: auto; width: 120px; text-align: right">{{ text }}</n-text>
     <n-button v-show="false" circle quaternary size="small" :disabled="finished" @click="emit('onPauseButtonClick')">
       <n-icon :component="info.status == 'paused' ? PlayOutline : PauseOutline" />

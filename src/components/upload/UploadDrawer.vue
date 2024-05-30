@@ -11,20 +11,75 @@ import UploadItem from "./UploadItem.vue"
 const { requestToken } = useUserInfo()
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
 
-// 初始化上传器
-const uploader = new Worker(new URL("./uploadWorker.ts", import.meta.url), {
-  type: "module",
-})
-uploader.postMessage({
-  command: "init",
-  baseUrl: `${requestConfig.baseURL}/file`,
-  token: requestToken,
-})
 // 上传列表
-const displayMap = reactive(new Map<number, UploadDisplayInfo>())
-watch(displayMap, () => {
+const uploadFileMap = reactive(new Map<string, UploadDisplayInfo>())
+// 初始化上传器
+const uploaderCount = 3 // 考虑下怎么动态调整并发数量
+const uploaderStatus = reactive<boolean[]>(Array(uploaderCount).fill(true))
+const uploaderPool = Array.from({ length: uploaderCount }, (_, i) => {
+  const uploader = new Worker(new URL("./uploadWorker.ts", import.meta.url), {
+    type: "module",
+  })
+  uploader.postMessage({
+    command: "init",
+    baseUrl: `${requestConfig.baseURL}/file`,
+    token: requestToken,
+  })
+  uploader.onmessage = (e) => {
+    const { event } = e.data
+    console.log(JSON.stringify(e.data))
+    if (event === "progress") {
+      const { id, progress } = e.data
+      const info = uploadFileMap.get(id)
+      if (info) {
+        info.progress = progress * 100
+      }
+    } else if (event === "mirrored") {
+      const { id } = e.data
+      const info = uploadFileMap.get(id)
+      if (info) {
+        info.status = "mirrored"
+        info.progress = 100
+        emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
+      }
+      uploaderStatus[i] = true
+      uploadNext()
+    } else if (event === "uploaded") {
+      const { id } = e.data
+      const info = uploadFileMap.get(id)
+      if (info) {
+        info.status = "uploaded"
+        info.progress = 100
+      }
+    } else if (event === "merged") {
+      const { id } = e.data
+      const info = uploadFileMap.get(id)
+      if (info) {
+        info.status = "merged"
+        info.progress = 100
+        emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
+      }
+      uploaderStatus[i] = true
+      uploadNext()
+    } else if (event === "failed") {
+      const { id } = e.data
+      const info = uploadFileMap.get(id)
+      if (info) {
+        info.status = "error"
+        info.progress = 0
+      }
+      uploaderStatus[i] = true
+      uploadNext()
+    }
+  }
+  return uploader
+})
+
+// 阻止关闭页面
+let running = false
+watch(uploadFileMap, () => {
   let notDoneCount = 0
-  displayMap.forEach((value) => {
+  uploadFileMap.forEach((value) => {
     if (value.status !== "mirrored" && value.status !== "merged" && value.status !== "canceled") {
       notDoneCount++
     }
@@ -32,67 +87,6 @@ watch(displayMap, () => {
   uploadItemCount.value = notDoneCount
   running = notDoneCount > 0
 })
-uploader.onmessage = (e) => {
-  const { event } = e.data
-  console.log(JSON.stringify(e.data))
-  if (event === "appended") {
-    const { task } = e.data
-    displayMap.set(task.id, {
-      id: task.id,
-      name: task.filename,
-      size: task.file.size,
-      type: task.file.type,
-      status: "waiting",
-      progress: 0,
-      folderId: task.folderId,
-    })
-  } else if (event === "started") {
-    const { id } = e.data
-    const info = displayMap.get(id)
-    if (info) {
-      info.status = "uploading"
-    }
-  } else if (event === "progress") {
-    const { id, progress } = e.data
-    const info = displayMap.get(id)
-    if (info) {
-      info.progress = progress * 100
-    }
-  } else if (event === "mirrored") {
-    const { id } = e.data
-    const info = displayMap.get(id)
-    if (info) {
-      info.status = "mirrored"
-      info.progress = 100
-      emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
-    }
-  } else if (event === "uploaded") {
-    const { id } = e.data
-    const info = displayMap.get(id)
-    if (info) {
-      info.status = "uploaded"
-      info.progress = 100
-    }
-  } else if (event === "merged") {
-    const { id } = e.data
-    const info = displayMap.get(id)
-    if (info) {
-      info.status = "merged"
-      info.progress = 100
-      emitBusEvent(BusEvent.UPLOAD_SUCCESS, info.folderId)
-    }
-  } else if (event === "failed") {
-    const { id } = e.data
-    const info = displayMap.get(id)
-    if (info) {
-      info.status = "error"
-      info.progress = 0
-    }
-  }
-}
-
-// 阻止关闭页面
-let running = false
 useEventListener(window, "beforeunload", (e) => {
   if (running) {
     e.preventDefault()
@@ -133,29 +127,66 @@ function addFileList(files: FileList, folderId?: string | null) {
     addFile(file, folderId)
   })
 }
+
 function addFile(file: File, folderId?: string | null) {
-  uploader.postMessage({
-    command: "append",
-    file: file,
-    filename: file.name,
-    folderId: folderId || null,
-  })
+  const id = crypto.randomUUID().toString()
+  const info: UploadDisplayInfo = {
+    id,
+    file,
+    status: "waiting",
+    progress: 0,
+    folderId,
+    uploaderIndex: -1,
+  }
+  uploadFileMap.set(id, info)
+  dispatchUpload(info)
+}
+
+function dispatchUpload(info: UploadDisplayInfo) {
+  for (let i = 0; i < uploaderStatus.length; i++) {
+    const status = uploaderStatus[i]
+    if (status) {
+      uploaderStatus[i] = false
+      info.status = "uploading"
+      uploaderPool[i].postMessage({
+        command: "append",
+        id: info.id,
+        file: info.file,
+        filename: info.file.name,
+        folderId: info.folderId,
+      })
+      break
+    }
+  }
+}
+
+function uploadNext() {
+  for (const info of uploadFileMap.values()) {
+    if (info.status === "waiting") {
+      dispatchUpload(info)
+      break
+    }
+  }
 }
 
 // 组件事件
-function onPauseButtonClick(taskId: number) {
-  uploader.postMessage({
+function onPauseButtonClick(taskId: string) {
+  const info = uploadFileMap.get(taskId)
+  if (!info) return
+  const i = info.uploaderIndex!
+  uploaderPool[i].postMessage({
     command: "pause",
     id: taskId,
   })
 }
-function onRemoveButtonClick(taskId: number) {
-  const info = displayMap.get(taskId)
+function onRemoveButtonClick(taskId: string) {
+  const info = uploadFileMap.get(taskId)
   if (!info) return
+  const i = info.uploaderIndex!
   if (info.status === "mirrored" || info.status === "merged" || info.status === "canceled" || info.status === "error") {
-    displayMap.delete(taskId)
+    uploadFileMap.delete(taskId)
   } else {
-    uploader.postMessage({
+    uploaderPool[i].postMessage({
       command: "remove",
       id: taskId,
     })
@@ -178,14 +209,14 @@ function onRemoveButtonClick(taskId: number) {
       }"
     >
       <template #header> 上传列表</template>
-      <n-empty v-if="displayMap.size === 0" id="empty" />
+      <n-empty v-if="uploadFileMap.size === 0" id="empty" />
       <div style="margin: 00px 0 0 0">
         <UploadItem
-          v-for="(item, index) in displayMap"
-          :key="index"
-          :data="item[1]"
-          @on-pause-button-click="() => onPauseButtonClick(item[0])"
-          @on-remove-button-click="() => onRemoveButtonClick(item[0])"
+          v-for="[id, item] in uploadFileMap"
+          :key="id"
+          :data="item"
+          @on-pause-button-click="() => onPauseButtonClick(id)"
+          @on-remove-button-click="() => onRemoveButtonClick(id)"
         />
       </div>
       <template #footer>

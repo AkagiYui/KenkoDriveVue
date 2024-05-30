@@ -7,18 +7,15 @@
  * - [ ] 上传失败重试
  * - [ ] 上传取消
  * - [ ] 上传暂停
- * - [ ] 分段上传
+ * - [x] 分段上传
  * - [ ] 上传速度
  * - [ ] 上传限速
- * - [ ] 多文件同时上传
- * - [ ] 多线程计算哈希值(唯一CPU密集型任务)
  *
  * ## API
  * - { command: "init", baseUrl: string, token: string } 初始化，设置 基础URL 和 AccessToken
- * - { command: "append", file: File, filename: string, folderId: number } 添加文件到上传队列
+ * - { command: "append", file: File, filename: string, folderId: number } 上传文件
  *
  * ## Events
- * - { event: "appended", task: UploadTask } 文件添加成功
  * - { event: "started", id: number } 文件开始上传
  * - { event: "progress", id: number, progress: number } 文件上传进度
  * - { event: "mirrored", id: number } 文件秒传成功
@@ -29,28 +26,33 @@
 
 import { SHA256Calculator } from "./HashCalculator"
 
+interface UploadWorkerTask extends UploadTask {
+  buffer: ArrayBuffer
+}
+
+interface FileChunk {
+  index: number
+  hash: string
+  blob: Blob
+}
+
 /** logger */
 function log(message: string, ...optionalParams: any[]) {
-  console.log("UploadWorker", message, ...optionalParams)
+  console.debug("UploadWorker", message, ...optionalParams)
 }
 
 log("loaded")
 
-/** api路由 */
-onmessage = async (e) => {
-  const { command, ...args } = e.data
-  switch (command) {
-    case "init":
-      onInit(args)
-      return
-    case "append":
-      await onAppendFile(args)
-      return
-  }
-  log(`got unknown data: ${e.data}`)
+const COMMAND_FUNC_MAP: Record<UploadWorkerCommand, Function> = {
+  init: onInit,
+  append: onAppendFile,
 }
 
-const taskList: UploadTask[] = [] // 上传任务队列
+onmessage = async ({ data }) => {
+  const { command, ...args } = data
+  await COMMAND_FUNC_MAP[command](args)
+}
+
 const config: UploaderWorkerConfig = {
   mirrorUrl: "", // 秒传地址
   createTaskUrl: "", // 创建任务地址
@@ -67,112 +69,50 @@ function onInit({ baseUrl, token }: { baseUrl: string; token: string }) {
   config.mirrorUrl = `${baseUrl}/mirror`
   config.createTaskUrl = `${baseUrl}/task`
   config.sendChunkUrl = `${baseUrl}/task`
-  log("inited", config)
+  log("initd", config)
 }
 
 /**
  * 接口 添加文件到队列
  */
-async function onAppendFile(request: AppendFileRequest) {
-  const task: UploadTask = {
-    id: generateId(),
-    ...request,
+async function onAppendFile(task: UploadTask) {
+  log("start task", task)
+  // 一个文件只读取一次 ArrayBuffer
+  const buffer = await task.file.arrayBuffer()
+  const workerTask: UploadWorkerTask = { buffer, ...task }
+  const [hash, success] = await tryMirrorFile(workerTask)
+  if (success) {
+    postMessage({ event: "mirrored", id: task.id })
+    return
   }
-  log("append", task)
-  taskList.push(task)
-  postMessage({ event: "appended", task: task })
-  handleTaskList()
+  await uploadByTask(workerTask, hash)
 }
-
-/**
- * 生成唯一ID
- * @returns {string} 唯一ID
- */
-const generateId: () => number = (() => {
-  let id = 0
-  return () => {
-    return id++
-  }
-})()
-
-/** 处理任务队列 */
-const handleTaskList = (() => {
-  let running = false
-  return async () => {
-    if (running) {
-      return
-    }
-    running = true
-    while (taskList.length > 0) {
-      const task = taskList.shift()!
-      log("start task", task)
-      postMessage({ event: "started", id: task.id })
-      const [hash, success] = await tryMirrorFile(task)
-      if (success) {
-        postMessage({ event: "mirrored", id: task.id })
-        continue
-      }
-      await uploadByTask(task, hash)
-    }
-    running = false
-  }
-})()
 
 /**
  * 尝试秒传文件
  * @param task 上传任务
  * @returns {boolean} 是否成功
  */
-async function tryMirrorFile(task: UploadTask): Promise<[string, boolean]> {
-  const { id, file, filename, folderId } = task
-
-  // 计算文件哈希
+async function tryMirrorFile({ id, file, filename, folderId, buffer }: UploadWorkerTask): Promise<[string, boolean]> {
   const hashCalculator = new SHA256Calculator()
-  const reader = new FileReader()
-
-  // 将FileReader的读取操作封装为Promise
-  const readAsArrayBufferPromise = new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = (error) => reject(error)
-    reader.readAsArrayBuffer(file)
-  })
-
-  const fileBuffer = await readAsArrayBufferPromise
-  hashCalculator.update(fileBuffer as ArrayBuffer)
+  hashCalculator.update(new Uint8Array(buffer))
   const hash = await hashCalculator.digest()
-
   try {
-    const requestBody = {
-      hash: hash,
-      filename: filename,
+    const responseJson = await postData(config.mirrorUrl, {
+      hash,
+      filename,
       size: file.size,
       folder: folderId,
-    }
-    const requestHeader = {
-      "Content-Type": "application/json",
-    }
-    if (config.accessToken) {
-      requestHeader["Authorization"] = `Bearer ${config.accessToken}`
-    }
-
-    // 等待fetch操作完成
-    const response = await fetch(config.mirrorUrl, {
-      method: "POST",
-      headers: requestHeader,
-      body: JSON.stringify(requestBody),
     })
-
-    // 取出data字段
-    const responseJson = await response.json()
     log("mirror response", responseJson)
-    const result = responseJson["data"] as boolean
-    if (result) {
+    const { data } = responseJson
+    log(data)
+    if (data) {
       log("mirror success", id)
       return [hash, true] // 成功时返回true
-    } else {
-      log("mirror failed", id)
-      return [hash, false] // 失败时返回false
     }
+    log("mirror failed", id)
+    return [hash, false] // 失败时返回false
   } catch (error) {
     log("mirror error", error)
     return [hash, false] // 出现异常时返回false
@@ -182,107 +122,40 @@ async function tryMirrorFile(task: UploadTask): Promise<[string, boolean]> {
 /**
  * 上传文件
  */
-async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
+async function uploadByTask(task: UploadWorkerTask, hash: string): Promise<void> {
   log("createUploadTask", task)
   // 创建上传任务
-  const { id, file, filename, folderId } = task
+  const { id, file, filename, folderId, buffer } = task
   const chunkSize = 1024 * 1024 * 2 // 2MB
   const chunkCount = Math.ceil(file.size / chunkSize)
-  // 请求创建
-  const createTaskRequest = {
-    hash: fileHash,
-    filename: filename,
+  const responseJson = await postData(config.createTaskUrl, {
+    hash,
+    filename,
     filesize: file.size,
     type: file.type,
     folder: folderId,
-    chunkSize: chunkSize,
-    chunkCount: chunkCount,
-  }
-  const requestHeader = {
-    "Content-Type": "application/json",
-  }
-  if (config.accessToken) {
-    requestHeader["Authorization"] = `Bearer ${config.accessToken}`
-  }
-  const response = await fetch(config.createTaskUrl, {
-    method: "POST",
-    headers: requestHeader,
-    body: JSON.stringify(createTaskRequest),
+    chunkSize,
+    chunkCount,
   })
-  const responseJson = await response.json()
   log("createTask response", responseJson)
-  const taskId = responseJson["data"]
+  const taskId = responseJson.data
   log("taskId", taskId)
   // 分片
-  const chunks: { index: number; hash: string; blob: Blob }[] = []
+  const chunks: FileChunk[] = []
   for (let i = 0; i < chunkCount; i++) {
     const start = i * chunkSize
-    const end = Math.min(start + chunkSize, file.size)
-    const blob = file.slice(start, end)
+    const intactCount = chunkCount - 1
+    const len = i === intactCount ? file.size - chunkSize * intactCount : chunkSize
+    // 使用视图对象操作，防止多次复制
+    const u8 = new Uint8Array(buffer, start, len)
     const hashCalculator = new SHA256Calculator()
-    hashCalculator.update(await blob.arrayBuffer())
+    hashCalculator.update(u8)
     const hash = await hashCalculator.digest()
-    chunks.push({ index: i, hash: hash, blob: blob })
+    chunks.push({ index: i, hash: hash, blob: new Blob([u8]) })
   }
-  // 封装上传
-  function uploadChunk(chunk, onProgress) {
-    return new Promise<void>((resolve, reject) => {
-      const { index, hash, blob } = chunk
-      const xhr = new XMLHttpRequest()
-      const url = `${config.sendChunkUrl}/${taskId}/chunk`
-      xhr.open("POST", url, true)
-      if (config.accessToken) {
-        xhr.setRequestHeader("Authorization", `Bearer ${config.accessToken}`)
-      }
-      xhr.upload.onprogress = function (event) {
-        onProgress(event, index)
-      }
-      xhr.onload = async function () {
-        if (xhr.status === 200) {
-          log("upload success")
-          resolve()
-          // 上传成功，获取data字段
-          const responseJson = JSON.parse(xhr.responseText)
-          const finished = responseJson["data"]
-          if (finished) {
-            log("upload finished")
-            // 轮询检查合并状态
-            const checkMergeStatus = async () => {
-              const response = await fetch(`${config.createTaskUrl}/${taskId}`, {
-                headers: requestHeader,
-              })
-              const responseJson = await response.json()
-              log("checkMergeStatus", responseJson)
-              const merged = responseJson["data"]["merged"]
-              if (merged) {
-                log("merge success")
-                postMessage({ event: "merged", id: id })
-              } else {
-                setTimeout(checkMergeStatus, 1000)
-              }
-            }
-            checkMergeStatus()
-          }
-        } else {
-          log("upload failed", xhr.responseText)
-          reject(new Error(`Failed to upload chunk ${index}: ${xhr.statusText}`))
-        }
-      }
-      xhr.onerror = function () {
-        log("upload failed", xhr.responseText)
-        reject(new Error(`Network error while uploading chunk ${index}`))
-      }
-      const formData = new FormData()
-      formData.append("blob", blob)
-      formData.append("hash", hash)
-      formData.append("index", index.toString())
-      xhr.send(formData)
-    })
-  }
-
   // 进度监控
   const progressList = new Array(chunkCount).fill(0)
-  function onProgress(event, index) {
+  const onProgress = (event, index) => {
     log(`Chunk ${index} progress: ${event.loaded}/${event.total}`)
     progressList[index] = event.loaded
     const overallProgress = progressList.reduce((acc, cur) => acc + cur, 0) / file.size
@@ -293,19 +166,120 @@ async function uploadByTask(task: UploadTask, fileHash: string): Promise<void> {
       progress: overallProgress,
     })
   }
+  const chunkTaskList = chunks.map((chunk) => retry(uploadChunkTask, 3)(taskId, chunk, onProgress))
+  try {
+    await Promise.all(chunkTaskList)
+    log("upload finished")
+    postMessage({
+      event: "uploaded",
+      id: id,
+    })
+    await checkMergeStatus(taskId)
+    postMessage({ event: "merged", id })
+    // 所有上传操作成功完成
+    log("all chunks uploaded")
+  } catch (error) {
+    // 至少一个上传操作失败
+    log("upload failed", error)
+    postMessage({ event: "failed", id: id }) // 发送一个消息表示失败
+  }
+}
 
-  Promise.all(chunks.map((chunk) => uploadChunk(chunk, onProgress)))
-    .then(() => {
-      // 所有上传操作成功完成
-      log("all chunks uploaded")
-      postMessage({
-        event: "uploaded",
-        id: id,
-      })
-    })
-    .catch((error) => {
-      // 至少一个上传操作失败
-      log("upload failed", error)
-      postMessage({ event: "failed", id: id }) // 发送一个消息表示失败
-    })
+// 封装上传
+function uploadChunkTask(taskId: any, { index, hash, blob }: FileChunk, onProgress: Function) {
+  return new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open("POST", `${config.sendChunkUrl}/${taskId}/chunk`, true)
+    if (config.accessToken) {
+      xhr.setRequestHeader("Authorization", `Bearer ${config.accessToken}`)
+    }
+    xhr.upload.onprogress = function (event) {
+      onProgress(event, index)
+    }
+    xhr.onload = () => {
+      if (xhr.status !== 200) {
+        log("upload failed", xhr.responseText)
+        reject(new Error(`Failed to upload chunk ${index}: ${xhr.statusText}`))
+        return
+      }
+      log("upload success")
+      resolve()
+    }
+    const onError = () => {
+      log("upload failed", xhr.responseText)
+      reject(new Error(`Network error while uploading chunk ${index}`))
+    }
+    xhr.onerror = onError
+    xhr.ontimeout = onError
+    const formData = new FormData()
+    formData.append("blob", blob)
+    formData.append("hash", hash)
+    formData.append("index", index.toString())
+    xhr.send(formData)
+  })
+}
+
+function checkMergeStatus(taskId) {
+  return new Promise<void>((resolve) => {
+    // 轮询检查合并状态
+    const f = async () => {
+      const responseJson = await getData(`${config.createTaskUrl}/${taskId}`)
+      log("checkMergeStatus", responseJson)
+      const merged = responseJson.data?.merged
+      if (merged) {
+        log("merge success")
+        resolve()
+      } else {
+        setTimeout(f, 1000)
+      }
+    }
+    f()
+  })
+}
+
+function makeHeaders(): Record<string, string> {
+  if (config.accessToken) {
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.accessToken}`,
+    }
+  }
+  return {
+    "Content-Type": "application/json",
+  }
+}
+
+async function getData<T = any>(url: string) {
+  const response = await fetch(url, {
+    method: "GET",
+    headers: makeHeaders(),
+  })
+  const json: T = await response.json()
+  return json
+}
+
+async function postData<T = any>(url: string, data: unknown) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: makeHeaders(),
+    body: JSON.stringify(data),
+  })
+  const json: T = await response.json()
+  return json
+}
+
+function retry(f: Function, count: number) {
+  let retryCount = 0
+  return async (...args: any) => {
+    while (true) {
+      try {
+        retryCount += 1
+        return await f(...args)
+      } catch (error) {
+        if (retryCount > count) {
+          throw error
+        }
+      }
+    }
+  }
 }
