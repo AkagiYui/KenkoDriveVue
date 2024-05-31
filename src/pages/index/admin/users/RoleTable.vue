@@ -162,7 +162,7 @@ const getRole = () => {
     preset="card"
     :mask-closable="false"
     :bordered="false"
-    :title="`分配角色(${props.user.username})`"
+    :title="`分配角色(${props.user?.username})`"
     style="width: 600px"
   >
     <n-data-table

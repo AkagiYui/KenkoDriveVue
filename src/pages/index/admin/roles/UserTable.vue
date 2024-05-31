@@ -160,7 +160,7 @@ const getUser = () => {
     preset="card"
     :mask-closable="false"
     :bordered="false"
-    :title="`分配用户(${props.role.name})`"
+    :title="`分配用户(${props.role?.name})`"
     style="width: 600px"
   >
     <n-data-table
