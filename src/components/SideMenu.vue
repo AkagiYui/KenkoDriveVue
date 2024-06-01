@@ -31,6 +31,7 @@ import { useAppConfig } from "@/stores/app-config"
 import { renderIcon } from "@/utils"
 
 const { expandedMenuKeys, isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
+const route = useRoute()
 
 const menuOptions = ref([
   {
@@ -238,21 +239,43 @@ const renderMenuLabel = (option: MenuOption) => {
     :collapsed-width="64"
     :width="240"
     :native-scrollbar="false"
+    :content-style="{ height: '100%' }"
   >
-    <n-menu
-      style="height: 100%; width: 100%"
-      :collapsed="isMenuCollapsed"
-      :collapsed-width="64"
-      :collapsed-icon-size="22"
-      :indent="22"
-      :options="menuOptions"
-      :render-label="renderMenuLabel"
-      :expand-icon="renderIcon(CaretDownOutline)"
-      :value="useRoute().name as string"
-      :expanded-keys="expandedMenuKeys"
-      @update:expanded-keys="expandedMenuKeys = $event"
-    />
+    <n-flex vertical style="height: 100%; width: 100%">
+      <n-scrollbar>
+        <n-menu
+          v-model:expanded-keys="expandedMenuKeys"
+          :collapsed="isMenuCollapsed"
+          :collapsed-width="64"
+          :collapsed-icon-size="22"
+          :indent="22"
+          :options="menuOptions"
+          :render-label="renderMenuLabel"
+          :expand-icon="renderIcon(CaretDownOutline)"
+          :value="route.name"
+        />
+      </n-scrollbar>
+      <div v-if="isDebugMode" class="quota">
+        <n-popover trigger="hover" :keep-alive-on-hover="false" :disabled="!isMenuCollapsed">
+          <template #trigger>
+            <n-progress
+              type="line"
+              status="success"
+              :percentage="10"
+              :show-indicator="false"
+              :height="isMenuCollapsed ? 12 : undefined"
+            />
+          </template>
+          <span>{{ "1G / 100G" }}</span>
+        </n-popover>
+        <span v-show="!isMenuCollapsed">{{ "1G / 100G" }}</span>
+      </div>
+    </n-flex>
   </n-layout-sider>
 </template>
 
-<style scoped></style>
+<style scoped>
+.quota {
+  padding: 5px 10px 10px 10px;
+}
+</style>
