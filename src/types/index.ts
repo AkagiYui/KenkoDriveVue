@@ -1,3 +1,5 @@
+export { default as Permission } from "./permission"
+
 /** 总线事件 */
 export enum BusEvent {
   ADD_ENTRIES = "add:entries",

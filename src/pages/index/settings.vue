@@ -14,11 +14,12 @@ import type { UploadFileInfo } from "naive-ui"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import { uploadUserAvatar } from "@/api"
+import { Permission } from "@/types"
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { toggleDarkMode, reset: resetConfig } = useAppConfig()
 const { avatarUrl, username, nickname, email } = storeToRefs(useUserInfo())
-const { renewAvatar } = useUserInfo()
+const { renewAvatar, hasPermission } = useUserInfo()
 const personalInfo = ref({
   nickname: "",
   email: "",
@@ -108,6 +109,10 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
                 <n-input-group-label class="info-label"> 邮箱 </n-input-group-label>
                 <n-input v-model:value="personalInfo.email" />
               </n-input-group>
+              <n-input-group>
+                <n-input-group-label class="info-label"> 手机号 </n-input-group-label>
+                <n-input />
+              </n-input-group>
             </n-space>
             <n-button style="height: 100%"> 保存</n-button>
           </n-space>
@@ -137,7 +142,10 @@ const uploadAvatar = (fileList: UploadFileInfo[]) => {
               </n-button>
             </n-button-group>
           </n-space>
-          <n-space style="display: flex; align-items: center">
+          <n-space
+            v-if="hasPermission(Permission.FRONTEND_ENABLE_DEBUG_MODE)"
+            style="display: flex; align-items: center"
+          >
             <n-text>调试模式</n-text>
             <n-switch v-model:value="isDebugMode" :round="false" />
           </n-space>

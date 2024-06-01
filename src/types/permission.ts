@@ -82,6 +82,18 @@ enum Permission {
    * 启用前端调试模式
    */
   FRONTEND_ENABLE_DEBUG_MODE,
+  /**
+   * 获取操作日志
+   */
+  ACTION_LOG_GET,
+  /**
+   * 获取系统信息
+   */
+  SYSTEM_INFO_GET,
+  /**
+   * 获取所有文件列表
+   */
+  FILE_LIST_ALL,
 }
 
 export default Permission

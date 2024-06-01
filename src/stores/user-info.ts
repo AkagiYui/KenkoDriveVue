@@ -1,7 +1,7 @@
 import { computed, ref } from "vue"
 import { defineStore } from "pinia"
 import { getUserAvatar, getUserInfo } from "@/api"
-import Permission from "@/types/permission"
+import { Permission } from "@/types"
 import { getJWTExpireTime, hasText } from "@/utils"
 
 export const useUserInfo = defineStore(
@@ -112,6 +112,24 @@ export const useUserInfo = defineStore(
       return permissions.value.includes(permission)
     }
 
+    /**
+     * 判断是否有所有权限
+     * @param permissionList 权限列表
+     * @returns 是否有权限
+     */
+    function hasAllPermissions(...permissionList: Permission[]) {
+      return permissionList.every((permission) => permissions.value.includes(permission))
+    }
+
+    /**
+     * 判断是否有任意权限
+     * @param permissionList 权限列表
+     * @returns 是否有权限
+     */
+    function hasAnyPermissions(...permissionList: Permission[]) {
+      return permissionList.some((permission) => permissions.value.includes(permission))
+    }
+
     return {
       requestToken,
       tokenExpireTime,
@@ -125,8 +143,10 @@ export const useUserInfo = defineStore(
       setToken,
       renewAvatar,
       renewUserInfo,
-      hasPermission,
       removeInfo,
+      hasPermission,
+      hasAllPermissions,
+      hasAnyPermissions,
     }
   },
   {
