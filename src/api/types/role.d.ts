@@ -11,7 +11,7 @@ interface Role {
   /** 用户数量 */
   userCount: number
   /** 是否默认 */
-  default: boolean
+  isDefault: boolean
   /** 权限列表 */
   permissions: string[]
 }
@@ -37,7 +37,7 @@ interface UpdateRoleData {
   /** 权限列表 */
   permissions?: string[]
   /** 是否默认 */
-  default?: boolean
+  isDefault?: boolean
 }
 
 /** 权限 */

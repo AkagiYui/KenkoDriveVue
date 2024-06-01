@@ -134,7 +134,7 @@ const modalData = ref({
   id: "",
   name: "",
   description: "",
-  default: false,
+  isDefault: false,
   permissions: [] as string[],
 })
 /** 模态框表单校验规则 */
@@ -200,7 +200,7 @@ const onModalConfirm = () => {
         updateRole(modalData.value.id, {
           name: modalData.value.name,
           description: modalData.value.description,
-          default: modalData.value.default,
+          isDefault: modalData.value.isDefault,
           permissions: modalData.value.permissions,
         })
           .then(() => {
@@ -212,7 +212,7 @@ const onModalConfirm = () => {
                 ...tableData.value[index],
                 name: modalData.value.name,
                 description: modalData.value.description,
-                default: modalData.value.default,
+                isDefault: modalData.value.isDefault,
                 permissions: modalData.value.permissions,
               }
             }
@@ -234,7 +234,7 @@ const onModalConfirm = () => {
               id: id,
               name: modalData.value.name,
               description: modalData.value.description,
-              default: modalData.value.default,
+              isDefault: modalData.value.isDefault,
               permissions: modalData.value.permissions,
               userCount: 0,
               disabled: false,
@@ -256,7 +256,7 @@ const onModalClosed = () => {
     id: "",
     name: "",
     description: "",
-    default: false,
+    isDefault: false,
     permissions: [],
   }
 }
@@ -272,7 +272,7 @@ const onEditButtonClick = (row: Role) => {
     id: row.id,
     name: row.name,
     description: row.description,
-    default: row.default,
+    isDefault: row.isDefault,
     permissions: row.permissions,
   }
   showEditModal.value = true
@@ -361,7 +361,7 @@ const getData = () => {
             <n-input v-model:value="modalData.description" clearable placeholder="可空" />
           </n-form-item>
           <n-form-item path="default" label="设为默认">
-            <n-switch v-model:value="modalData.default" />
+            <n-switch v-model:value="modalData.isDefault" />
           </n-form-item>
           <n-transfer
             ref="transfer"
