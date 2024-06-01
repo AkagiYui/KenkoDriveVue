@@ -374,21 +374,30 @@ const onSendSmsCodeLogoClick = () => {
   }
 }
 
-.login-card {
-  position: absolute;
-  left: 75%; /* 左边位于父容器75%宽度处 */
-  top: 50%;
-  transform: translate(-50%, -50%); /* 移动自身宽高的50% */
-  width: 400px; /* 设置宽度 */
+@media screen and (min-width: 550px) {
+  .background {
+    background-image: url("/img/background.webp");
+    background-size: cover;
+    background-position: center top;
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  .login-card {
+    position: absolute;
+    left: 75%; /* 左边位于父容器75%宽度处 */
+    top: 50%;
+    transform: translate(-50%, -50%); /* 移动自身宽高的50% */
+    width: 400px; /* 设置宽度 */
+  }
 }
 
-.background {
-  background-image: url("/img/background.webp");
-  background-size: cover;
-  background-position: center top;
-  opacity: 1;
-  width: 100%;
-  height: 100%;
-  position: absolute;
+@media screen and (max-width: 550px) {
+  .login-card {
+    width: 100%;
+    border: 0;
+  }
 }
 </style>
