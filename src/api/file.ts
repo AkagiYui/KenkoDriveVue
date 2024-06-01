@@ -109,3 +109,38 @@ export function renameUserFile(id: string, name: string): RequestResponse<null> 
     },
   )
 }
+
+/**
+ * 获取文件列表
+ * @param pageIndex 初始页码
+ * @param pageSize 页大小
+ */
+export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
+  const index = ref(pageIndex)
+  const size = ref(pageSize)
+  const data = ref<FileInfoResponse[]>([])
+  const count = ref(0)
+  const isLoading = ref(false)
+
+  function fetchData() {
+    isLoading.value = true
+    Request.get<Page<FileInfoResponse>>("/file", {
+      params: {
+        index: index.value,
+        size: size.value,
+      },
+    })
+      .then((response) => {
+        data.value = response.data.list
+        count.value = response.data.total
+      })
+      .finally(() => {
+        isLoading.value = false
+      })
+  }
+
+  fetchData()
+  watch([index, size], fetchData)
+
+  return { index, size, data, count, isLoading, fetchData }
+}

@@ -72,3 +72,13 @@ type FolderContent = {
    */
   folderChain: { id: string; name: string }[]
 }
+
+interface FileInfoResponse {
+  id: string
+  name: string
+  size: number
+  type: string
+  createTime: number
+  locked: boolean
+  downloadCount: number
+}

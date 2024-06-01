@@ -152,8 +152,8 @@ const menuOptions = ref([
       {
         label: "文件管理",
         key: "file-manage",
+        path: "/admin/files",
         icon: renderIcon(FolderOpenOutline),
-        disabled: true,
       },
       {
         label: "分享管理",
