@@ -276,6 +276,6 @@ const renderMenuLabel = (option: MenuOption) => {
 
 <style scoped>
 .quota {
-  padding: 5px 10px 10px 10px;
+  padding: 5px 10px 20px 10px;
 }
 </style>
