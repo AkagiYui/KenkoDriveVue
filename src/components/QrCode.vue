@@ -1,40 +1,17 @@
 <script setup lang="ts">
-import QrcodeVue from "qrcode.vue"
-
-const props = withDefaults(
-  defineProps<{
-    value: string // 是否必传
-    size?: number
-  }>(),
-  {
-    size: 100,
-  },
-)
-const inputValue = ref<string>(props.value)
-const size = ref<number>(props.size)
-watch(
-  () => props.value,
-  (newValue: string) => {
-    inputValue.value = newValue
-  },
-)
-watch(
-  () => props.size,
-  (newValue: number) => {
-    size.value = newValue
-  },
-)
+const value = defineModel<string>("value")
+const size = defineModel<number>("size", { default: 100 })
 </script>
 
 <template>
-  <qrcode-vue
-    :value="inputValue"
+  <n-qr-code
+    :value="value"
     :size="size"
-    render-as="svg"
-    level="H"
-    :background="'#ffffff'"
-    :foreground="'#000000'"
-    :margin="1"
+    icon-src="/favicon.svg"
+    background-color="#ffffff"
+    color="#000000"
+    error-correction-level="H"
+    type="svg"
   />
 </template>
 

@@ -54,7 +54,6 @@
 - [ArtPlayer](https://artplayer.org/): 视频播放器
 - [vue-pdf](https://github.com/TaTo30/vue-pdf): PDF 阅读器（PDF.js封装）
 - [VueUse](https://vueuse.org/): Vue 工具库
-- [qrcode.vue](https://github.com/scopewu/qrcode.vue): 二维码生成
 - [mitt](https://github.com/developit/mitt): 事件总线
 - [vue-office](https://github.com/501351981/vue-office): Office 预览
 - [shiki](https://shiki.matsu.io/): 代码高亮
@@ -76,7 +75,7 @@
 - [ ] feat: 支持input的自动填充
 - [ ] feat: 管理员修改用户头像
 - [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
-- [ ] refactor: 二维码组件使用Naive UI自带组件
+- [x] refactor: 二维码组件使用Naive UI自带组件
 
 ## 开发注意事项
 

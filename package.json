@@ -34,7 +34,6 @@
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
-    "qrcode.vue": "^3.4.1",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue": "^3.4.21",
     "vue-chartjs": "^5.3.0",

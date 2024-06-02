@@ -71,9 +71,6 @@ importers:
       pinia-plugin-persistedstate:
         specifier: ^3.2.1
         version: 3.2.1(pinia@2.1.7(typescript@5.4.2)(vue@3.4.21(typescript@5.4.2)))
-      qrcode.vue:
-        specifier: ^3.4.1
-        version: 3.4.1(vue@3.4.21(typescript@5.4.2))
       vite-plugin-node-polyfills:
         specifier: ^0.22.0
         version: 0.22.0(rollup@4.13.0)(vite@5.1.6(@types/node@20.11.28)(sass@1.77.2)(stylus@0.59.0)(terser@5.29.2))
@@ -2292,11 +2289,6 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
-
-  qrcode.vue@3.4.1:
-    resolution: {integrity: sha512-wq/zHsifH4FJ1GXQi8/wNxD1KfQkckIpjK1KPTc/qwYU5/Bkd4me0w4xZSg6EXk6xLBkVDE0zxVagewv5EMAVA==}
-    peerDependencies:
-      vue: ^3.0.0
 
   qs@6.12.1:
     resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
@@ -5181,10 +5173,6 @@ snapshots:
   punycode@1.4.1: {}
 
   punycode@2.3.1: {}
-
-  qrcode.vue@3.4.1(vue@3.4.21(typescript@5.4.2)):
-    dependencies:
-      vue: 3.4.21(typescript@5.4.2)
 
   qs@6.12.1:
     dependencies:
