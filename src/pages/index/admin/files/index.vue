@@ -18,6 +18,7 @@ const tableColumns = [
     title: "文件名",
     key: "name",
     ellipsis: {},
+    minWidth: 123,
   },
   {
     title: "大小",

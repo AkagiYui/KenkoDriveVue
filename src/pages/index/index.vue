@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
 import { MdSave } from "@vicons/ionicons4"
-import { getIndexAnnouncements } from "@/api"
+import { getDisplayAnnouncements } from "@/api"
 import { useUserInfo } from "@/stores/user-info"
 import { useAppConfig } from "@/stores/app-config"
 import { useInterval } from "@/hooks"
@@ -54,25 +54,13 @@ const updateHelloText = () => {
 // 每一分钟执行一次更新问候语
 useInterval(updateHelloText, 60000)
 
-const announcements = ref<DisplayAnnouncement[]>([])
+const announcements = ref<DisplayAnnouncementResponse[]>([])
 const lastFetchTime = ref(0)
 
-function fetchAnnouncements() {
-  getIndexAnnouncements().then((res) => {
-    announcements.value = res.data as DisplayAnnouncement[]
-    // 把 时间 字符串转换为 Date 对象
-    // 格式：2023-08-25T09:05:13.497+00:00
-    announcements.value.forEach((announcement) => {
-      announcement.createTime = new Date(announcement.createTime).toLocaleString()
-      announcement.updateTime = new Date(announcement.updateTime).toLocaleString()
-    })
-    lastFetchTime.value = Date.now()
-  })
+async function fetchAnnouncements() {
+  announcements.value = await getDisplayAnnouncements()
+  lastFetchTime.value = Date.now()
 }
-
-onBeforeMount(() => {
-  fetchAnnouncements()
-})
 
 onActivated(() => {
   // 如果距离上次获取公告超过一分钟，就重新获取

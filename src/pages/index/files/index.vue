@@ -28,11 +28,11 @@ import {
 import { filesize } from "filesize"
 import {
   deleteFile as deleteFileEndpoint,
+  deleteFolder as deleteFolderEndpoint,
   getFileTemporaryUrl,
   getFolderContent,
   moveFile,
   moveFolder,
-  deleteFolder as deleteFolderEndpoint,
   renameUserFile,
   renameFolder,
 } from "@/api"
@@ -123,22 +123,20 @@ function rowProps(row: TableData): HTMLAttributes {
   }
 }
 
-function onFileMove(fileId: string, targetId: string | undefined) {
-  moveFile(fileId, targetId).then(() => {
-    window.$message.success("移动成功")
-    loadFolder(currentFolderId.value)
-  })
+async function onFileMove(fileId: string, targetId: string | undefined) {
+  await moveFile(fileId, targetId)
+  window.$message.success("移动成功")
+  loadFolder(currentFolderId.value)
 }
 
-function onFolderMove(folderId: string, targetId: string | undefined) {
+async function onFolderMove(folderId: string, targetId: string | undefined) {
   if (folderId === targetId) {
     window.$message.error("不能移动到自己")
     return
   }
-  moveFolder(folderId, targetId).then(() => {
-    window.$message.success("移动成功")
-    loadFolder(currentFolderId.value)
-  })
+  await moveFolder(folderId, targetId)
+  window.$message.success("移动成功")
+  loadFolder(currentFolderId.value)
 }
 
 /**
@@ -151,7 +149,7 @@ function rowKey(row: TableData): string {
 /**
  * 请求数据
  */
-const contentResponse = ref<FolderContent>({
+const contentResponse = ref<FolderContentResponse>({
   folders: [],
   files: [],
   folderChain: [],
@@ -263,30 +261,29 @@ function onActionSelect(key: string, row: TableData) {
 }
 const { openConfirmModal } = useConfirmModal()
 function deleteItem(row: TableData) {
-  openConfirmModal(() => {
+  openConfirmModal(async () => {
     const endpoint = row.type === "folder" ? deleteFolderEndpoint : deleteFileEndpoint
-    endpoint(row.id).then(() => {
-      window.$message.success("删除成功")
-      loadFolder(currentFolderId.value)
-    })
+    await endpoint(row.id)
+    window.$message.success("删除成功")
+    loadFolder(currentFolderId.value)
   })
 }
 const { openRenameModal } = useRenameModal()
 function renameItem(row: TableData) {
-  openRenameModal(row.name, (newName) => {
+  openRenameModal(row.name, async (newName) => {
     if (!newName) {
       return
     }
     const endpoint = row.type === "folder" ? renameFolder : renameUserFile
-    endpoint(row.id, newName).then(() => {
-      loadFolder(currentFolderId.value)
-    })
+    await endpoint(row.id, newName)
+    window.$message.success("重命名成功")
+    loadFolder(currentFolderId.value)
   })
 }
 
 const imagePreviewUrl = ref("")
 
-function playFile(row: TableData) {
+async function playFile(row: TableData) {
   if (row.type === "folder") {
     return
   }
@@ -299,74 +296,68 @@ function playFile(row: TableData) {
 
   // 图片预览
   if (fileType.startsWith("image")) {
-    getFileTemporaryUrl(row.id).then((res) => {
-      imagePreviewUrl.value = res
-      window.$loadingbar.start()
-    })
+    const url = await getFileTemporaryUrl(row.id)
+    imagePreviewUrl.value = url
+    window.$loadingbar.start()
     return
   }
 
   // 视频、音频播放
   if (fileType.startsWith("video")) {
-    getFileTemporaryUrl(row.id).then((res) => {
-      const route = router.resolve({
-        name: "video-preview",
-        query: { url: res },
-      })
-      window.open(route.href, "_blank")
-      emitBusEvent(BusEvent.PAUSE_MUSIC)
+    const url = await getFileTemporaryUrl(row.id)
+    const route = router.resolve({
+      name: "video-preview",
+      query: { url },
     })
+    window.open(route.href, "_blank")
+    emitBusEvent(BusEvent.PAUSE_MUSIC)
     return
   }
   if (fileType.startsWith("audio")) {
-    getFileTemporaryUrl(row.id).then((res) => {
-      emitBusEvent(BusEvent.PLAY_MUSIC, res)
-    })
+    const url = await getFileTemporaryUrl(row.id)
+    emitBusEvent(BusEvent.PLAY_MUSIC, url)
     return
   }
 
   // PDF 预览
   if (fileType === "application/pdf") {
-    getFileTemporaryUrl(row.id).then((res) => {
-      // 使用浏览器打开
-      // fetch(res)
-      //   .then((res) => res.blob())
-      //   .then((res) => {
-      //     const blob = new Blob([res], { type: "application/pdf" })
-      //     const url = URL.createObjectURL(blob)
-      //     window.open(url, "_blank")
-      //   })
-      //
-      // 使用内置 PDF 阅读器
-      const route = router.resolve({
-        name: "pdf-preview",
-        query: { url: res },
-      })
-      window.open(route.href, "_blank")
+    const url = await getFileTemporaryUrl(row.id)
+    // 使用浏览器打开
+    // fetch(url)
+    //   .then((res) => res.blob())
+    //   .then((res) => {
+    //     const blob = new Blob([res], { type: "application/pdf" })
+    //     const url = URL.createObjectURL(blob)
+    //     window.open(url, "_blank")
+    //   })
+
+    // 使用内置 PDF 阅读器
+    const route = router.resolve({
+      name: "pdf-preview",
+      query: { url },
     })
+    window.open(route.href, "_blank")
     return
   }
 
   // docx
   if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-    getFileTemporaryUrl(row.id).then((res) => {
-      const route = router.resolve({
-        name: "docx-preview",
-        query: { url: res },
-      })
-      window.open(route.href, "_blank")
+    const url = await getFileTemporaryUrl(row.id)
+    const route = router.resolve({
+      name: "docx-preview",
+      query: { url },
     })
+    window.open(route.href, "_blank")
     return
   }
   // xlsx
   if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-    getFileTemporaryUrl(row.id).then((res) => {
-      const route = router.resolve({
-        name: "xlsx-preview",
-        query: { url: res },
-      })
-      window.open(route.href, "_blank")
+    const url = await getFileTemporaryUrl(row.id)
+    const route = router.resolve({
+      name: "xlsx-preview",
+      query: { url },
     })
+    window.open(route.href, "_blank")
     return
   }
 
@@ -386,17 +377,12 @@ function playFile(row: TableData) {
     return
   }
   if (codeFileSuffix.includes(suffix!)) {
-    getFileTemporaryUrl(row.id).then((res) => {
-      window.$loadingbar.start()
-      fetch(res)
-        .then((res) => res.text())
-        .then((res) => {
-          window.$loadingbar.finish()
-          monacoPreviewValue.value = res
-          monacoLanguage.value = suffix!
-          showMonaco.value = true
-        })
-    })
+    const url = await getFileTemporaryUrl(row.id)
+    window.$loadingbar.start()
+    monacoPreviewValue.value = await fetch(url).then((res) => res.text())
+    window.$loadingbar.finish()
+    monacoLanguage.value = suffix!
+    showMonaco.value = true
     return
   }
 
@@ -405,19 +391,18 @@ function playFile(row: TableData) {
   console.log("unknown file type", fileType, row.name)
 }
 
-function downloadFile(row: TableData) {
+async function downloadFile(row: TableData) {
   if (row.locked) {
     window.$message.error("文件已锁定，无法下载")
     return
   }
-  getFileTemporaryUrl(row.id, false, row.name).then((url) => {
-    // 创建a标签
-    const a = document.createElement("a")
-    a.href = url
-    a.download = row.name
-    a.click()
-    a.remove()
-  })
+  const url = await getFileTemporaryUrl(row.id, false, row.name)
+  // 创建a标签
+  const a = document.createElement("a")
+  a.href = url
+  a.download = row.name
+  a.click()
+  a.remove()
 }
 
 function onImageLoaded() {
@@ -539,11 +524,9 @@ function onDoubleClick(row: TableData) {
  * 加载文件夹内容
  * @param id 文件夹id
  */
-function loadFolder(id?: string | null): void {
+async function loadFolder(id?: string | null) {
   firstLoaded = true
-  getFolderContent(id).then((res) => {
-    contentResponse.value = res.data
-  })
+  contentResponse.value = await getFolderContent(id)
 }
 
 const showCreateFolderModal = ref(false)

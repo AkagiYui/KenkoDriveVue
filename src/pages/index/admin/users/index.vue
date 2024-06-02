@@ -187,7 +187,7 @@ const tableColumns = [
     },
     key: "isDisabled",
     width: "0",
-    render: (row: User) => {
+    render: (row: UserInfoResponse) => {
       return h(
         NButton,
         {
@@ -195,16 +195,10 @@ const tableColumns = [
           tertiary: true,
           size: "small",
           type: !row.disabled ? "success" : "error",
-          onClick: () => {
+          onClick: async () => {
             row.disabled = !row.disabled
-            updateUserDisabled(row.id, row.disabled)
-              .then(() => {
-                window.$message.success("操作成功")
-              })
-              .catch((e) => {
-                window.$message.error("操作失败")
-                console.error(e)
-              })
+            await updateUserDisabled(row.id, row.disabled)
+            window.$message.success("操作成功")
           },
         },
         { default: () => (!row.disabled ? "已启用" : "已禁用") },
@@ -215,7 +209,7 @@ const tableColumns = [
     title: "操作",
     key: "actions",
     width: "250px",
-    render: (row: User) => {
+    render: (row: UserInfoResponse) => {
       return h(
         NSpace,
         {},
@@ -277,9 +271,9 @@ const tableColumns = [
   },
 ]
 /** 表格数据 */
-const tableData = ref<User[]>([])
+const tableData = ref<UserInfoResponse[]>([])
 /** 选中行 */
-const selectRow = ref<User | null>(null)
+const selectRow = ref<UserInfoResponse | null>(null)
 /** 显示编辑模态框 */
 const showEditModal = ref(false)
 /** 处于编辑/新增 */
@@ -303,36 +297,21 @@ onBeforeMount(() => {
   getData()
 })
 /** 删除用户确认事件 */
-const onDeleteUserConfirm = () => {
+const onDeleteUserConfirm = async () => {
   if (!selectRow.value) return
-  deleteUser(selectRow.value.id)
-    .then(() => {
-      getData()
-      window.$message.success("删除成功")
-    })
-    .catch((e) => {
-      window.$message.error("删除失败")
-      console.error(e)
-    })
+  await deleteUser(selectRow.value.id)
+  getData()
+  window.$message.success("删除成功")
   showDeleteConfirmModal.value = false
 }
 /** 重置密码按钮点击事件 */
-const onResetPasswordClick = () => {
-  resetPasswordFormRef.value?.validate().then((valid: any) => {
-    if (valid) {
-      const selectedId = selectRow.value?.id
-      if (!selectedId) return
-      updateUserPassword(selectedId, resetPasswordData.value.password)
-        .then(() => {
-          window.$message.success("密码重置成功")
-          showResetPasswordModal.value = false
-        })
-        .catch((e) => {
-          window.$message.error("密码重置失败")
-          console.error(e)
-        })
-    }
-  })
+const onResetPasswordClick = async () => {
+  await resetPasswordFormRef.value?.validate()
+  const selectedId = selectRow.value?.id
+  if (!selectedId) return
+  await updateUserPassword(selectedId, resetPasswordData.value.password)
+  window.$message.success("密码重置成功")
+  showResetPasswordModal.value = false
 }
 /** 重置密码模态框关闭后事件 */
 const onAfterResetPasswordModalLeave = () => {
@@ -383,7 +362,7 @@ const onModalPositiveButtonClick = async () => {
   }
 }
 /** 编辑按钮点击事件 */
-const onEditButtonClick = (row: User) => {
+const onEditButtonClick = (row: UserInfoResponse) => {
   isEdit.value = true
   selectRow.value = row
   modalData.value = {
@@ -406,25 +385,18 @@ watch(isEdit, (isEdit) => {
   }
 })
 /** 分配角色按钮点击事件 */
-const onAssignRoleButtonClick = (row: User) => {
+const onAssignRoleButtonClick = (row: UserInfoResponse) => {
   selectRow.value = row
   showRoleTable.value = true
 }
 
 /** 获取表格数据 */
-const getData = () => {
+const getData = async () => {
   isLoading.value = true
-  getUsers(pagination.page - 1, pagination.pageSize, searchExpression.value)
-    .then((res) => {
-      let data: Page<User> = res.data
-      tableData.value = data.list
-      pagination.itemCount = data.total
-    })
-    .catch((e) => {
-      window.$message.error("数据获取失败")
-      console.error(e)
-    })
-    .finally(() => (isLoading.value = false))
+  const data = await getUsers(pagination.page - 1, pagination.pageSize, searchExpression.value)
+  tableData.value = data.list
+  pagination.itemCount = data.itemCount
+  isLoading.value = false
 }
 </script>
 

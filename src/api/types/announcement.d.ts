@@ -1,7 +1,7 @@
 /**
  * 显示的公告信息接口
  */
-interface DisplayAnnouncement {
+interface DisplayAnnouncementResponse {
   /**
    * 标题
    */
@@ -31,7 +31,7 @@ interface DisplayAnnouncement {
 /**
  * 系统公告
  */
-interface Announcement {
+interface AnnouncementResponse {
   /**
    * 公告ID
    */
@@ -48,18 +48,6 @@ interface Announcement {
   content: string
 
   /**
-   * 公告的创建时间
-   * 格式：ISO 8601日期字符串（例如："2023-01-01T00:00:00.000Z"）
-   */
-  createTime: string
-
-  /**
-   * 公告的最后更新时间
-   * 格式：ISO 8601日期字符串（例如："2023-01-01T00:00:00.000Z"）
-   */
-  updateTime: string
-
-  /**
    * 创建公告的用户的ID
    */
   userId: string
@@ -73,4 +61,14 @@ interface Announcement {
    * 是否启用
    */
   enabled: boolean
+
+  /**
+   * 公告创建时间戳
+   */
+  createTime: string
+
+  /**
+   * 公告更新时间戳
+   */
+  updateTime: string
 }

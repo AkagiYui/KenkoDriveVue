@@ -36,26 +36,18 @@ const reset = () => {
 }
 
 const avatarFileList = ref<UploadFileInfo[]>([])
-const uploadAvatar = (fileList: UploadFileInfo[]) => {
+const uploadAvatar = async (fileList: UploadFileInfo[]) => {
   const fileInfo = fileList[0] ?? null
   const file = fileInfo?.file ?? null
   if (!file) {
     return
   }
-  uploadUserAvatar(file)
-    .then(() => {
-      window.$message.success("头像上传成功")
-      renewAvatar()
-    })
-    .catch((err) => {
-      window.$message.error("头像上传失败")
-      console.error("upload avatar error", err)
-    })
-    .finally(() => {
-      // 移除元素
-      fileInfo.status = "finished"
-      avatarFileList.value = []
-    })
+  await uploadUserAvatar(file)
+  window.$message.success("头像上传成功")
+  renewAvatar()
+  // 移除元素
+  fileInfo.status = "finished"
+  avatarFileList.value = []
 }
 </script>
 

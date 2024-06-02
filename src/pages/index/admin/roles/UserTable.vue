@@ -7,7 +7,7 @@ const show = defineModel<boolean>("show", { default: false })
 /** 组件参数 */
 const props = withDefaults(
   defineProps<{
-    role: Role
+    role: RoleResponse
   }>(),
   {},
 )
@@ -40,7 +40,7 @@ const columns = [
     title: "操作",
     key: "actions",
     width: 100,
-    render: (row: User) => {
+    render: (row: UserInfoResponse) => {
       return h(
         NButton,
         {
@@ -75,11 +75,11 @@ const pagination = reactive({
   prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
 /** 表格数据 */
-const tableData = ref<User[]>([])
+const tableData = ref<UserInfoResponse[]>([])
 /** 已选用户 ID */
 const selectedUserIds = ref<string[]>([])
 /** 是否用户在角色中 */
-const isUserInRole = (user: User) => {
+const isUserInRole = (user: UserInfoResponse) => {
   return selectedUserIds.value.includes(user.id)
 }
 
@@ -95,62 +95,32 @@ const onPageSizeChange = (pageSize: number) => {
   getUser()
 }
 /** 窗口出现事件 */
-const onComponentShow = () => {
+const onComponentShow = async () => {
   loading.value = true
-  getRoleUsers(props.role.id)
-    .then((res) => {
-      selectedUserIds.value = res.data
-    })
-    .finally(() => {
-      loading.value = false
-    })
+  selectedUserIds.value = await getRoleUsers(props.role.id)
+  loading.value = false
 }
-const onActionClick = (user: User) => {
+const onActionClick = async (user: UserInfoResponse) => {
   loading.value = true
   if (isUserInRole(user)) {
-    unassignRoleUsers(props.role.id, [user.id])
-      .then(() => {
-        window.$message.success("移除成功")
-        selectedUserIds.value = selectedUserIds.value.filter((id) => id !== user.id)
-      })
-      .catch((e) => {
-        window.$message.error("移除失败")
-        throw e
-      })
-      .finally(() => {
-        loading.value = false
-      })
+    await unassignRoleUsers(props.role.id, [user.id])
+    window.$message.success("移除成功")
+    selectedUserIds.value = selectedUserIds.value.filter((id) => id !== user.id)
+    loading.value = false
   } else {
-    assignRoleUsers(props.role.id, [user.id])
-      .then(() => {
-        window.$message.success("分配成功")
-        selectedUserIds.value.push(user.id)
-      })
-      .catch((e) => {
-        window.$message.error("分配失败")
-        throw e
-      })
-      .finally(() => {
-        loading.value = false
-      })
+    await assignRoleUsers(props.role.id, [user.id])
+    window.$message.success("分配成功")
+    selectedUserIds.value.push(user.id)
+    loading.value = false
   }
 }
 /** 获取用户信息 */
-const getUser = () => {
+const getUser = async () => {
   loading.value = true
-  getUsers(pagination.page - 1, pagination.pageSize)
-    .then((res) => {
-      let data: Page<User> = res.data
-      tableData.value = data.list
-      pagination.itemCount = data.total
-    })
-    .catch((e) => {
-      window.$message.error("数据获取失败")
-      throw e
-    })
-    .finally(() => {
-      loading.value = false
-    })
+  const data = await getUsers(pagination.page - 1, pagination.pageSize)
+  tableData.value = data.list
+  pagination.itemCount = data.itemCount
+  loading.value = false
 }
 </script>
 

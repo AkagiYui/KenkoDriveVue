@@ -539,14 +539,9 @@ const editorMounted = (editor) => {
       </n-modal>
       <NButton
         @click="
-          () => {
-            geetest
-              .validate((w) => {
-                console.log(w)
-              })
-              .then((res) => {
-                console.log('success1', res)
-              })
+          async () => {
+            const w = await geetest.validate()
+            console.log(w)
             // captchaRef?.validate().then((res) => {
             //   console.log('success', res)
             // })

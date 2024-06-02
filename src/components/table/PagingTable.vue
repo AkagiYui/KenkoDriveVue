@@ -15,9 +15,12 @@ const props = withDefaults(
 const emits = defineEmits<{
   (e: "update:index", i: number, s: number): void
 }>()
-watch(() => props.count, () => {
-  pagination.itemCount = props.count
-})
+watch(
+  () => props.count,
+  () => {
+    pagination.itemCount = props.count
+  },
+)
 
 const pagination = reactive({
   /** 当前页，从 1 开始 */

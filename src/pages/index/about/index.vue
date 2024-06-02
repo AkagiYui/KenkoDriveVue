@@ -47,9 +47,7 @@ onBeforeMount(async () => {
       })
       frontendVersion.value = road[0].version
     })
-  getBackendVersion().then((res) => {
-    backendVersion.value = res.data
-  })
+  backendVersion.value = await getBackendVersion()
 })
 </script>
 

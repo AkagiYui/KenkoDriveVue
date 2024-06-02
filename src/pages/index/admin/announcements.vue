@@ -17,7 +17,7 @@ import {
   getAnnouncements,
   updateAnnouncement,
   updateAnnouncementStatus,
-} from "@/api/announcement"
+} from "@/api"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import { renderTooltip } from "@/utils"
 
@@ -69,11 +69,13 @@ const tableColumns = [
     title: "标题",
     key: "title",
     resizable: true,
+    minWidth: 80,
   },
   {
     title: "发布时间",
     key: "createTime",
-    maxWidth: 200,
+    minWidth: 100,
+    maxWidth: 160,
     resizable: true,
   },
   {
@@ -87,7 +89,7 @@ const tableColumns = [
     key: "capacity",
     minWidth: "200px",
     resizable: true,
-    render: (row: Announcement) => {
+    render: (row: AnnouncementResponse) => {
       return h(
         NTooltip,
         {
@@ -123,7 +125,7 @@ const tableColumns = [
     },
     key: "isDisabled",
     width: "100px",
-    render: (row: Announcement) => {
+    render: (row: AnnouncementResponse) => {
       return h(
         NButton,
         {
@@ -131,16 +133,10 @@ const tableColumns = [
           tertiary: true,
           size: "small",
           type: row.enabled ? "success" : "error",
-          onClick: () => {
-            updateAnnouncementStatus(row.id, row.enabled)
-              .then(() => {
-                row.enabled = !row.enabled
-                window.$message.success("操作成功")
-              })
-              .catch((e) => {
-                window.$message.error("操作失败")
-                console.error(e)
-              })
+          onClick: async () => {
+            await updateAnnouncementStatus(row.id, row.enabled)
+            row.enabled = !row.enabled
+            window.$message.success("操作成功")
           },
         },
         { default: () => (row.enabled ? "已发布" : "已隐藏") },
@@ -151,7 +147,7 @@ const tableColumns = [
     title: "操作",
     key: "actions",
     width: "140px",
-    render: (row: Announcement) => {
+    render: (row: AnnouncementResponse) => {
       return h(
         NSpace,
         {},
@@ -187,23 +183,15 @@ const tableColumns = [
     },
   },
 ]
-/** 表格数据 */
-const tableData = computed(() => {
-  if (!requestData.value) return []
-  return requestData.value.map((announcement) => {
-    const n = announcement
-    n.createTime = new Date(announcement.createTime).toLocaleString()
-    return n
-  })
-})
+
 /** 选中行 */
-const selectRow = ref<Announcement | null>(null)
+const selectRow = ref<AnnouncementResponse | null>(null)
 /** 显示编辑模态框 */
 const showEditModal = ref(false)
 /** 处于编辑/新增 */
 const isEdit = ref(false)
-/** 请求数据 */
-const requestData = ref<Announcement[]>([])
+/** 请求数据，表格数据 */
+const requestData = ref<AnnouncementResponse[]>([])
 
 /** 页码改变事件 */
 function onPageChange(page: number) {
@@ -224,17 +212,11 @@ onBeforeMount(() => {
 })
 
 /** 删除确认事件 */
-function onDeleteConfirm() {
+async function onDeleteConfirm() {
   if (!selectRow.value) return
-  deleteAnnouncement(selectRow.value.id)
-    .then(() => {
-      getData()
-      window.$message.success("删除成功")
-    })
-    .catch((e) => {
-      window.$message.error("删除失败")
-      console.error(e)
-    })
+  await deleteAnnouncement(selectRow.value.id)
+  getData()
+  window.$message.success("删除成功")
   showDeleteConfirmModal.value = false
 }
 
@@ -253,43 +235,29 @@ function onAddButtonClick() {
 }
 
 /** 模态框按钮点击事件 */
-function onModalPositiveButtonClick() {
-  modalFormRef.value
-    ?.validate()
-    .then(() => {
-      if (isEdit.value) {
-        // 修改用户信息
-        if (!selectRow.value) {
-          throw new Error("未选中用户")
-        }
-        if (!selectRow.value.id) {
-          throw new Error("未获取到用户ID")
-        }
-        updateAnnouncement(selectRow.value.id, modalData.value.title, modalData.value.content)
-          .then(() => {
-            getData()
-            window.$message.success("修改成功")
-          })
-          .catch(() => {
-            window.$message.error("修改失败")
-          })
-      } else {
-        // 新增条目
-        addAnnouncement(modalData.value)
-          .then(() => {
-            getData()
-            window.$message.success("新增成功")
-          })
-          .catch(() => {
-            window.$message.error("新增失败")
-          })
-      }
-    })
-    .catch(() => {})
+async function onModalPositiveButtonClick() {
+  await modalFormRef.value?.validate()
+  if (isEdit.value) {
+    // 修改用户信息
+    if (!selectRow.value) {
+      throw new Error("未选中用户")
+    }
+    if (!selectRow.value.id) {
+      throw new Error("未获取到用户ID")
+    }
+    await updateAnnouncement(selectRow.value.id, modalData.value.title, modalData.value.content)
+    getData()
+    window.$message.success("修改成功")
+  } else {
+    // 新增条目
+    await addAnnouncement(modalData.value)
+    getData()
+    window.$message.success("新增成功")
+  }
 }
 
 /** 编辑按钮点击事件 */
-function onEditButtonClick(row: Announcement) {
+function onEditButtonClick(row: AnnouncementResponse) {
   isEdit.value = true
   selectRow.value = row
   modalData.value = {
@@ -300,19 +268,12 @@ function onEditButtonClick(row: Announcement) {
 }
 
 /** 获取表格数据 */
-function getData() {
+async function getData() {
   isLoading.value = true
-  getAnnouncements(pagination.page - 1, pagination.pageSize, searchExpression.value)
-    .then((res) => {
-      let data: Page<any> = res.data
-      requestData.value = data.list
-      pagination.itemCount = data.total
-    })
-    .catch((e) => {
-      window.$message.error("数据获取失败")
-      console.error(e)
-    })
-    .finally(() => (isLoading.value = false))
+  const data = await getAnnouncements(pagination.page - 1, pagination.pageSize, searchExpression.value)
+  requestData.value = data.list
+  pagination.itemCount = data.itemCount
+  isLoading.value = false
 }
 </script>
 
@@ -387,7 +348,7 @@ function getData() {
         striped
         :bordered="true"
         :columns="tableColumns"
-        :data="tableData"
+        :data="requestData"
         :pagination="pagination"
         :loading="isLoading"
         @update:page="onPageChange"

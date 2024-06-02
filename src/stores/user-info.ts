@@ -66,12 +66,10 @@ export const useUserInfo = defineStore(
     /**
      * 更新头像
      */
-    function renewAvatar() {
+    async function renewAvatar() {
       if (!isLoggedIn.value) return
-      getUserAvatar().then((res) => {
-        const data = res.data
-        setAvatar(data)
-      })
+      const data = await getUserAvatar()
+      setAvatar(data)
     }
 
     /**
@@ -87,12 +85,12 @@ export const useUserInfo = defineStore(
         getUserInfo()
           .then((res) => {
             renewAvatar()
-            const data = res.data
+            const data = res
             username.value = data.username
             userId.value = data.id
             email.value = data.email
             nickname.value = data.nickname || data.username
-            permissions.value = (data.permissions as string[]).map((item) => {
+            permissions.value = data.permissions.map((item) => {
               // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
               return (Permission as Record<string, any>)[item]
             })

@@ -62,7 +62,7 @@ const tableColumns = [
     title: "状态",
     key: "disabled",
     width: "80px",
-    render: (row: Role) => {
+    render: (row: RoleResponse) => {
       return h(
         NButton,
         {
@@ -81,7 +81,7 @@ const tableColumns = [
     title: "操作",
     key: "action",
     width: "230px",
-    render: (row: Role) => {
+    render: (row: RoleResponse) => {
       return h(
         NSpace,
         {},
@@ -124,9 +124,9 @@ const tableColumns = [
   },
 ]
 /** 表格数据 */
-const tableData = ref<Role[]>([])
+const tableData = ref<RoleResponse[]>([])
 /** 选中行数据 */
-const selectedRow = ref<Role | null>(null)
+const selectedRow = ref<RoleResponse | null>(null)
 /** 是否显示删除确认模态框 */
 const showDeleteConfirmModal = ref(false)
 /** 模态框信息 */
@@ -152,7 +152,7 @@ const rules = {
 /** 模态框表单引用 */
 const modalFormRef = ref<FormInst | null>(null)
 /** 权限列表 */
-const permissions = ref<Permission[]>([])
+const permissions = ref<PermissionResponse[]>([])
 /** 权限转移选项 */
 const permissionTransferOptions = computed(() => {
   return permissions.value.map((p) => ({
@@ -166,17 +166,9 @@ const showUserTable = ref(false)
 
 // 事件
 /** 加载页面事件 */
-onBeforeMount(() => {
+onBeforeMount(async () => {
   getData() // 获取表格数据
-  getPermissions() // 获取权限列表
-    .then((res) => {
-      permissions.value = res.data
-      console.debug("permissions", permissions.value)
-    })
-    .catch((e) => {
-      window.$message.error("权限获取失败")
-      throw e
-    })
+  permissions.value = await getPermissions() // 获取权限列表
 })
 /** 页码改变事件 */
 const onPageChange = (page: number) => {
@@ -190,65 +182,46 @@ const onPageSizeChange = (pageSize: number) => {
   getData()
 }
 /** 模态框确认事件 */
-const onModalConfirm = () => {
+const onModalConfirm = async () => {
   processing.value = true
-  modalFormRef.value
-    ?.validate()
-    .then(() => {
-      if (isEdit.value) {
-        // 编辑
-        updateRole(modalData.value.id, {
-          name: modalData.value.name,
-          description: modalData.value.description,
-          isDefault: modalData.value.isDefault,
-          permissions: modalData.value.permissions,
-        })
-          .then(() => {
-            showEditModal.value = false
-            window.$message.success("修改成功")
-            const index = tableData.value.findIndex((r) => r.id === modalData.value.id)
-            if (index !== -1) {
-              tableData.value[index] = {
-                ...tableData.value[index],
-                name: modalData.value.name,
-                description: modalData.value.description,
-                isDefault: modalData.value.isDefault,
-                permissions: modalData.value.permissions,
-              }
-            }
-          })
-          .catch(() => {
-            window.$message.error("修改失败")
-          })
-          .finally(() => {
-            processing.value = false
-          })
-      } else {
-        // 新增
-        addRole(modalData.value)
-          .then((response) => {
-            showEditModal.value = false
-            window.$message.success("添加成功")
-            const id = response.data
-            tableData.value.push({
-              id: id,
-              name: modalData.value.name,
-              description: modalData.value.description,
-              isDefault: modalData.value.isDefault,
-              permissions: modalData.value.permissions,
-              userCount: 0,
-              disabled: false,
-            })
-          })
-          .catch(() => {
-            window.$message.error("添加失败")
-          })
-          .finally(() => {
-            processing.value = false
-          })
-      }
+  await modalFormRef.value?.validate()
+  if (isEdit.value) {
+    // 编辑
+    await updateRole(modalData.value.id, {
+      name: modalData.value.name,
+      description: modalData.value.description,
+      isDefault: modalData.value.isDefault,
+      permissions: modalData.value.permissions,
     })
-    .catch(() => {})
+    showEditModal.value = false
+    window.$message.success("修改成功")
+    const index = tableData.value.findIndex((r) => r.id === modalData.value.id)
+    if (index !== -1) {
+      tableData.value[index] = {
+        ...tableData.value[index],
+        name: modalData.value.name,
+        description: modalData.value.description,
+        isDefault: modalData.value.isDefault,
+        permissions: modalData.value.permissions,
+      }
+    }
+    processing.value = false
+  } else {
+    // 新增
+    const id = await addRole(modalData.value)
+    showEditModal.value = false
+    window.$message.success("添加成功")
+    tableData.value.push({
+      id: id,
+      name: modalData.value.name,
+      description: modalData.value.description,
+      isDefault: modalData.value.isDefault,
+      permissions: modalData.value.permissions,
+      userCount: 0,
+      disabled: false,
+    })
+    processing.value = false
+  }
 }
 /** 模态框关闭事件 */
 const onModalClosed = () => {
@@ -266,7 +239,7 @@ const onAddButtonClick = () => {
   showEditModal.value = true
 }
 /** 编辑按钮点击事件 */
-const onEditButtonClick = (row: Role) => {
+const onEditButtonClick = (row: RoleResponse) => {
   isEdit.value = true
   modalData.value = {
     id: row.id,
@@ -278,60 +251,40 @@ const onEditButtonClick = (row: Role) => {
   showEditModal.value = true
 }
 /** 删除按钮点击事件 */
-const onDeleteButtonClick = (row: Role) => {
+const onDeleteButtonClick = (row: RoleResponse) => {
   selectedRow.value = row
   showDeleteConfirmModal.value = true
 }
 /** 删除确认事件 */
-const onDeleteConfirm = () => {
+const onDeleteConfirm = async () => {
   showDeleteConfirmModal.value = false
   if (!selectedRow.value) return
-  deleteRole(selectedRow.value.id)
-    .then(() => {
-      window.$message.success("删除成功")
-      tableData.value = tableData.value.filter((r) => r.id !== selectedRow.value?.id)
-    })
-    .catch(() => {
-      window.$message.error("删除失败")
-    })
+  await deleteRole(selectedRow.value.id)
+  window.$message.success("删除成功")
+  tableData.value = tableData.value.filter((r) => r.id !== selectedRow.value?.id)
 }
 /** 启用/禁用按钮点击事件 */
-const onToggleEnabledButtonClick = (row: Role) => {
+const onToggleEnabledButtonClick = async (row: RoleResponse) => {
   processing.value = true
-  updateRoleStatus(row.id, !row.disabled)
-    .then(() => {
-      window.$message.success("操作成功")
-      row.disabled = !row.disabled
-    })
-    .catch((e) => {
-      window.$message.error("操作失败")
-      console.error(e)
-    })
-    .finally(() => {
-      processing.value = false
-    })
+  await updateRoleStatus(row.id, !row.disabled)
+  window.$message.success("操作成功")
+  row.disabled = !row.disabled
+  processing.value = false
 }
 /** 分配用户按钮点击事件 */
-const onAssignUserButtonClick = (row: Role) => {
+const onAssignUserButtonClick = (row: RoleResponse) => {
   selectedRow.value = row
   showUserTable.value = true
 }
 
 // 工具函数
 /** 获取表格数据 */
-const getData = () => {
+const getData = async () => {
   isLoading.value = true
-  getRoles(pagination.page - 1, pagination.pageSize, searchExpression.value)
-    .then((res) => {
-      let data: Page<Role> = res.data
-      tableData.value = data.list
-      pagination.itemCount = data.total
-    })
-    .catch((e) => {
-      window.$message.error("数据获取失败")
-      throw e
-    })
-    .finally(() => (isLoading.value = false))
+  const data = await getRoles(pagination.page - 1, pagination.pageSize, searchExpression.value)
+  tableData.value = data.list
+  pagination.itemCount = data.itemCount
+  isLoading.value = false
 }
 </script>
 

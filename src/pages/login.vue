@@ -29,7 +29,6 @@ import {
   sendRegisterEmailCode,
   sendSmsCode,
   getRegisterEnabled,
-  EMD,
 } from "@/api"
 import { hasText } from "@/utils"
 import { useGlobal } from "@/hooks"
@@ -40,10 +39,8 @@ const router = useRouter()
 
 const isRegisterEnabled = ref(false)
 
-onBeforeMount(() => {
-  getRegisterEnabled().then((res) => {
-    isRegisterEnabled.value = res.data
-  })
+onActivated(async () => {
+  isRegisterEnabled.value = await getRegisterEnabled()
 })
 
 const modalFormRef = ref<FormInst | null>(null)
@@ -81,79 +78,45 @@ const loginForm = ref({
   email: "",
   code: "",
 })
-const onLoginButtonClick = () => {
-  modalFormRef.value?.validate((errors) => {
-    if (errors) {
-      return
-    }
-    getToken(loginForm.value.username, loginForm.value.password)
-      .then((res) => {
-        setToken(res.data.token)
-        router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
-        loginForm.value.username = ""
-        loginForm.value.password = ""
-        loginForm.value.repeatPassword = ""
-        loginForm.value.email = ""
-        loginForm.value.code = ""
-      })
-      .catch((err) => {
-        const code = err.response?.status
-        if (code === 401) {
-          window.$message.error("用户名或密码错误")
-        } else {
-          console.error(err)
-        }
-      })
-  })
+const onLoginButtonClick = async () => {
+  await modalFormRef.value?.validate()
+  const token = await getToken(loginForm.value.username, loginForm.value.password)
+  setToken(token)
+  router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
+  loginForm.value.username = ""
+  loginForm.value.password = ""
+  loginForm.value.repeatPassword = ""
+  loginForm.value.email = ""
+  loginForm.value.code = ""
 }
 const isCooldown = ref(false)
 const sentEmailCode = ref(false)
 
-function onRegisterButtonClick() {
-  registerFormRef.value?.validate().then(() => {
-    confirmRegisterEmailCode(loginForm.value.email, loginForm.value.code)
-      .then(() => {
-        window.$message.success("注册成功")
-        loginForm.value.repeatPassword = ""
-        loginForm.value.email = ""
-        loginForm.value.code = ""
-        selectedTab.value = "signin"
-      })
-      .catch(() => {
-        window.$message.error("验证失败，请检查验证码是否正确")
-      })
-  })
+async function onRegisterButtonClick() {
+  await registerFormRef.value?.validate()
+  await confirmRegisterEmailCode(loginForm.value.email, loginForm.value.code)
+  window.$message.success("注册成功")
+  loginForm.value.repeatPassword = ""
+  loginForm.value.email = ""
+  loginForm.value.code = ""
+  selectedTab.value = "signin"
 }
 
 const codeInputRef = ref<HTMLInputElement | null>(null)
 const { $geetest: geetest } = useGlobal()
 
-function onSendEmailCodeLogoClick() {
+async function onSendEmailCodeLogoClick() {
   if (isCooldown.value) return
-  registerFormRef.value
-    ?.validate()
-    .then(() => {
-      geetest.validate().then((w) => {
-        sendRegisterEmailCode(loginForm.value.username, loginForm.value.password, loginForm.value.email, w)
-          .then(() => {
-            window.$message.success("验证码已发送，请查收")
-            isCooldown.value = true
-            sentEmailCode.value = true
-            setTimeout(() => {
-              isCooldown.value = false
-            }, 60000)
-            codeInputRef.value?.focus()
-          })
-          .catch((err) => {
-            const code = err.response?.status
-            if (code === 400) {
-              const code = err.response?.data.code
-              window.$message.error(EMD[code])
-            }
-          })
-      })
-    })
-    .catch(() => {})
+  await registerFormRef.value?.validate()
+  const w = await geetest.validate()
+  await sendRegisterEmailCode(loginForm.value.username, loginForm.value.password, loginForm.value.email, w)
+  window.$message.success("验证码已发送，请查收")
+  isCooldown.value = true
+  sentEmailCode.value = true
+  setTimeout(() => {
+    isCooldown.value = false
+  }, 60000)
+  codeInputRef.value?.focus()
 }
 
 const selectedTab = ref("sms")
@@ -182,47 +145,27 @@ const smsFormRules = {
   },
 }
 const smsFormRef = ref<FormInst | null>(null)
-const onSmsLoginButtonClick = () => {
-  smsFormRef.value?.validate().then(() => {
-    confirmSmsCode(smsLoginForm.value.phone, smsLoginForm.value.code)
-      .then((res) => {
-        setToken(res.data.token)
-        router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
-        smsLoginForm.value.phone = ""
-        smsLoginForm.value.code = ""
-      })
-      .catch((err) => {
-        const code = err.response?.status
-        if (code === 401) {
-          window.$message.error("验证码错误")
-        } else {
-          console.error(err)
-        }
-      })
-  })
+const onSmsLoginButtonClick = async () => {
+  await smsFormRef.value?.validate()
+  const res = await confirmSmsCode(smsLoginForm.value.phone, smsLoginForm.value.code)
+  setToken(res)
+  router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
+  smsLoginForm.value.phone = ""
+  smsLoginForm.value.code = ""
 }
 
-const onSendSmsCodeLogoClick = () => {
+const onSendSmsCodeLogoClick = async () => {
   if (isCooldown.value) return
   if (hasText(smsLoginForm.value.phone)) {
-    geetest.validate().then((w) => {
-      sendSmsCode(smsLoginForm.value.phone, w)
-        .then(() => {
-          window.$message.success("验证码已发送，请查收")
-          isCooldown.value = true
-          setTimeout(() => {
-            isCooldown.value = false
-          }, 60000)
-        })
-        .catch((err) => {
-          const code = err.response?.status
-          if (code === 400) {
-            const code = err.response?.data.code
-            window.$message.error(EMD[code])
-          }
-        })
-    })
+    return
   }
+  const w = await geetest.validate()
+  await sendSmsCode(smsLoginForm.value.phone, w)
+  window.$message.success("验证码已发送，请查收")
+  isCooldown.value = true
+  setTimeout(() => {
+    isCooldown.value = false
+  }, 60000)
 }
 </script>
 

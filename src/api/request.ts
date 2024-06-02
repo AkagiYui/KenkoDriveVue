@@ -3,14 +3,12 @@ import { NIcon } from "naive-ui"
 import { BugReportOutlined } from "@vicons/material"
 import { useUserInfo } from "@/stores/user-info"
 import { hasText } from "@/utils"
+import EMD from "./ResponseMessages"
 
 const isDev = import.meta.env.DEV
 export const config = {
   baseURL: isDev ? "/api" : import.meta.env.VITE_BACKEND_BASE_URL,
   timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
 }
 
 const request = axios.create(config)
@@ -37,8 +35,12 @@ function responseSuccess(response) {
   window.$loadingbar.finish()
   const contentType = response.headers["content-type"]
   if (contentType && contentType.indexOf("application/json") !== -1) {
-    // 如果返回的数据是 JSON 格式，取消外层的 data 包裹
-    response.data = response.data["data"]
+    const data = response.data
+    // 如果有code/msg/data字段
+    if (data.code !== undefined && data.msg !== undefined && data.data !== undefined) {
+      // 取消外层的 data 包裹
+      response.data = response.data["data"]
+    }
   }
   return response
 }
@@ -59,6 +61,8 @@ function responseFailed(error) {
     console.log(error)
     if (error.config.url !== loginUrl) {
       window.$message.error("登录超时，请重新登录")
+    } else {
+      window.$message.error("登录失败，请检查用户名和密码")
     }
     return Promise.reject(error)
   }
@@ -71,18 +75,30 @@ function responseFailed(error) {
 
   // 400 参数错误、业务异常
   if (statusCode === 400) {
-    // 如果是开发环境，弹出错误提示
-    if (isDev) {
-      const contentType = error.response.headers["content-type"]
-      if (contentType && contentType.indexOf("application/json") !== -1) {
-        const message = error.response.data["msg"]
-        window.$message.warning(message, {
-          icon: () => h(NIcon, null, { default: () => h(BugReportOutlined) }),
-          duration: 10000,
-          keepAliveOnHover: true,
-        })
+    const contentType = error.response.headers["content-type"]
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      // 如果code/msg/data字段存在
+      if (
+        error.response.data.code !== undefined &&
+        error.response.data.msg !== undefined &&
+        error.response.data.data !== undefined
+      ) {
+        const data = error.response.data
+        const code = data["code"]
+        window.$message.error(EMD[code])
+
+        // 如果是开发环境，弹出额外的错误提示
+        if (isDev) {
+          const message = data["msg"]
+          window.$message.warning(message, {
+            icon: () => h(NIcon, null, { default: () => h(BugReportOutlined) }),
+            duration: 10000,
+            keepAliveOnHover: true,
+          })
+        }
       }
     }
+
     return Promise.reject(error)
   }
 

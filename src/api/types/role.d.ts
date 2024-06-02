@@ -1,5 +1,5 @@
 /** 角色 */
-interface Role {
+interface RoleResponse {
   /** ID */
   id: string
   /** 名称 */
@@ -8,16 +8,16 @@ interface Role {
   description: string
   /** 是否禁用 */
   disabled: boolean
-  /** 用户数量 */
-  userCount: number
   /** 是否默认 */
   isDefault: boolean
+  /** 用户数量 */
+  userCount: number
   /** 权限列表 */
   permissions: string[]
 }
 
 /** 添加角色需要的数据 */
-interface AddRoleData {
+interface AddRoleRequest {
   /** 名称 */
   name: string
   /** 描述 */
@@ -29,7 +29,7 @@ interface AddRoleData {
 }
 
 /** 更新角色需要的数据 */
-interface UpdateRoleData {
+interface UpdateRoleRequest {
   /** ID */
   name?: string
   /** 名称 */
@@ -41,7 +41,7 @@ interface UpdateRoleData {
 }
 
 /** 权限 */
-interface Permission {
+interface PermissionResponse {
   /** 名称 */
   name: string
   /** 描述 */

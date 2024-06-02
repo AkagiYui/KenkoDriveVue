@@ -10,26 +10,27 @@
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core"
 import { getConfig, updateSetting } from "@/api"
+import type { WatchStopHandle } from "vue"
 
 // 全局变量
 const isLoading = ref(false)
-onActivated(() => {
+let stopper: WatchStopHandle | undefined = undefined
+onActivated(async () => {
   isLoading.value = true
-  getConfig()
-    .then((res) => {
-      oldSettings.value = { ...res.data }
-      settings.value = { ...res.data }
-      watch(
-        settings,
-        () => {
-          updateSettingsDebounced()
-        },
-        { deep: true },
-      )
-    })
-    .finally(() => {
-      isLoading.value = false
-    })
+  if (stopper) {
+    stopper()
+  }
+  const res = await getConfig()
+  oldSettings.value = { ...res }
+  settings.value = { ...res }
+  stopper = watch(
+    settings,
+    () => {
+      updateSettingsDebounced()
+    },
+    { deep: true },
+  )
+  isLoading.value = false
 })
 
 type SettingsType = {
