@@ -39,7 +39,7 @@ const router = useRouter()
 
 const isRegisterEnabled = ref(false)
 
-onActivated(async () => {
+onBeforeMount(async () => {
   isRegisterEnabled.value = await getRegisterEnabled()
 })
 
