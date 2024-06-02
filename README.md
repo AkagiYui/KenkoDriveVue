@@ -65,6 +65,7 @@
 - unplugin-auto-import: 自动导入
 - vite-plugin-ms-clarity: Clarity统计
 - [aplayer](https://aplayer.js.org/): 音频播放器
+- [Fetch Event Source](https://github.com/Azure/fetch-event-source) 更好的SSE支持
 
 ## TODO
 

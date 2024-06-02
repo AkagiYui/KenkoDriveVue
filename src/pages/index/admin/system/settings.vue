@@ -8,9 +8,9 @@
 </route>
 
 <script setup lang="ts">
-import { useDebounceFn } from "@vueuse/core"
 import { getConfig, updateSetting } from "@/api"
 import type { WatchStopHandle } from "vue"
+import { useDebounce } from "@/hooks"
 
 // 全局变量
 const isLoading = ref(false)
@@ -56,7 +56,7 @@ const settings = ref<SettingsType>({
   aliyunSmsTemplateCode: "",
 })
 
-const updateSettingsDebounced = useDebounceFn(() => {
+const updateSettingsDebounced = useDebounce(() => {
   const updatePromises: Promise<any>[] = []
 
   for (const key in settings.value) {

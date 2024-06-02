@@ -26,3 +26,16 @@ export function useInterval(callback: () => void, delay: number) {
     onUnmounted(() => clearInterval(timer))
   })
 }
+
+/**
+ * 防抖
+ * @param callback 回调
+ * @param delay 延迟(ms)
+ */
+export function useDebounce(callback: () => void, delay: number) {
+  let timer: number | NodeJS.Timeout
+  return () => {
+    clearTimeout(timer)
+    timer = setTimeout(callback, delay)
+  }
+}
