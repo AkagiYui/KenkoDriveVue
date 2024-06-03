@@ -84,7 +84,7 @@ function responseFailed(error) {
       ) {
         const data = error.response.data
         const code = data["code"]
-        window.$message.error(EMD[code])
+        window.$message.error(EMD[code] || "未知错误")
 
         // 如果是开发环境，弹出额外的错误提示
         if (isDev) {

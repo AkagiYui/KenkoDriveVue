@@ -1,5 +1,6 @@
 export { default as EMD } from "./ResponseMessages"
 
+export * from "./endpoints/auth"
 export * from "./endpoints/announcement"
 export * from "./endpoints/file"
 export * from "./endpoints/folder"
