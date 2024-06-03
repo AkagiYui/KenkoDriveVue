@@ -78,12 +78,9 @@ const uploaderPool = Array.from({ length: uploaderCount }, (_, i) => {
 // 阻止关闭页面
 let running = false
 watch(uploadFileMap, () => {
-  let notDoneCount = 0
-  uploadFileMap.forEach((value) => {
-    if (value.status !== "mirrored" && value.status !== "merged" && value.status !== "canceled") {
-      notDoneCount++
-    }
-  })
+  const notDoneCount = Array.from(uploadFileMap.values()).filter(
+    (value) => value.status !== "mirrored" && value.status !== "merged" && value.status !== "canceled",
+  ).length
   uploadItemCount.value = notDoneCount
   running = notDoneCount > 0
 })
@@ -212,7 +209,7 @@ function onRemoveButtonClick(taskId: string) {
     >
       <template #header> 上传列表</template>
       <n-empty v-if="uploadFileMap.size === 0" id="empty" />
-      <div style="margin: 00px 0 0 0">
+      <div style="margin: 0 0 0 0">
         <UploadItem
           v-for="[id, item] in uploadFileMap"
           :key="id"

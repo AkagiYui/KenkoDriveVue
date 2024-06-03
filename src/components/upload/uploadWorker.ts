@@ -4,7 +4,7 @@
  * feature:
  * - [x] 上传文件
  * - [x] 上传进度回调
- * - [ ] 上传失败重试
+ * - [x] 上传失败重试
  * - [ ] 上传取消
  * - [ ] 上传暂停
  * - [x] 分段上传
@@ -12,16 +12,16 @@
  * - [ ] 上传限速
  *
  * ## API
- * - { command: "init", baseUrl: string, token: string } 初始化，设置 基础URL 和 AccessToken
- * - { command: "append", file: File, filename: string, folderId: number } 上传文件
+ * - { command: "init", baseUrl: string, token: string } 初始化(基本URL, AccessToken)
+ * - { command: "append", file: File, filename: string, folderId: number } 上传文件(文件, 文件名, 文件夹ID)
  *
  * ## Events
- * - { event: "started", id: number } 文件开始上传
- * - { event: "progress", id: number, progress: number } 文件上传进度
- * - { event: "mirrored", id: number } 文件秒传成功
- * - { event: "uploaded", id: number } 文件上传成功
- * - { event: "merged", id: number } 文件合并成功
- * - { event: "failed", id: number } 文件上传失败
+ * - { event: "started", id: number } 开始上传(任务ID)
+ * - { event: "progress", id: number, progress: number } 上传进度(任务ID, 0~1进度)
+ * - { event: "mirrored", id: number } 秒传成功(任务ID)
+ * - { event: "uploaded", id: number } 上传成功(任务ID)
+ * - { event: "merged", id: number } 合并成功(任务ID)
+ * - { event: "failed", id: number } 上传失败(任务ID)
  */
 
 import { SHA256Calculator } from "./HashCalculator"
@@ -170,10 +170,7 @@ async function uploadByTask(task: UploadWorkerTask, hash: string): Promise<void>
   try {
     await Promise.all(chunkTaskList)
     log("upload finished")
-    postMessage({
-      event: "uploaded",
-      id: id,
-    })
+    postMessage({ event: "uploaded", id })
     await checkMergeStatus(taskId)
     postMessage({ event: "merged", id })
     // 所有上传操作成功完成
@@ -181,7 +178,7 @@ async function uploadByTask(task: UploadWorkerTask, hash: string): Promise<void>
   } catch (error) {
     // 至少一个上传操作失败
     log("upload failed", error)
-    postMessage({ event: "failed", id: id }) // 发送一个消息表示失败
+    postMessage({ event: "failed", id }) // 发送一个消息表示失败
   }
 }
 
@@ -267,7 +264,7 @@ async function postData<T = any>(url: string, data: unknown) {
   return json
 }
 
-function retry(f: Function, count: number) {
+function retry(f: Function, count: number): Function {
   let retryCount = 0
   return async (...args: any) => {
     // eslint-disable-next-line no-constant-condition
