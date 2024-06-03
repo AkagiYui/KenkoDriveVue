@@ -156,7 +156,7 @@ const onSmsLoginButtonClick = async () => {
 
 const onSendSmsCodeLogoClick = async () => {
   if (isCooldown.value) return
-  if (hasText(smsLoginForm.value.phone)) {
+  if (!hasText(smsLoginForm.value.phone)) {
     return
   }
   const w = await geetest.validate()

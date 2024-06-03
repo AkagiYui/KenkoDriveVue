@@ -12,19 +12,17 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from) => {
-  const config = useUserInfo()
-  // 未登录则跳转到登录页
-  if (!config.isLoggedIn && to.name !== "login") {
-    return { name: "login" }
-  }
-  // 已登录则取消路由
-  if (config.isLoggedIn && to.name === "login") {
-    window.$message.success("您已登录")
+  // 显示加载条
+  window.$loadingbar.start()
+
+  const { isLoggedIn } = useUserInfo()
+  // 已登录则返回或跳转到首页
+  if (isLoggedIn && to.name === "login") {
     return from.name ? false : { name: "home" }
   }
   // 需要登录的页面
-  if (to.meta.requiresAuth && !config.isLoggedIn) {
-    window.$message.error("请先登录")
+  if (to.meta.requireAuth && !isLoggedIn) {
+    window.$message.error("未登录")
     return { name: "login" }
   }
 
@@ -32,33 +30,24 @@ router.beforeEach((to, from) => {
   return true
 })
 
-// 显示加载条
-router.beforeEach(async () => {
-  window.$loadingbar.start()
-})
-
 router.afterEach((to) => {
-  if (to.name === "404") {
-    window.$loadingbar.error()
-  } else {
-    window.$loadingbar.finish()
-  }
-
   // 修改标题
   const baseTitle = "Kenko Drive"
   const subTitle: string = (to.meta.title as string)?.trim() || ""
   document.title = subTitle ? `${subTitle} | ${baseTitle}` : baseTitle
-})
 
-router.afterEach(async (to: any) => {
-  // 修改当前路由名称
-  const config = useAppConfig()
-  config.currentRouteName = to.name
+  // 记录当前路由名称
+  useAppConfig().currentRouteName = to.name
+
+  // 隐藏加载条
+  const bar = window.$loadingbar
+  const state = to.name === "404" ? bar.error : bar.finish
+  state()
 })
 
 router.onError((error: any) => {
   window.$loadingbar.error()
-  console.log("router error", error)
+  console.error("router error", error)
 })
 
 router.isReady().then(() => {

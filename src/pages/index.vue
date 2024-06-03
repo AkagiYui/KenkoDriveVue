@@ -1,6 +1,9 @@
 <route lang="json">
 {
-  "name": "index-layout"
+  "name": "index-layout",
+  "meta": {
+    "requireAuth": true
+  }
 }
 </route>
 
@@ -19,7 +22,6 @@ renewUserInfo().catch(() => {
   if (isLoggedIn) {
     window.$message.error("服务器连接失败，请检查网络连接")
   } else {
-    window.$message.error("登录失效，请重新登录")
     router.replace("/login")
   }
 })

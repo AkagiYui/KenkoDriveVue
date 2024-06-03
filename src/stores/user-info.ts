@@ -76,28 +76,19 @@ export const useUserInfo = defineStore(
      * 更新用户信息
      * @returns Promise
      */
-    function renewUserInfo() {
-      return new Promise<void>((_, reject) => {
-        if (!isLoggedIn.value) {
-          reject()
-          return
-        }
-        getUserInfo()
-          .then((res) => {
-            renewAvatar()
-            const data = res
-            username.value = data.username
-            userId.value = data.id
-            email.value = data.email
-            nickname.value = data.nickname || data.username
-            permissions.value = data.permissions.map((item) => {
-              // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
-              return (Permission as Record<string, any>)[item]
-            })
-          })
-          .catch(() => {
-            reject()
-          })
+    async function renewUserInfo() {
+      if (!isLoggedIn.value) {
+        throw new Error("未登录")
+      }
+      renewAvatar()
+      const data = await getUserInfo()
+      username.value = data.username
+      userId.value = data.id
+      email.value = data.email
+      nickname.value = data.nickname || data.username
+      permissions.value = data.permissions.map((item) => {
+        // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
+        return (Permission as Record<string, any>)[item]
       })
     }
 

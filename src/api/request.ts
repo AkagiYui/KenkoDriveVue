@@ -58,7 +58,6 @@ function responseFailed(error) {
 
   // 401 未认证
   if (statusCode === 401) {
-    console.log(error)
     if (error.config.url !== loginUrl) {
       window.$message.error("登录超时，请重新登录")
     } else {
