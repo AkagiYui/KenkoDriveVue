@@ -11,8 +11,9 @@
 import { filesize } from "filesize"
 import { NButton, NFlex } from "naive-ui"
 import { RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import { lockFile, useFileList } from "@/api"
+import { deleteRealFile, lockFile, useFileList } from "@/api"
 import PagingTable from "@/components/table/PagingTable.vue"
+import { useConfirmModal } from "@/hooks"
 
 const tableColumns = [
   {
@@ -64,7 +65,7 @@ const tableColumns = [
     title: "操作",
     key: "action",
     width: 280,
-    render: () =>
+    render: (row) =>
       h(
         NFlex,
         { justify: "center" },
@@ -73,7 +74,11 @@ const tableColumns = [
             h(NButton, { type: "primary", size: "small", secondary: true }, { default: () => "预览" }),
             h(NButton, { type: "info", size: "small", secondary: true }, { default: () => "下载" }),
             h(NButton, { type: "warning", size: "small", secondary: true }, { default: () => "拥有者" }),
-            h(NButton, { type: "error", size: "small", secondary: true }, { default: () => "删除" }),
+            h(
+              NButton,
+              { type: "error", size: "small", secondary: true, onClick: () => onDeleteButtonClick(row) },
+              { default: () => "删除" },
+            ),
           ],
         },
       ),
@@ -90,6 +95,14 @@ function tableIndexChanged(index: number, size: number) {
 async function onLockButtonClick(row: FileInfoResponse) {
   await lockFile(row.id, !row.locked)
   fetchData()
+}
+
+const { openConfirmModal } = useConfirmModal()
+function onDeleteButtonClick(row: FileInfoResponse) {
+  openConfirmModal(async () => {
+    await deleteRealFile(row.id)
+    fetchData()
+  }, "文件将在所有用户的存储空间中被删除，确定删除该文件吗？")
 }
 </script>
 

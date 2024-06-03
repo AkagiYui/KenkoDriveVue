@@ -28,11 +28,19 @@ export async function getFileTemporaryUrl(id: string, single: boolean = false, n
 }
 
 /**
- * 删除文件
+ * 删除文件链接
  * @param id 文件ID
  */
 export async function deleteFile(id: string): Promise<void> {
   await Request.delete(`/file/${id}`)
+}
+
+/**
+ * 删除文件
+ * @param id 文件ID
+ */
+export async function deleteRealFile(id: string): Promise<void> {
+  await Request.delete(`/file/${id}/real`)
 }
 
 /**

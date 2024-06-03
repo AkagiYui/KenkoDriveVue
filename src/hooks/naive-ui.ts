@@ -3,11 +3,15 @@ import { NInput, useModal } from "naive-ui"
 export function useConfirmModal() {
   const modal = useModal()
 
-  function openConfirmModal(positive?: () => void, negative?: () => void) {
+  function openConfirmModal(
+    positive?: () => void,
+    content: string = "此操作不可撤销，请确认是否继续？",
+    negative?: () => void,
+  ) {
     const m = modal.create({
       preset: "dialog",
       title: "确认",
-      content: "此操作不可撤销，请确认是否继续？",
+      content: content,
       positiveText: "确认",
       negativeText: "取消",
       type: "warning",
