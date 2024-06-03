@@ -8,10 +8,11 @@
 </route>
 
 <script setup lang="ts">
-import { useFileList } from "@/api"
-import PagingTable from "@/components/table/PagingTable.vue"
 import { filesize } from "filesize"
 import { NButton, NFlex } from "naive-ui"
+import { RefreshOutline, SearchOutline } from "@vicons/ionicons5"
+import { lockFile, useFileList } from "@/api"
+import PagingTable from "@/components/table/PagingTable.vue"
 
 const tableColumns = [
   {
@@ -44,12 +45,14 @@ const tableColumns = [
     title: "锁定",
     key: "locked",
     width: 80,
-    render: ({ locked }) =>
-      h(
+    render: (row) => {
+      const { locked } = row
+      return h(
         NButton,
-        { type: locked ? "error" : "success", tertiary: true, size: "small" },
+        { type: locked ? "error" : "success", tertiary: true, size: "small", onClick: () => onLockButtonClick(row) },
         { default: () => (locked ? "已锁定" : "未锁定") },
-      ),
+      )
+    },
   },
   {
     title: "上传时间",
@@ -77,26 +80,41 @@ const tableColumns = [
   },
 ]
 
-const { index: pageIndex, size: pageSize, count, data, isLoading } = useFileList()
-watch(count, () => {
-  console.log("count", count.value)
-})
+const { index: pageIndex, size: pageSize, count, data, fetchData, isLoading } = useFileList()
 
 function tableIndexChanged(index: number, size: number) {
   pageIndex.value = index - 1
   pageSize.value = size
 }
+
+async function onLockButtonClick(row: FileInfoResponse) {
+  await lockFile(row.id, !row.locked)
+  fetchData()
+}
 </script>
 
 <template>
   <div class="view">
-    <PagingTable
-      :data="data"
-      :columns="tableColumns"
-      :count="count"
-      :loading="isLoading"
-      @update:index="tableIndexChanged"
-    />
+    <n-flex vertical>
+      <n-space>
+        <n-button tertiary type="info" :disabled="isLoading" @click="fetchData">
+          <template #icon>
+            <n-icon :component="RefreshOutline" />
+          </template>
+          刷新
+        </n-button>
+        
+        <n-input-group>
+          <n-input placeholder="文件名、类型">
+            <template #prefix>
+              <n-icon :component="SearchOutline" />
+            </template>
+          </n-input>
+          <n-button ghost :disabled="isLoading"> 搜索 </n-button>
+        </n-input-group>
+      </n-space>
+      <PagingTable :data="data" :columns="tableColumns" :count="count" @update:index="tableIndexChanged" />
+    </n-flex>
   </div>
 </template>
 

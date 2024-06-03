@@ -99,3 +99,20 @@ export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
 
   return { index, size, data, count, isLoading, fetchData }
 }
+
+/**
+ * 锁定/解锁文件
+ * @param id 文件ID
+ * @param lock 是否锁定
+ */
+export function lockFile(id: string, lock: boolean): Promise<void> {
+  return Request.put(
+    `/file/${id}/lock`,
+    { locked: lock },
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    },
+  )
+}
