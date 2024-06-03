@@ -343,38 +343,34 @@ const getData = async () => {
     <!-- 页面内容 -->
     <n-space vertical>
       <!-- 按钮区 -->
-      <n-form :show-label="false" inline :show-feedback="false">
-        <n-formItem>
-          <n-space>
-            <n-button tertiary type="info" :disabled="isLoading" @click="getData">
-              <template #icon>
-                <n-icon>
-                  <RefreshOutline />
-                </n-icon>
-              </template>
-              刷新
-            </n-button>
+      <n-space>
+        <n-button tertiary type="info" :disabled="isLoading" @click="getData">
+          <template #icon>
+            <n-icon>
+              <RefreshOutline />
+            </n-icon>
+          </template>
+          刷新
+        </n-button>
 
-            <n-button tertiary type="primary" @click="onAddButtonClick">
-              <template #icon>
-                <n-icon>
-                  <AddOutline />
-                </n-icon>
-              </template>
-              新增
-            </n-button>
+        <n-button tertiary type="primary" @click="onAddButtonClick">
+          <template #icon>
+            <n-icon>
+              <AddOutline />
+            </n-icon>
+          </template>
+          新增
+        </n-button>
 
-            <n-input-group>
-              <n-input v-model:value="searchExpression" placeholder="角色名、描述">
-                <template #prefix>
-                  <n-icon :component="SearchOutline" />
-                </template>
-              </n-input>
-              <n-button ghost :disabled="isLoading" @click="getData"> 搜索 </n-button>
-            </n-input-group>
-          </n-space>
-        </n-formItem>
-      </n-form>
+        <n-input-group>
+          <n-input v-model:value="searchExpression" placeholder="角色名、描述">
+            <template #prefix>
+              <n-icon :component="SearchOutline" />
+            </template>
+          </n-input>
+          <n-button ghost :disabled="isLoading" @click="getData"> 搜索 </n-button>
+        </n-input-group>
+      </n-space>
 
       <!-- 表格 -->
       <n-data-table

@@ -91,7 +91,6 @@ export async function updateUserInfo(
   await Request.put(`/user/${id}`, requestData)
 }
 
-
 /** 获取用户信息 */
 export async function getUserInfo(): Promise<UserInfoResponse> {
   const res = await Request.get<UserInfoResponse>("/user/info")

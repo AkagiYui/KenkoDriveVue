@@ -186,16 +186,14 @@ async function uploadByTask(task: UploadWorkerTask, hash: string): Promise<void>
 }
 
 // 封装上传
-function uploadChunkTask(taskId: any, { index, hash, blob }: FileChunk, onProgress: Function) {
-  return new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
+async function uploadChunkTask(taskId: any, { index, hash, blob }: FileChunk, onProgress: Function): Promise<void> {
+  const xhr = new XMLHttpRequest()
+  return new Promise((resolve, reject) => {
     xhr.open("POST", `${config.sendChunkUrl}/${taskId}/chunk`, true)
     if (config.accessToken) {
       xhr.setRequestHeader("Authorization", `Bearer ${config.accessToken}`)
     }
-    xhr.upload.onprogress = function (event) {
-      onProgress(event, index)
-    }
+    xhr.upload.onprogress = (event) => onProgress(event, index)
     xhr.onload = () => {
       if (xhr.status !== 200) {
         log("upload failed", xhr.responseText)
@@ -219,22 +217,23 @@ function uploadChunkTask(taskId: any, { index, hash, blob }: FileChunk, onProgre
   })
 }
 
-function checkMergeStatus(taskId: number) {
-  return new Promise<void>((resolve) => {
-    // 轮询检查合并状态
-    const f = async () => {
-      const responseJson = await getData(`${config.createTaskUrl}/${taskId}`)
-      log("checkMergeStatus", responseJson)
-      const merged = responseJson.data?.merged
-      if (merged) {
-        log("merge success")
-        resolve()
-      } else {
-        setTimeout(f, 1000)
-      }
+async function checkMergeStatus(taskId: number): Promise<void> {
+  type Response = {
+    data: {
+      merged: boolean
     }
-    f()
-  })
+  }
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const responseJson = await getData<Response>(`${config.createTaskUrl}/${taskId}`)
+    log("checkMergeStatus", responseJson)
+    const merged = responseJson.data.merged
+    if (merged) {
+      log("merge success")
+      return
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+  }
 }
 
 function makeHeaders(): Record<string, string> {

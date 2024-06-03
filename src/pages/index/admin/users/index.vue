@@ -505,7 +505,7 @@ const getData = async () => {
     <!-- 页面内容 -->
     <n-space vertical>
       <!-- 按钮区 -->
-      <n-space style="margin-bottom: 4px">
+      <n-space>
         <n-button tertiary type="info" :disabled="isLoading" @click="getData">
           <template #icon>
             <n-icon>
