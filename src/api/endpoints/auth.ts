@@ -6,25 +6,53 @@ type TokenResponse = {
 }
 
 /**
- * 获取注册邮件验证码
- * @param username 邮箱
+ * 使用密码获取token
+ * @param username 用户名
+ * @param password 密码
+ */
+export async function getTokenByPassword(username: string, password: string): Promise<string> {
+  const res = await Request.post<TokenResponse>("/auth/token/password", { username, password })
+  return res.data.token
+}
+export const getToken = getTokenByPassword
+
+/**
+ * 使用短信验证码获取token
+ */
+export async function getTokenBySms(phone: string, otp: string): Promise<string> {
+  const res = await Request.post<TokenResponse>("/auth/token/sms", { phone, otp })
+  return res.data.token
+}
+
+/**
+ * 发送注册邮件验证码
  * @param password 密码
  * @param email 邮箱
  * @param captcha 极验验证信息
  */
-export async function sendRegisterEmailCode(
-  username: string,
+export async function sendEmailRegisterOtp(
   password: string,
   email: string,
   captcha: GeetestSuccessInfo,
 ): Promise<void> {
   await Request.post(
-    "/auth/register/email",
+    "/auth/otp/email",
+    { password, email },
     {
-      username: username,
-      password: password,
-      email: email,
+      params: { ...captcha },
     },
+  )
+}
+
+/**
+ * 发送短信验证码
+ * @param phone 手机号
+ * @param captcha 极验验证信息
+ */
+export async function sendSmsOtp(phone: string, captcha: GeetestSuccessInfo): Promise<void> {
+  await Request.post(
+    "/auth/otp/sms",
+    { phone },
     {
       params: { ...captcha },
     },
@@ -34,62 +62,8 @@ export async function sendRegisterEmailCode(
 /**
  * 确认邮件验证码注册
  * @param username 邮箱
- * @param code 验证码
+ * @param otp 验证码
  */
-export async function confirmRegisterEmailCode(username: string, code: string): Promise<void> {
-  await Request.post("/auth/register", {
-    email: username,
-    verifyCode: code,
-  })
-}
-
-/**
- * 获取短信验证码
- * @param phone 手机号
- * @param captcha 极验验证信息
- */
-export async function sendSmsCode(phone: string, captcha: GeetestSuccessInfo): Promise<void> {
-  await Request.post(
-    "/auth/sms",
-    {
-      ...captcha,
-      phone,
-    },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    },
-  )
-}
-
-/**
- * 确认短信验证码登录
- */
-export async function confirmSmsCode(phone: string, code: string): Promise<string> {
-  const res = await Request.get<TokenResponse>("/auth/token/sms", {
-    params: {
-      phone: phone,
-      code: code,
-    },
-  })
-  return res.data.token
-}
-
-/**
- * 获取token
- * @param username 用户名
- * @param password 密码
- */
-export async function getToken(username: string, password: string): Promise<string> {
-  const res = await Request.post<TokenResponse>(
-    "/auth/token",
-    { username, password },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    },
-  )
-  return res.data.token
+export async function confirmEmailRegisterOtp(email: string, otp: string): Promise<void> {
+  await Request.post("/auth/register/email", { email, otp })
 }

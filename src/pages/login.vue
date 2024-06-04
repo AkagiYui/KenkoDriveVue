@@ -23,11 +23,11 @@ import {
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import {
-  confirmRegisterEmailCode,
-  confirmSmsCode,
+  confirmEmailRegisterOtp,
+  getTokenBySms,
   getToken,
-  sendRegisterEmailCode,
-  sendSmsCode,
+  sendEmailRegisterOtp,
+  sendSmsOtp,
   getRegisterEnabled,
 } from "@/api"
 import { hasText } from "@/utils"
@@ -36,97 +36,78 @@ import { useGlobal } from "@/hooks"
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { setToken } = useUserInfo()
 const router = useRouter()
+const { $geetest } = useGlobal()
+
+const modalFormRef = ref<FormInst | null>(null)
+const registerFormRef = ref<FormInst | null>(null)
+const smsFormRef = ref<FormInst | null>(null)
+const emailOtpInputRef = ref<HTMLInputElement | null>(null)
+const smsOtpInputRef = ref<HTMLInputElement | null>(null)
+
+const selectedTab = ref("sms")
+const isCooldown = ref(false)
+const sentEmailCode = ref(false)
 
 const isRegisterEnabled = ref(false)
-
 onBeforeMount(async () => {
   isRegisterEnabled.value = await getRegisterEnabled()
 })
 
-const modalFormRef = ref<FormInst | null>(null)
-const registerFormRef = ref<FormInst | null>(null)
-const rules = {
+const formRules = {
   username: {
-    required: true,
-    message: "请输入用户名",
-    min: 3,
+    key: "username",
     trigger: ["input", "blur"],
+    validator: (rule: FormItemRule, value: string) => {
+      if (!value) {
+        return new Error("请输入账号")
+      }
+      if (value.length < 5) {
+        return new Error("账号长度不能小于5")
+      }
+      return true
+    },
   },
   password: {
-    required: true,
-    min: 5,
-    message: "请输入密码",
+    key: "password",
     trigger: ["input", "blur"],
+    validator: (rule: FormItemRule, value: string) => {
+      if (!value) {
+        return new Error("请输入密码")
+      }
+      if (value.length < 5) {
+        return new Error("密码长度不能小于5")
+      }
+      return true
+    },
   },
   repeatPassword: {
-    required: true,
-    min: 8,
-    message: "请再次输入密码",
+    key: "repeatPassword",
     trigger: ["input", "blur"],
+    validator: (rule: FormItemRule, value: string) => {
+      if (!value) {
+        return new Error("请再次输入密码")
+      }
+      if (value !== formData.value.password) {
+        return new Error("两次输入密码不一致")
+      }
+      return true
+    },
   },
   email: {
-    // 邮箱格式校验
-    required: true,
-    message: "请输入邮箱",
+    key: "email",
     trigger: ["input", "blur"],
+    validator: (rule: FormItemRule, value: string) => {
+      if (!value) {
+        return new Error("请输入邮箱")
+      }
+      if (!/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(value)) {
+        return new Error("邮箱格式不正确")
+      }
+      return true
+    },
   },
-}
-const loginForm = ref({
-  username: "",
-  password: "",
-  repeatPassword: "",
-  email: "",
-  code: "",
-})
-const onLoginButtonClick = async () => {
-  await modalFormRef.value?.validate()
-  const token = await getToken(loginForm.value.username, loginForm.value.password)
-  setToken(token)
-  router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
-  loginForm.value.username = ""
-  loginForm.value.password = ""
-  loginForm.value.repeatPassword = ""
-  loginForm.value.email = ""
-  loginForm.value.code = ""
-}
-const isCooldown = ref(false)
-const sentEmailCode = ref(false)
-
-async function onRegisterButtonClick() {
-  await registerFormRef.value?.validate()
-  await confirmRegisterEmailCode(loginForm.value.email, loginForm.value.code)
-  window.$message.success("注册成功")
-  loginForm.value.repeatPassword = ""
-  loginForm.value.email = ""
-  loginForm.value.code = ""
-  selectedTab.value = "signin"
-}
-
-const codeInputRef = ref<HTMLInputElement | null>(null)
-const { $geetest: geetest } = useGlobal()
-
-async function onSendEmailCodeLogoClick() {
-  if (isCooldown.value) return
-  await registerFormRef.value?.validate()
-  const w = await geetest.validate()
-  await sendRegisterEmailCode(loginForm.value.username, loginForm.value.password, loginForm.value.email, w)
-  window.$message.success("验证码已发送，请查收")
-  isCooldown.value = true
-  sentEmailCode.value = true
-  setTimeout(() => {
-    isCooldown.value = false
-  }, 60000)
-  codeInputRef.value?.focus()
-}
-
-const selectedTab = ref("sms")
-const smsLoginForm = ref({
-  phone: "",
-  code: "",
-})
-const smsFormRules = {
   phone: {
-    required: true,
+    key: "phone",
     trigger: ["input", "blur"],
     validator: (rule: FormItemRule, value: string) => {
       if (!value) {
@@ -138,29 +119,77 @@ const smsFormRules = {
       return true
     },
   },
-  code: {
+  otp: {
+    key: "otp",
     required: true,
     message: "请输入验证码",
     trigger: ["input"],
   },
 }
-const smsFormRef = ref<FormInst | null>(null)
-const onSmsLoginButtonClick = async () => {
-  await smsFormRef.value?.validate()
-  const res = await confirmSmsCode(smsLoginForm.value.phone, smsLoginForm.value.code)
-  setToken(res)
+const formData = ref({
+  username: "",
+  password: "",
+  repeatPassword: "",
+  email: "",
+  phone: "",
+  otp: "",
+})
+
+async function onLoginButtonClick() {
+  await modalFormRef.value?.validate()
+  const token = await getToken(formData.value.username, formData.value.password)
+  setToken(token)
   router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
-  smsLoginForm.value.phone = ""
-  smsLoginForm.value.code = ""
+  formData.value.username = ""
+  formData.value.password = ""
+  formData.value.repeatPassword = ""
+  formData.value.email = ""
+  formData.value.phone = ""
+  formData.value.otp = ""
 }
 
-const onSendSmsCodeLogoClick = async () => {
+async function onRegisterButtonClick() {
+  await registerFormRef.value?.validate()
+  await confirmEmailRegisterOtp(formData.value.email, formData.value.otp)
+  window.$message.success("注册成功")
+  formData.value.repeatPassword = ""
+  formData.value.username = formData.value.email
+  formData.value.email = ""
+  formData.value.otp = ""
+  selectedTab.value = "signin"
+}
+
+async function onSendEmailCodeLogoClick() {
   if (isCooldown.value) return
-  if (!hasText(smsLoginForm.value.phone)) {
+  await registerFormRef.value?.validate(() => { }, (rule) => {
+    if (rule === undefined) return false
+    return ["email", "password", "repeatPassword"].includes(rule.key as string)
+  })
+  const w = await $geetest.validate()
+  await sendEmailRegisterOtp(formData.value.password, formData.value.email, w)
+  window.$message.success("验证码已发送，请查收")
+  isCooldown.value = true
+  sentEmailCode.value = true
+  setTimeout(() => {
+    isCooldown.value = false
+  }, 60000)
+  smsOtpInputRef.value?.focus()
+}
+
+async function onSmsLoginButtonClick() {
+  await smsFormRef.value?.validate()
+  const res = await getTokenBySms(formData.value.phone, formData.value.otp)
+  setToken(res)
+  router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
+}
+
+async function onSendSmsCodeLogoClick() {
+  if (isCooldown.value) return
+  if (!hasText(formData.value.phone)) {
     return
   }
-  const w = await geetest.validate()
-  await sendSmsCode(smsLoginForm.value.phone, w)
+  const w = await $geetest.validate()
+  await sendSmsOtp(formData.value.phone, w)
   window.$message.success("验证码已发送，请查收")
   isCooldown.value = true
   setTimeout(() => {
@@ -182,23 +211,18 @@ const onSendSmsCodeLogoClick = async () => {
     >
       <n-tab-pane name="sms" tab="短信登录">
         <h3>验证即登录，未注册将自动创建账号</h3>
-        <n-form
-          ref="smsFormRef"
-          :model="smsLoginForm"
-          :rules="smsFormRules"
-          :show-label="false"
-          :show-require-mark="false"
-        >
+        <n-form ref="smsFormRef" :model="formData" :rules="formRules" :show-label="false" :show-require-mark="false">
           <n-form-item-row label="手机号" path="phone">
-            <n-input v-model:value="smsLoginForm.phone" :input-props="{ autocomplete: 'phone' }" placeholder="手机号">
+            <n-input v-model:value="formData.phone" :input-props="{ autocomplete: 'phone' }" placeholder="手机号">
               <template #prefix>
                 <n-icon :component="PhonePortraitOutline" />
               </template>
             </n-input>
           </n-form-item-row>
-          <n-form-item-row label="验证码" path="code">
+          <n-form-item-row label="验证码" path="otp">
             <n-input
-              v-model:value="smsLoginForm.code"
+              ref="smsOtpInputRef"
+              v-model:value="formData.otp"
               :input-props="{ autocomplete: 'off' }"
               placeholder="验证码"
               @keyup.enter="onSmsLoginButtonClick"
@@ -218,12 +242,13 @@ const onSendSmsCodeLogoClick = async () => {
         </n-form>
         <n-button block secondary strong type="primary" @click="onSmsLoginButtonClick"> 登录 </n-button>
       </n-tab-pane>
+
       <n-tab-pane name="signin" tab="登录">
-        <n-form ref="modalFormRef" :show-require-mark="false" :show-label="false" :model="loginForm" :rules="rules">
+        <n-form ref="modalFormRef" :show-require-mark="false" :show-label="false" :model="formData" :rules="formRules">
           <n-form-item-row path="username" label="账号">
             <n-input
-              v-model:value="loginForm.username"
-              placeholder="用户名/邮箱/手机号"
+              v-model:value="formData.username"
+              placeholder="邮箱/手机号"
               :input-props="{ autocomplete: 'username' }"
             >
               <template #prefix>
@@ -233,9 +258,9 @@ const onSendSmsCodeLogoClick = async () => {
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
             <n-input
-              v-model:value="loginForm.password"
+              v-model:value="formData.password"
               type="password"
-              placeholder="请输入密码"
+              placeholder="密码"
               show-password-on="click"
               :input-props="{ autocomplete: 'current-password' }"
               @keyup.enter="onLoginButtonClick"
@@ -248,34 +273,65 @@ const onSendSmsCodeLogoClick = async () => {
         </n-form>
         <n-button block secondary strong type="primary" @click="onLoginButtonClick"> 登录 </n-button>
       </n-tab-pane>
+
       <n-tab-pane v-if="isRegisterEnabled" name="signup" tab="注册">
-        <n-form ref="registerFormRef" :model="loginForm" :rules="rules" :show-require-mark="false">
-          <n-form-item-row path="username" label="用户名">
+        <n-form
+          ref="registerFormRef"
+          :model="formData"
+          :rules="formRules"
+          :show-require-mark="false"
+          :show-label="false"
+        >
+          <n-form-item-row label="邮箱" path="email">
             <n-input
-              v-model:value="loginForm.username"
+              v-model:value="formData.email"
               :disabled="isCooldown"
-              :input-props="{ autocomplete: 'username' }"
-            />
+              placeholder="邮箱"
+              @keyup.enter="onSendEmailCodeLogoClick"
+            >
+              <template #prefix>
+                <n-icon :component="MailOutline" />
+              </template>
+            </n-input>
           </n-form-item-row>
           <n-form-item-row path="password" label="密码">
             <n-input
-              v-model:value="loginForm.password"
+              v-model:value="formData.password"
+              placeholder="密码"
               type="password"
               :disabled="isCooldown"
               :input-props="{ autocomplete: 'new-password' }"
               show-password-on="click"
-            />
+            >
+              <template #prefix>
+                <n-icon :component="LockClosedOutline" />
+              </template>
+            </n-input>
           </n-form-item-row>
           <n-form-item-row path="repeatPassword" label="重复密码">
             <n-input
-              v-model:value="loginForm.repeatPassword"
+              v-model:value="formData.repeatPassword"
+              placeholder="重复密码"
               :disabled="isCooldown"
               :input-props="{ autocomplete: 'new-password' }"
               type="password"
-            />
+            >
+              <template #prefix>
+                <n-icon :component="LockClosedOutline" />
+              </template>
+            </n-input>
           </n-form-item-row>
-          <n-form-item-row label="邮箱" path="email">
-            <n-input v-model:value="loginForm.email" :disabled="isCooldown" @keyup.enter="onSendEmailCodeLogoClick">
+
+          <n-form-item-row label="验证码" path="otp">
+            <n-input
+              ref="emailOtpInputRef"
+              v-model:value="formData.otp"
+              placeholder="验证码"
+              @keyup.enter="onRegisterButtonClick"
+            >
+              <template #prefix>
+                <n-icon :component="KeyOutline" />
+              </template>
               <template #suffix>
                 <n-icon
                   :component="isCooldown ? CheckmarkOutline : SendSharp"
@@ -284,9 +340,6 @@ const onSendSmsCodeLogoClick = async () => {
                 />
               </template>
             </n-input>
-          </n-form-item-row>
-          <n-form-item-row label="验证码" path="code">
-            <n-input ref="codeInputRef" v-model:value="loginForm.code" :disabled="!sentEmailCode" />
           </n-form-item-row>
         </n-form>
         <n-button :disabled="!sentEmailCode" block secondary strong type="primary" @click="onRegisterButtonClick"
