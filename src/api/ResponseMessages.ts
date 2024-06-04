@@ -50,6 +50,7 @@ export const ResponseMessagesSimplifiedChinese: { [key: number]: string } = {
   10021: "权限不存在",
   10022: "角色不存在",
   10023: "用户不存在",
+  10025: "手机号已存在",
 }
 
 export function getErrorMessageDict(language: string = "zh-CN"): { [key: number]: string } {

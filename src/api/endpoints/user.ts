@@ -50,22 +50,33 @@ export async function deleteUser(id: string): Promise<void> {
  * @param data 新增用户数据
  */
 export async function addUser(data: {
-  username: string
-  password: string
+  username?: string
+  password?: string
   nickname?: string
   email?: string
+  phone?: string
 }): Promise<void> {
+  if (!hasText(data.username) && !hasText(data.email) && !hasText(data.phone)) { 
+    throw new Error("用户名、邮箱、手机号至少填写一个")
+  }
   // 检查undefined，不发送
   const requestData: any = {}
-  if (hasText(data.nickname)) {
-    requestData.nickname = data.nickname
-  }
   if (hasText(data.email)) {
     requestData.email = data.email
   }
+  if (hasText(data.phone)) {
+    requestData.phone = data.phone
+  }
+  if (hasText(data.password)) {
+    requestData.password = data.password
+  }
+  if (hasText(data.username)) {
+    requestData.username = data.username
+  }
+  if (hasText(data.nickname)) {
+    requestData.nickname = data.nickname
+  }
   await Request.post("/user", {
-    username: data.username,
-    password: data.password,
     ...requestData,
   })
 }
@@ -77,7 +88,7 @@ export async function addUser(data: {
  */
 export async function updateUserInfo(
   id: string,
-  data: { password?: string; nickname?: string; email?: string },
+  data: { password?: string; nickname?: string; email?: string, phone?: string },
 ): Promise<void> {
   // 检查undefined，不发送
   const requestData: any = {}
@@ -89,6 +100,9 @@ export async function updateUserInfo(
   }
   if (hasText(data.password)) {
     requestData.password = data.password
+  }
+  if (hasText(data.phone)) {
+    requestData.phone = data.phone
   }
   await Request.put(`/user/${id}`, requestData)
 }
