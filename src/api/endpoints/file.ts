@@ -81,6 +81,7 @@ export async function renameUserFile(id: string, name: string): Promise<void> {
 export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
   const index = ref(pageIndex)
   const size = ref(pageSize)
+  const expression = ref("")
   const data = ref<FileInfoResponse[]>([])
   const count = ref(0)
   const isLoading = ref(false)
@@ -91,6 +92,7 @@ export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
       params: {
         index: index.value,
         size: size.value,
+        expression: expression.value,
       },
     })
       .then((response) => {
@@ -103,9 +105,9 @@ export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
   }
 
   fetchData()
-  watch([index, size], fetchData)
+  watch([index, size, expression], fetchData)
 
-  return { index, size, data, count, isLoading, fetchData }
+  return { index, size, data, count, isLoading, fetchData, expression }
 }
 
 /**
