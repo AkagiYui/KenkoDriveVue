@@ -13,6 +13,8 @@ export async function getUsers(index: number, size: number, filter?: string): Pr
     username: string
     nickname: string
     email: string
+    phone: string
+    hasPassword: boolean
     disabled: boolean
     registerTime: number
     permissions: string[]

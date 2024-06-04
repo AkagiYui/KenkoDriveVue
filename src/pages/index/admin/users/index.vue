@@ -10,12 +10,13 @@
 <script setup lang="ts">
 import { changeColor } from "seemly"
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import { NButton, NInput, NProgress, NSpace, NText, NTooltip, useThemeVars } from "naive-ui"
+import { NButton, NCheckbox, NFlex, NInput, NProgress, NSpace, NText, NTooltip, useThemeVars } from "naive-ui"
 import type { FormInst, PaginationProps } from "naive-ui"
 import { addUser, deleteUser, getUsers, updateUserDisabled, updateUserInfo, updateUserPassword } from "@/api"
 import RoleTable from "./RoleTable.vue"
 import ConfirmModal from "@/components/ConfirmModal.vue"
 import { renderTooltip } from "@/utils"
+import type { TableColumn } from "naive-ui/es/data-table/src/interface"
 
 /** naiveui主题相关变量 */
 const themeVars = useThemeVars()
@@ -130,6 +131,7 @@ const tableColumns = [
   {
     title: "用户名",
     key: "username",
+    ellipsis: {},
   },
   {
     title: "昵称",
@@ -138,6 +140,22 @@ const tableColumns = [
   {
     title: "邮箱",
     key: "email",
+  },
+  {
+    title: "手机号",
+    key: "phone",
+  },
+  {
+    title: "已设置密码",
+    key: "hasPassword",
+    width: 100,
+    align: "center",
+    render: (row: UserInfoResponse) => {
+      return h(NCheckbox, {
+        checked: !!row.hasPassword,
+        disabled: false,
+      })
+    },
   },
   // {
   //   title: "配额",
@@ -186,7 +204,7 @@ const tableColumns = [
       )
     },
     key: "isDisabled",
-    width: "0",
+    width: 80,
     render: (row: UserInfoResponse) => {
       return h(
         NButton,
@@ -544,7 +562,7 @@ const getData = async () => {
         remote
         striped
         :bordered="true"
-        :columns="tableColumns"
+        :columns="tableColumns as TableColumn[]"
         :data="tableData"
         :pagination="pagination"
         :loading="isLoading"
