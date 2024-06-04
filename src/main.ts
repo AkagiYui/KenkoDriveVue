@@ -32,6 +32,12 @@ app.config.errorHandler = (err) => {
 
 // Catch unhandled rejections.
 window.addEventListener("unhandledrejection", (event) => {
+  const err = event.reason
+  // 如果是[[{message: string, fieldValue: any, field: string}], ...], 则为表单验证错误，不提示
+  if (Array.isArray(err) && err.length > 0 && Array.isArray(err[0]) && err[0].length > 0 && err[0][0].message) {
+    return
+  }
+
   console.error("Unhandled Rejection", event.reason)
 })
 
