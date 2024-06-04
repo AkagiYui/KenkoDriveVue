@@ -38,7 +38,7 @@ const { setToken } = useUserInfo()
 const router = useRouter()
 const { $geetest } = useGlobal()
 
-const modalFormRef = ref<FormInst | null>(null)
+const loginFormRef = ref<FormInst | null>(null)
 const registerFormRef = ref<FormInst | null>(null)
 const smsFormRef = ref<FormInst | null>(null)
 const emailOtpInputRef = ref<HTMLInputElement | null>(null)
@@ -136,7 +136,7 @@ const formData = ref({
 })
 
 async function onLoginButtonClick() {
-  await modalFormRef.value?.validate()
+  await loginFormRef.value?.validate()
   const token = await getToken(formData.value.username, formData.value.password)
   setToken(token)
   router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
@@ -161,10 +161,13 @@ async function onRegisterButtonClick() {
 
 async function onSendEmailCodeLogoClick() {
   if (isCooldown.value) return
-  await registerFormRef.value?.validate(() => { }, (rule) => {
-    if (rule === undefined) return false
-    return ["email", "password", "repeatPassword"].includes(rule.key as string)
-  })
+  await registerFormRef.value?.validate(
+    () => {},
+    (rule) => {
+      if (rule === undefined) return false
+      return ["email", "password", "repeatPassword"].includes(rule.key as string)
+    },
+  )
   const w = await $geetest.validate()
   await sendEmailRegisterOtp(formData.value.password, formData.value.email, w)
   window.$message.success("验证码已发送，请查收")
@@ -184,6 +187,10 @@ async function onSmsLoginButtonClick() {
 }
 
 async function onSendSmsCodeLogoClick() {
+  await smsFormRef.value?.validate(() =>{}, (rule) => {
+    if (rule === undefined) return false
+    return ["phone"].includes(rule.key as string)
+  })
   if (isCooldown.value) return
   if (!hasText(formData.value.phone)) {
     return
@@ -244,7 +251,7 @@ async function onSendSmsCodeLogoClick() {
       </n-tab-pane>
 
       <n-tab-pane name="signin" tab="登录">
-        <n-form ref="modalFormRef" :show-require-mark="false" :show-label="false" :model="formData" :rules="formRules">
+        <n-form ref="loginFormRef" :show-require-mark="false" :show-label="false" :model="formData" :rules="formRules">
           <n-form-item-row path="username" label="账号">
             <n-input
               v-model:value="formData.username"
