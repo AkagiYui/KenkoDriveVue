@@ -15,8 +15,9 @@ import type { FormInst, PaginationProps } from "naive-ui"
 import { addUser, deleteUser, getUsers, updateUserDisabled, updateUserInfo, updateUserPassword } from "@/api"
 import RoleTable from "./RoleTable.vue"
 import ConfirmModal from "@/components/ConfirmModal.vue"
-import { renderTooltip } from "@/utils"
+import { hasText, renderTooltip } from "@/utils"
 import type { TableColumn } from "naive-ui/es/data-table/src/interface"
+import { useConfirmModal } from "@/hooks"
 
 /** naiveui主题相关变量 */
 const themeVars = useThemeVars()
@@ -40,8 +41,7 @@ const pagination = reactive({
   /** 总记录数显示文本 */
   prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
-/** 显示删除确认模态框 */
-const showDeleteConfirmModal = ref(false)
+
 const modalFormRef = ref<FormInst | null>(null)
 /** 模态框信息 */
 const modalData = ref({
@@ -50,82 +50,51 @@ const modalData = ref({
   repeatPassword: "",
   nickname: "",
   email: "",
+  phone: "",
 })
 /** 模态框表单校验规则 */
 const rules = {
   username: {
-    required: true,
     message: "请输入用户名",
     trigger: ["input", "blur"],
   },
   password: {
-    required: true,
     message: "请输入密码",
     trigger: ["input", "blur"],
   },
-  repeatPassword: [
-    {
-      required: true,
-      message: "请再次输入密码",
-      trigger: ["input", "blur"],
+  repeatPassword: {
+    validator: (_: any, value: string) => {
+      if (value !== modalData.value.password) {
+        return new Error("两次输入的密码不一致")
+      }
+      return true
     },
-    {
-      validator: (_: any, value: string) => {
-        if (value !== modalData.value.password) {
-          return new Error("两次输入的密码不一致")
-        }
-        return true
-      },
-      trigger: ["input", "blur"],
-    },
-  ],
+    trigger: ["input", "blur"],
+  },
   nickname: {
-    required: false,
     message: "请输入昵称",
-    min: 1,
     trigger: ["input", "blur"],
   },
   email: {
-    required: false,
-    message: "请输入邮箱",
-    min: 1,
+    validator: (_: any, value: string) => {
+      if (!hasText(value) && !hasText(modalData.value.phone)) {
+        return new Error("邮箱和手机号至少填写一项")
+      }
+    },
+    trigger: ["input", "blur"],
+  },
+  phone: {
+    validator: (_: any, value: string) => {
+      if (!hasText(value) && !hasText(modalData.value.email)) {
+        return new Error("邮箱和手机号至少填写一项")
+      }
+    },
     trigger: ["input", "blur"],
   },
 }
-// 是否显示重置密码模态框
-const showResetPasswordModal = ref(false)
-// 重置密码模态框数据
-const resetPasswordData = ref({ password: "", confirmPassword: "" })
-// 重置密码模态框表单校验规则
-const resetPasswordRules = {
-  password: {
-    required: true,
-    message: "请输入新密码",
-    min: 1,
-    trigger: ["input", "blur"],
-  },
-  confirmPassword: [
-    {
-      required: true,
-      message: "请再次输入新密码",
-      min: 1,
-      trigger: ["input", "blur"],
-    },
-    {
-      validator: (_: any, value: string) => {
-        if (value !== resetPasswordData.value.password) {
-          return new Error("两次输入的密码不一致")
-        }
-        return true
-      },
-      trigger: ["input", "blur"],
-    },
-  ],
-}
+
 /** 搜索表达式 */
 const searchExpression = ref("")
-/** 重置密码模态框表单引用 */
-const resetPasswordFormRef = ref<FormInst | null>(null)
 /** 表格列 */
 const tableColumns = [
   {
@@ -253,32 +222,13 @@ const tableColumns = [
               },
               { default: () => "修改信息" },
             ),
-
-            // h(
-            //   NButton,
-            //   {
-            //     size: "small",
-            //     type: "warning",
-            //     secondary: true,
-            //     onClick: () => {
-            //       selectRow.value = row
-            //       if (!selectRow.value) return
-            //       showResetPasswordModal.value = true
-            //     },
-            //   },
-            //   { default: () => "重置密码" },
-            // ),
             h(
               NButton,
               {
                 size: "small",
                 type: "error",
                 secondary: true,
-                onClick: () => {
-                  selectRow.value = row
-                  if (!selectRow.value) return
-                  showDeleteConfirmModal.value = true
-                },
+                onClick: () => onDeleteButtonClick(row),
               },
               { default: () => "删除" },
             ),
@@ -299,6 +249,15 @@ const isEdit = ref(false)
 /** 显示角色表格 */
 const showRoleTable = ref(false)
 
+const { openConfirmModal } = useConfirmModal()
+function onDeleteButtonClick(row: UserInfoResponse) {
+  openConfirmModal(async () => {
+    await deleteUser(row.id)
+    getData()
+    window.$message.success("删除成功")
+  })
+}
+
 /** 页码改变事件 */
 const onPageChange = (page: number) => {
   pagination.page = page
@@ -314,27 +273,6 @@ const onPageSizeChange = (pageSize: number) => {
 onBeforeMount(() => {
   getData()
 })
-/** 删除用户确认事件 */
-const onDeleteUserConfirm = async () => {
-  if (!selectRow.value) return
-  await deleteUser(selectRow.value.id)
-  getData()
-  window.$message.success("删除成功")
-  showDeleteConfirmModal.value = false
-}
-/** 重置密码按钮点击事件 */
-const onResetPasswordClick = async () => {
-  await resetPasswordFormRef.value?.validate()
-  const selectedId = selectRow.value?.id
-  if (!selectedId) return
-  await updateUserPassword(selectedId, resetPasswordData.value.password)
-  window.$message.success("密码重置成功")
-  showResetPasswordModal.value = false
-}
-/** 重置密码模态框关闭后事件 */
-const onAfterResetPasswordModalLeave = () => {
-  resetPasswordData.value = { password: "", confirmPassword: "" }
-}
 /** 编辑模态框关闭后事件 */
 const onAfterEditModalLeave = () => {
   modalData.value = {
@@ -343,6 +281,7 @@ const onAfterEditModalLeave = () => {
     repeatPassword: "",
     nickname: "",
     email: "",
+    phone: "",
   }
 }
 /** 新增按钮点击事件 */
@@ -352,32 +291,23 @@ const onAddButtonClick = () => {
 }
 /** 模态框按钮点击事件 */
 const onModalPositiveButtonClick = async () => {
-  try {
-    // 尝试验证模态表单
-    await modalFormRef.value?.validate()
+  if (!isEdit.value) {
+    // 新增用户
+    await (modalFormRef.value as FormInst).validate()
 
-    if (isEdit.value) {
-      // 修改用户信息
-      if (!selectRow.value) {
-        throw new Error("未选中用户")
-      }
-      if (!selectRow.value.id) {
-        throw new Error("未获取到用户ID")
-      }
-      await updateUserInfo(selectRow.value.id, modalData.value)
-      window.$message.success("修改成功")
-    } else {
-      // 新增用户
-      await addUser(modalData.value)
-      window.$message.success("新增成功")
+    await addUser(modalData.value)
+    window.$message.success("新增成功")
+  } else {
+    // 修改用户信息
+    if (selectRow.value === null) {
+      window.$message.error("未选中用户")
+      return
     }
-
-    getData()
-    showEditModal.value = false
-  } catch (error) {
-    window.$message.error("操作失败")
-    console.error(error)
+    await updateUserInfo(selectRow.value.id, modalData.value)
+    window.$message.success("修改成功")
   }
+  getData()
+  showEditModal.value = false
 }
 /** 编辑按钮点击事件 */
 const onEditButtonClick = (row: UserInfoResponse) => {
@@ -389,19 +319,11 @@ const onEditButtonClick = (row: UserInfoResponse) => {
     repeatPassword: "",
     nickname: row.nickname,
     email: row.email,
+    phone: row.phone,
   }
   showEditModal.value = true
 }
-watch(isEdit, (isEdit) => {
-  // 修改规则
-  if (isEdit) {
-    rules.password.required = false
-    rules.repeatPassword[0].required = false
-  } else {
-    rules.password.required = true
-    rules.repeatPassword[0].required = true
-  }
-})
+
 /** 分配角色按钮点击事件 */
 const onAssignRoleButtonClick = (row: UserInfoResponse) => {
   selectRow.value = row
@@ -420,49 +342,6 @@ const getData = async () => {
 
 <template>
   <div style="padding: 12px">
-    <!-- 确认删除模态框 -->
-    <ConfirmModal v-model:show="showDeleteConfirmModal" @positive-click="onDeleteUserConfirm" />
-
-    <!-- 重置密码模态框 -->
-    <n-modal
-      v-model:show="showResetPasswordModal"
-      preset="card"
-      :closable="true"
-      bordered
-      :title="`重置密码 (${selectRow?.username})`"
-      :mask-closable="false"
-      :style="{
-        width: '400px',
-      }"
-      @after-leave="onAfterResetPasswordModalLeave"
-    >
-      <n-space vertical>
-        <n-form
-          ref="resetPasswordFormRef"
-          :model="resetPasswordData"
-          :rules="resetPasswordRules"
-          label-placement="left"
-          label-width="auto"
-        >
-          <n-form-item path="password" label="新密码">
-            <n-input v-model:value="resetPasswordData.password" clearable placeholder="输入新密码" type="password" />
-          </n-form-item>
-          <n-form-item path="confirmPassword" label="确认密码">
-            <n-input
-              v-model:value="resetPasswordData.confirmPassword"
-              clearable
-              placeholder="再次输入新密码"
-              type="password"
-            />
-          </n-form-item>
-        </n-form>
-        <n-space justify="end">
-          <n-button type="error" @click="() => (showResetPasswordModal = false)"> 取消 </n-button>
-          <n-button type="primary" @click="onResetPasswordClick"> 确定 </n-button>
-        </n-space>
-      </n-space>
-    </n-modal>
-
     <!-- 新增编辑模态框 -->
     <n-modal
       v-model:show="showEditModal"
@@ -472,7 +351,7 @@ const getData = async () => {
       }"
       :title="isEdit ? '修改信息' : '新增用户'"
       :bordered="false"
-      :mask-closable="false"
+      :mask-closable="true"
       @after-leave="onAfterEditModalLeave"
     >
       <n-space vertical>
@@ -483,7 +362,7 @@ const getData = async () => {
                 <n-input
                   v-model:value="modalData.username"
                   clearable
-                  placeholder="输入用户名"
+                  placeholder="留空则自动生成"
                   :input-props="{ autocomplete: 'off' }"
                   :disabled="isEdit"
                 />
@@ -496,11 +375,11 @@ const getData = async () => {
               v-model:value="modalData.password"
               type="password"
               clearable
-              placeholder="输入密码"
+              :placeholder="isEdit ? '留空则不修改密码' : '输入密码'"
               :input-props="{ autocomplete: 'new-password' }"
             />
           </n-form-item>
-          <n-form-item path="repeatPassword" label="确认密码">
+          <n-form-item v-show="modalData.password" path="repeatPassword" label="确认密码">
             <n-input v-model:value="modalData.repeatPassword" type="password" clearable placeholder="重复密码" />
           </n-form-item>
           <n-form-item path="nickname" label="昵称">
@@ -508,6 +387,9 @@ const getData = async () => {
           </n-form-item>
           <n-form-item path="email" label="邮箱">
             <n-input v-model:value="modalData.email" clearable placeholder="输入邮箱" />
+          </n-form-item>
+          <n-form-item path="phone" label="手机号">
+            <n-input v-model:value="modalData.phone" clearable placeholder="输入手机号" />
           </n-form-item>
         </n-form>
       </n-space>
@@ -521,7 +403,7 @@ const getData = async () => {
     <RoleTable v-model:show="showRoleTable" :user="selectRow!" />
 
     <!-- 页面内容 -->
-    <n-space vertical>
+    <n-flex vertical>
       <!-- 按钮区 -->
       <n-space>
         <n-button tertiary type="info" :disabled="isLoading" @click="getData">
@@ -569,6 +451,6 @@ const getData = async () => {
         @update:page="onPageChange"
         @update:page-size="onPageSizeChange"
       />
-    </n-space>
+    </n-flex>
   </div>
 </template>

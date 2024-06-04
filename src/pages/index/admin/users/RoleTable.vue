@@ -130,7 +130,7 @@ const getRole = async () => {
   <n-modal
     v-model:show="show"
     preset="card"
-    :mask-closable="false"
+    :mask-closable="true"
     :bordered="false"
     :title="`分配角色(${props.user?.username})`"
     style="width: 600px"
