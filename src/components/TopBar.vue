@@ -12,12 +12,12 @@ const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())
 const { removeInfo } = useUserInfo()
 const router = useRouter()
 
-const isPlayer = ref(true)
+const hidePersonal = ref(true)
 onMounted(async () => {
   // 在路由完成后再判断是否为播放器页面
   await router.isReady()
   const currentRoute = router.currentRoute.value
-  isPlayer.value = currentRoute.meta.isPlayer ?? currentRoute.name === "share" ?? false
+  hidePersonal.value = currentRoute.meta.isPlayer ?? currentRoute.name === "share" ?? false
 })
 
 const host = window.location.origin
@@ -77,7 +77,7 @@ const onSelect = (key: string) => {
           <n-icon :component="isDarkMode ? MoonOutline : SunnyOutline" />
         </template>
       </n-button>
-      <n-badge v-if="isLoggedIn && !isPlayer" :max="999" :value="uploadItemCount">
+      <n-badge v-if="isLoggedIn && !hidePersonal" :max="999" :value="uploadItemCount">
         <n-button circle secondary strong @click="isUploadDrawerShow = true">
           <template #icon>
             <n-icon :component="ArrowUpOutline" />
@@ -85,7 +85,7 @@ const onSelect = (key: string) => {
         </n-button>
       </n-badge>
       <n-dropdown
-        v-if="isLoggedIn && !isPlayer"
+        v-if="isLoggedIn && !hidePersonal"
         trigger="hover"
         :options="options"
         placement="bottom-end"

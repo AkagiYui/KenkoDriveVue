@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
-import { createLocale, darkTheme, dateZhCN, zhCN } from "naive-ui"
+import { createLocale, darkTheme, dateZhCN, zhCN, type GlobalThemeOverrides } from "naive-ui"
 import { useAppConfig } from "@/stores/app-config"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
@@ -37,10 +37,19 @@ onMounted(() => {
     }
   }
 })
+
+const themeOverrides: GlobalThemeOverrides = {
+  common: {
+    // primaryColor: "#FF0000",
+  },
+  Button: {
+    // textColor: "#FF0000",
+  },
+}
 </script>
 
 <template>
-  <n-config-provider :locale="customizedLocale" :date-locale="dateZhCN" :theme="isDarkMode ? darkTheme : null">
+  <n-config-provider :locale="customizedLocale" :date-locale="dateZhCN" :theme="isDarkMode ? darkTheme : null" :theme-overrides="themeOverrides">
     <FeedbackProvider>
       <div class="container">
         <div v-show="banner" class="banner">

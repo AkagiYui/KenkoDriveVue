@@ -160,6 +160,7 @@ const menuOptions = ref([
         key: "share-manage",
         icon: renderIcon(PaperPlaneOutline),
         disabled: true,
+        show: false,
       },
       {
         label: "公告管理",
