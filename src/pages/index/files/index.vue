@@ -14,7 +14,7 @@ import type { HTMLAttributes } from "vue"
 import { NButton, NDropdown, NFlex, NIcon, NImage, useThemeVars } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
-import { AddOutline, ArrowUpOutline, RefreshOutline, TrashBinOutline, SearchOutline } from "@vicons/ionicons5"
+import { AddOutline, ArrowUpOutline, RefreshOutline, TrashBinOutline, SearchOutline, FilterOutline } from "@vicons/ionicons5"
 import { FolderOpenOutlined } from "@vicons/material"
 import {
   ArrowDownload24Regular as DownloadIcon,
@@ -450,23 +450,27 @@ const tableData = computed(() => {
     return []
   }
   return [
-    ...folders.map((folder) => ({
-      id: folder.id,
-      name: folder.name,
-      size: "-",
-      type: "folder",
-      createTime: new Date(folder.createTime).toLocaleString(),
-      locked: false,
-    })),
-    ...files.map((file) => ({
-      id: file.id,
-      name: file.name,
-      size: filesize(file.size, { standard: "jedec" }),
-      type: "file",
-      createTime: new Date(file.createTime).toLocaleString(),
-      fileType: file.type,
-      locked: file.locked,
-    })),
+    ...folders
+      .map((folder) => ({
+        id: folder.id,
+        name: folder.name,
+        size: "-",
+        type: "folder",
+        createTime: new Date(folder.createTime).toLocaleString(),
+        locked: false,
+      }))
+      .filter(({ name }) => name.includes(filterInputValue.value)),
+    ...files
+      .map((file) => ({
+        id: file.id,
+        name: file.name,
+        size: filesize(file.size, { standard: "jedec" }),
+        type: "file",
+        createTime: new Date(file.createTime).toLocaleString(),
+        fileType: file.type,
+        locked: file.locked,
+      }))
+      .filter(({ name }) => name.includes(filterInputValue.value)),
   ]
 })
 
@@ -576,6 +580,8 @@ function onSearchButtonClick() {
     loadFolder(currentFolderId.value, expressionInputValue.value)
   }
 }
+
+const filterInputValue = ref("")
 </script>
 
 <template>
@@ -604,7 +610,16 @@ function onSearchButtonClick() {
     <n-flex vertical>
       <!-- 操作按钮 -->
       <n-space class="buttons-container" :style="{ '--color': themeVars.dividerColor }">
-        <n-button tertiary type="info" @click="() => loadFolder(currentFolderId)">
+        <n-button
+          tertiary
+          type="info"
+          @click="
+            () => {
+              filterInputValue = ''
+              loadFolder(currentFolderId)
+            }
+          "
+        >
           <template #icon>
             <n-icon :component="RefreshOutline" />
           </template>
@@ -629,12 +644,19 @@ function onSearchButtonClick() {
           删除
         </n-button>
         <n-input-group>
-          <n-input v-model:value="expressionInputValue" placeholder="文件名、类型" @keyup.enter="onSearchButtonClick">
+          <n-input v-model:value="expressionInputValue" placeholder="文件名" @keyup.enter="onSearchButtonClick">
             <template #prefix>
               <n-icon :component="SearchOutline" />
             </template>
           </n-input>
           <n-button ghost @click="onSearchButtonClick"> 搜索 </n-button>
+        </n-input-group>
+        <n-input-group>
+          <n-input v-model:value="filterInputValue" placeholder="当前目录筛选">
+            <template #prefix>
+              <n-icon :component="FilterOutline" />
+            </template>
+          </n-input>
         </n-input-group>
       </n-space>
 
