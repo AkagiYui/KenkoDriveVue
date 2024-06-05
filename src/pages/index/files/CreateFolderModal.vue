@@ -31,7 +31,7 @@ const create = async () => {
   <n-modal
     v-model:show="show"
     preset="card"
-    :mask-closable="false"
+    :mask-closable="true"
     :bordered="false"
     title="新建文件夹"
     style="width: 400px"

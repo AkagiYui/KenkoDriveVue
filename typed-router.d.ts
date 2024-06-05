@@ -29,6 +29,7 @@ declare module 'vue-router/auto-routes' {
     'user-manage': RouteRecordInfo<'user-manage', '/admin/users', Record<never, never>, Record<never, never>>,
     'files': RouteRecordInfo<'files', '/files', Record<never, never>, Record<never, never>>,
     'settings': RouteRecordInfo<'settings', '/settings', Record<never, never>, Record<never, never>>,
+    'sharing': RouteRecordInfo<'sharing', '/sharing', Record<never, never>, Record<never, never>>,
     'playground': RouteRecordInfo<'playground', '/test', Record<never, never>, Record<never, never>>,
     '404': RouteRecordInfo<'404', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
@@ -36,5 +37,6 @@ declare module 'vue-router/auto-routes' {
     'pdf-preview': RouteRecordInfo<'pdf-preview', '/preview/pdf', Record<never, never>, Record<never, never>>,
     'video-preview': RouteRecordInfo<'video-preview', '/preview/video', Record<never, never>, Record<never, never>>,
     'xlsx-preview': RouteRecordInfo<'xlsx-preview', '/preview/xlsx', Record<never, never>, Record<never, never>>,
+    'share': RouteRecordInfo<'share', '/share/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }

@@ -17,7 +17,7 @@ onMounted(async () => {
   // 在路由完成后再判断是否为播放器页面
   await router.isReady()
   const currentRoute = router.currentRoute.value
-  isPlayer.value = currentRoute.meta.isPlayer ?? false
+  isPlayer.value = currentRoute.meta.isPlayer ?? currentRoute.name === "share" ?? false
 })
 
 const host = window.location.origin

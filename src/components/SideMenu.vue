@@ -55,9 +55,9 @@ const menuOptions = ref([
   },
   {
     label: "我的分享",
-    key: "share",
+    key: "sharing",
     icon: renderIcon(PaperPlaneOutline),
-    disabled: true,
+    path: "/sharing",
   },
   {
     label: "相册",

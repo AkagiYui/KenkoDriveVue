@@ -14,7 +14,14 @@ import type { HTMLAttributes } from "vue"
 import { NButton, NDropdown, NFlex, NIcon, NImage, useThemeVars } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
-import { AddOutline, ArrowUpOutline, RefreshOutline, TrashBinOutline, SearchOutline, FilterOutline } from "@vicons/ionicons5"
+import {
+  AddOutline,
+  ArrowUpOutline,
+  RefreshOutline,
+  TrashBinOutline,
+  SearchOutline,
+  FilterOutline,
+} from "@vicons/ionicons5"
 import { FolderOpenOutlined } from "@vicons/material"
 import {
   ArrowDownload24Regular as DownloadIcon,
@@ -37,6 +44,7 @@ import {
   renameFolder,
 } from "@/api"
 import CreateFolderModal from "./CreateFolderModal.vue"
+import SharingModal from "./SharingModal.vue"
 import { renderIcon, type2Icon } from "@/utils"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
@@ -243,7 +251,7 @@ const columns: DataTableColumns<TableData> = [
 function onActionSelect(key: string, row: TableData) {
   switch (key) {
     case "share":
-      window.$message.success("分享文件 " + row)
+      shareFile(row)
       break
     case "rename":
       renameItem(row)
@@ -259,6 +267,13 @@ function onActionSelect(key: string, row: TableData) {
       break
   }
 }
+
+function shareFile(row: TableData) {
+  sharingModalProps.value = { filename: row.name, id: row.id }
+  showSharingModal.value = true
+}
+
+
 const { openConfirmModal } = useConfirmModal()
 function deleteItem(row: TableData) {
   openConfirmModal(async () => {
@@ -582,11 +597,16 @@ function onSearchButtonClick() {
 }
 
 const filterInputValue = ref("")
+
+const showSharingModal = ref(false)
+const sharingModalProps = ref({ filename: "", id: "" })
 </script>
 
 <template>
   <FullScreenDrag v-if="allowDrop" @drop="onDrop"></FullScreenDrag>
+
   <input v-show="false" ref="fileInputRef" MULTIPLE type="file" />
+
   <n-image
     ref="imageRef"
     :show-toolbar-tooltip="true"
@@ -594,18 +614,25 @@ const filterInputValue = ref("")
     style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%)"
     @load="onImageLoaded"
   />
+
   <n-modal v-model:show="showMarkdownPreview" preset="card" style="width: 70%" title="Markdown 预览">
     <MarkdownPreview :value="markdownPreviewValue" />
   </n-modal>
+
   <n-modal v-model:show="showMonaco" preset="card" style="width: 80%; height: 80vh" title="代码预览">
     <MonacoEditor :content="monacoPreviewValue" :dark="isDarkMode" :language="monacoLanguage" />
   </n-modal>
-  <div style="padding-top: 10px">
-    <CreateFolderModal
+
+  <CreateFolderModal
       v-model:show="showCreateFolderModal"
       :parent="currentFolderId"
       @success="() => loadFolder(currentFolderId)"
     />
+
+  <SharingModal :id="sharingModalProps.id" v-model:show="showSharingModal" :filename="sharingModalProps.filename" />
+
+  <div style="padding-top: 10px">
+    
     <!-- 页面内容 -->
     <n-flex vertical>
       <!-- 操作按钮 -->
