@@ -42,3 +42,8 @@ interface FileInfoResponse {
   locked: boolean
   downloadCount: number
 }
+
+type FileOwnerResponse = {
+  username: string
+  nickname: string
+}[]

@@ -13,6 +13,7 @@ import { NButton, NFlex } from "naive-ui"
 import { RefreshOutline, SearchOutline } from "@vicons/ionicons5"
 import { deleteRealFile, lockFile, useFileList } from "@/api"
 import PagingTable from "@/components/table/PagingTable.vue"
+import OwnerTable from "./OwnerTable.vue"
 import { useConfirmModal } from "@/hooks"
 
 const tableColumns = [
@@ -64,16 +65,20 @@ const tableColumns = [
   {
     title: "操作",
     key: "action",
-    width: 280,
+    width: 2 * 80,
     render: (row) =>
       h(
         NFlex,
         { justify: "center" },
         {
           default: () => [
-            h(NButton, { type: "primary", size: "small", secondary: true }, { default: () => "预览" }),
-            h(NButton, { type: "info", size: "small", secondary: true }, { default: () => "下载" }),
-            h(NButton, { type: "warning", size: "small", secondary: true }, { default: () => "拥有者" }),
+            // h(NButton, { type: "primary", size: "small", secondary: true }, { default: () => "预览" }),
+            // h(NButton, { type: "info", size: "small", secondary: true }, { default: () => "下载" }),
+            h(
+              NButton,
+              { type: "warning", size: "small", secondary: true, onClick: () => onShowFileOwnerButtonClick(row) },
+              { default: () => "拥有者" },
+            ),
             h(
               NButton,
               { type: "error", size: "small", secondary: true, onClick: () => onDeleteButtonClick(row) },
@@ -85,7 +90,8 @@ const tableColumns = [
   },
 ]
 
-const { index: pageIndex, size: pageSize, count, data, fetchData, isLoading } = useFileList()
+const { index: pageIndex, size: pageSize, expression, count, data, fetchData, isLoading } = useFileList()
+const expressionInputValue = ref("")
 
 function tableIndexChanged(index: number, size: number) {
   pageIndex.value = index - 1
@@ -104,10 +110,18 @@ function onDeleteButtonClick(row: FileInfoResponse) {
     fetchData()
   }, "文件将在所有用户的存储空间中被删除，确定删除该文件吗？")
 }
+
+const isOwnerTableShow = ref(false)
+const currentFile = ref<FileInfoResponse | null>(null)
+function onShowFileOwnerButtonClick(row: FileInfoResponse) {
+  currentFile.value = row
+  isOwnerTableShow.value = true
+}
 </script>
 
 <template>
   <div class="view">
+    <OwnerTable v-model:show="isOwnerTableShow" :file="currentFile" />
     <n-flex vertical>
       <n-space>
         <n-button tertiary type="info" :disabled="isLoading" @click="fetchData">
@@ -118,12 +132,12 @@ function onDeleteButtonClick(row: FileInfoResponse) {
         </n-button>
 
         <n-input-group>
-          <n-input placeholder="文件名、类型">
+          <n-input v-model:value="expressionInputValue" placeholder="文件名、类型">
             <template #prefix>
               <n-icon :component="SearchOutline" />
             </template>
           </n-input>
-          <n-button ghost :disabled="isLoading"> 搜索 </n-button>
+          <n-button ghost :disabled="isLoading" @click="expression = expressionInputValue"> 搜索 </n-button>
         </n-input-group>
       </n-space>
       <PagingTable :data="data" :columns="tableColumns" :count="count" @update:index="tableIndexChanged" />

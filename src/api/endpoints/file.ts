@@ -126,3 +126,31 @@ export function lockFile(id: string, lock: boolean): Promise<void> {
     },
   )
 }
+
+/**
+ * 获取文件拥有者
+ * @param id 文件ID
+ */
+export function useFileOwner() {
+  const id = ref("")
+  const owner = ref<FileOwnerResponse>([])
+  const isLoading = ref(false)
+
+  async function fetchData() {
+    isLoading.value = true
+    try {
+      const res = await Request.get<FileOwnerResponse>(`/file/${id.value}/owner`)
+      owner.value = res.data
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  watch(id, (newId) => {
+    if (newId) {
+      fetchData()
+    }
+  })
+
+  return { id, owner, fetchData, isLoading }
+}
