@@ -4,7 +4,7 @@ import Request from "../request"
  * 获取文件夹内容
  * @param id 文件夹ID
  */
-export async function getFolderContent(id?: string | null | undefined): Promise<FolderContentResponse> {
+export async function getFolderContent(id?: string | null | undefined, filter?: string): Promise<FolderContentResponse> {
   type Response = {
     files: {
       id: string
@@ -26,7 +26,11 @@ export async function getFolderContent(id?: string | null | undefined): Promise<
     }[]
   }
   const url = id ? `/folder/${id}` : "/folder"
-  const res = await Request.get<Response>(url)
+  const res = await Request.get<Response>(url, {
+    params: {
+      expression: filter,
+    },
+  })
   const data = res.data
   return {
     files: data.files.map((item) => {

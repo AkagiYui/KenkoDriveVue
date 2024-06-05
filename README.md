@@ -76,6 +76,7 @@
 - [ ] feat: 支持input的自动填充
 - [ ] feat: 管理员修改用户头像
 - [ ] fix: 头像上传点击图片和按钮外的区域会触发文件选择
+- [ ] refactor: 修改API函数为Hooks
 - [x] refactor: 二维码组件使用Naive UI自带组件
 
 ## 开发注意事项

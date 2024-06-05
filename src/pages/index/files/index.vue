@@ -14,7 +14,7 @@ import type { HTMLAttributes } from "vue"
 import { NButton, NDropdown, NFlex, NIcon, NImage, useThemeVars } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
-import { AddOutline, ArrowUpOutline, RefreshOutline, TrashBinOutline } from "@vicons/ionicons5"
+import { AddOutline, ArrowUpOutline, RefreshOutline, TrashBinOutline, SearchOutline } from "@vicons/ionicons5"
 import { FolderOpenOutlined } from "@vicons/material"
 import {
   ArrowDownload24Regular as DownloadIcon,
@@ -524,9 +524,9 @@ function onDoubleClick(row: TableData) {
  * 加载文件夹内容
  * @param id 文件夹id
  */
-async function loadFolder(id?: string | null) {
+async function loadFolder(id?: string | null, filter?: string) {
   firstLoaded = true
-  contentResponse.value = await getFolderContent(id)
+  contentResponse.value = await getFolderContent(id, filter)
 }
 
 const showCreateFolderModal = ref(false)
@@ -569,6 +569,13 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
     onFileMove(id, folderId)
   }
 }
+
+const expressionInputValue = ref("")
+function onSearchButtonClick() {
+  if (expressionInputValue.value) {
+    loadFolder(currentFolderId.value, expressionInputValue.value)
+  }
+}
 </script>
 
 <template>
@@ -596,7 +603,7 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
     <!-- 页面内容 -->
     <n-flex vertical>
       <!-- 操作按钮 -->
-      <n-flex class="buttons-container" :style="{ '--color': themeVars.dividerColor }">
+      <n-space class="buttons-container" :style="{ '--color': themeVars.dividerColor }">
         <n-button tertiary type="info" @click="() => loadFolder(currentFolderId)">
           <template #icon>
             <n-icon :component="RefreshOutline" />
@@ -621,7 +628,15 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
           </template>
           删除
         </n-button>
-      </n-flex>
+        <n-input-group>
+          <n-input v-model:value="expressionInputValue" placeholder="文件名、类型" @keyup.enter="onSearchButtonClick">
+            <template #prefix>
+              <n-icon :component="SearchOutline" />
+            </template>
+          </n-input>
+          <n-button ghost @click="onSearchButtonClick"> 搜索 </n-button>
+        </n-input-group>
+      </n-space>
 
       <!-- 面包屑导航 -->
       <n-breadcrumb style="margin: 0 0 0 10px">
@@ -630,6 +645,9 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
           :clickable="!!breadcrumbLastItem"
           @click="
             () => {
+              if (expressionInputValue) {
+                loadFolder()
+              }
               if (!breadcrumbLastItem) {
                 return
               }
@@ -660,6 +678,9 @@ function onBreadcrumbDrop(folderId: string | undefined, event: DragEvent) {
         <n-breadcrumb-item
           @click="
             () => {
+              if (expressionInputValue) {
+                loadFolder()
+              }
               if (!breadcrumbLastItem) {
                 return
               }
