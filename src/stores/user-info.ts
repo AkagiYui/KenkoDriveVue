@@ -13,6 +13,7 @@ export const useUserInfo = defineStore(
     const username = ref("")
     const nickname = ref("")
     const email = ref("")
+    const phone = ref("")
     const avatarUrl = ref("")
     const permissions = ref<Permission[]>([])
 
@@ -48,6 +49,7 @@ export const useUserInfo = defineStore(
       username.value = ""
       nickname.value = ""
       email.value = ""
+      phone.value = ""
       avatarUrl.value = ""
     }
 
@@ -85,6 +87,7 @@ export const useUserInfo = defineStore(
       username.value = data.username
       userId.value = data.id
       email.value = data.email
+      phone.value = data.phone
       nickname.value = data.nickname || data.username
       permissions.value = data.permissions.map((item) => {
         // TypeScript无法直接将字符串转换为枚举，这里去掉as也能正常运行，但会有类型错误
@@ -126,6 +129,7 @@ export const useUserInfo = defineStore(
       username,
       nickname,
       email,
+      phone,
       avatarUrl,
       permissions,
       isLoggedIn,
