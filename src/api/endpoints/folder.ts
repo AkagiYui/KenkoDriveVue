@@ -4,7 +4,10 @@ import Request from "../request"
  * 获取文件夹内容
  * @param id 文件夹ID
  */
-export async function getFolderContent(id?: string | null | undefined, filter?: string): Promise<FolderContentResponse> {
+export async function getFolderContent(
+  id?: string | null | undefined,
+  filter?: string,
+): Promise<FolderContentResponse> {
   type Response = {
     files: {
       id: string

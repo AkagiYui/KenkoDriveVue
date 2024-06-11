@@ -273,7 +273,6 @@ function shareFile(row: TableData) {
   showSharingModal.value = true
 }
 
-
 const { openConfirmModal } = useConfirmModal()
 function deleteItem(row: TableData) {
   openConfirmModal(async () => {
@@ -624,15 +623,14 @@ const sharingModalProps = ref({ filename: "", id: "" })
   </n-modal>
 
   <CreateFolderModal
-      v-model:show="showCreateFolderModal"
-      :parent="currentFolderId"
-      @success="() => loadFolder(currentFolderId)"
-    />
+    v-model:show="showCreateFolderModal"
+    :parent="currentFolderId"
+    @success="() => loadFolder(currentFolderId)"
+  />
 
   <SharingModal :id="sharingModalProps.id" v-model:show="showSharingModal" :filename="sharingModalProps.filename" />
 
   <div style="padding-top: 10px">
-    
     <!-- 页面内容 -->
     <n-flex vertical>
       <!-- 操作按钮 -->

@@ -187,10 +187,13 @@ async function onSmsLoginButtonClick() {
 }
 
 async function onSendSmsCodeLogoClick() {
-  await smsFormRef.value?.validate(() =>{}, (rule) => {
-    if (rule === undefined) return false
-    return ["phone"].includes(rule.key as string)
-  })
+  await smsFormRef.value?.validate(
+    () => {},
+    (rule) => {
+      if (rule === undefined) return false
+      return ["phone"].includes(rule.key as string)
+    },
+  )
   if (isCooldown.value) return
   if (!hasText(formData.value.phone)) {
     return

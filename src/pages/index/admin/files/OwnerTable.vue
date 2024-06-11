@@ -24,7 +24,7 @@ const columns = [
   {
     title: "昵称",
     key: "nickname",
-  }
+  },
 ]
 </script>
 
@@ -32,7 +32,6 @@ const columns = [
   <n-modal
     v-model:show="show"
     preset="card"
-    
     :mask-closable="true"
     :bordered="false"
     :title="`拥有者(${props.file?.name})`"

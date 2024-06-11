@@ -56,7 +56,7 @@ export async function addUser(data: {
   email?: string
   phone?: string
 }): Promise<void> {
-  if (!hasText(data.username) && !hasText(data.email) && !hasText(data.phone)) { 
+  if (!hasText(data.username) && !hasText(data.email) && !hasText(data.phone)) {
     throw new Error("用户名、邮箱、手机号至少填写一个")
   }
   // 检查undefined，不发送
@@ -88,7 +88,7 @@ export async function addUser(data: {
  */
 export async function updateUserInfo(
   id: string,
-  data: { password?: string; nickname?: string; email?: string, phone?: string },
+  data: { password?: string; nickname?: string; email?: string; phone?: string },
 ): Promise<void> {
   // 检查undefined，不发送
   const requestData: any = {}

@@ -49,7 +49,12 @@ const themeOverrides: GlobalThemeOverrides = {
 </script>
 
 <template>
-  <n-config-provider :locale="customizedLocale" :date-locale="dateZhCN" :theme="isDarkMode ? darkTheme : null" :theme-overrides="themeOverrides">
+  <n-config-provider
+    :locale="customizedLocale"
+    :date-locale="dateZhCN"
+    :theme="isDarkMode ? darkTheme : null"
+    :theme-overrides="themeOverrides"
+  >
     <FeedbackProvider>
       <div class="container">
         <div v-show="banner" class="banner">
