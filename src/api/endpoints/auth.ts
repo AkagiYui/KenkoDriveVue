@@ -1,10 +1,5 @@
 import Request from "../request"
 
-type TokenResponse = {
-  token: string
-  refreshToken: string
-}
-
 /**
  * 使用密码获取token
  * @param username 用户名
@@ -66,4 +61,60 @@ export async function sendSmsOtp(phone: string, captcha: GeetestSuccessInfo): Pr
  */
 export async function confirmEmailRegisterOtp(email: string, otp: string): Promise<void> {
   await Request.post("/auth/register/email", { email, otp })
+}
+
+/**
+ * 申请登录二维码token
+ */
+export async function getQrToken(): Promise<string> {
+  const res = await Request.post<string>("/auth/token/temporary")
+  return res.data
+}
+
+/**
+ * 获取二维码状态
+ * @param token 二维码token
+ */
+export async function getQrStatus(token: string): Promise<TemporaryTokenStatus> {
+  const res = await Request.get<TemporaryTokenStatus>(`/auth/token/temporary/${token}`)
+  return res.data
+}
+
+/**
+ * 认领二维码token
+ * @param token 二维码token
+ */
+export async function claimQrToken(token: string): Promise<ClaimTokenResponse> {
+  const res = await Request.post<ClaimTokenResponse>(`/auth/token/temporary/${token}`)
+  return res.data
+}
+
+/**
+ * 确认二维码登录
+ * @param token 二维码token
+ * @param takenToken 认领token
+ */
+export async function confirmQrLogin(token: string, takenToken: string): Promise<void> {
+  await Request.post<string>(
+    `/auth/token/temporary/${token}/confirm`,
+    { token: takenToken },
+    {
+      headers: { ContentType: "x-www-form-urlencoded" },
+    },
+  )
+}
+
+/**
+ * 取消二维码登录
+ * @param token 二维码token
+ * @param takenToken 认领token
+ */
+export async function cancelQrLogin(token: string, takenToken: string): Promise<void> {
+  await Request.post<string>(
+    `/auth/token/temporary/${token}/cancel`,
+    { token: takenToken },
+    {
+      headers: { ContentType: "x-www-form-urlencoded" },
+    },
+  )
 }

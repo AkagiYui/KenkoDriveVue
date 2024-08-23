@@ -206,6 +206,10 @@ async function onSendSmsCodeLogoClick() {
     isCooldown.value = false
   }, 60000)
 }
+
+async function onTabUpdate(value: string) {
+  console.debug(value)
+}
 </script>
 
 <template>
@@ -218,6 +222,7 @@ async function onSendSmsCodeLogoClick() {
       animated
       pane-wrapper-style="margin: 0 -4px"
       pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
+      @update:value="onTabUpdate"
     >
       <n-tab-pane name="sms" tab="短信登录">
         <h3>验证即登录，未注册将自动创建账号</h3>
@@ -251,6 +256,10 @@ async function onSendSmsCodeLogoClick() {
           </n-form-item-row>
         </n-form>
         <n-button block secondary strong type="primary" @click="onSmsLoginButtonClick"> 登录 </n-button>
+      </n-tab-pane>
+
+      <n-tab-pane name="qrcode" tab="扫码登录">
+        <QrCodeLogin />
       </n-tab-pane>
 
       <n-tab-pane name="signin" tab="登录">
