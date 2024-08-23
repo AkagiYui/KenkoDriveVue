@@ -68,6 +68,22 @@ function onDeleteButtonClick() {
     getSharingInfo()
   })
 }
+
+function onShareButtonClick() {
+  if (!displayData.value) {
+    return
+  }
+  const shareData = {
+    title: `分享文件：${displayData.value.filename}`,
+    text: `分享文件：${displayData.value.filename}，提取码：${displayData.value.password}，链接：${url.value}`,
+    url: url.value,
+  }
+  if (navigator.share) {
+    navigator.share(shareData)
+  } else {
+    window.$message.error("当前浏览器不支持分享")
+  }
+}
 </script>
 
 <template>
@@ -99,6 +115,7 @@ function onDeleteButtonClick() {
             <n-qr-code :value="url" error-correction-level="H" type="svg" :size="200" />
           </n-flex>
           <n-button type="error" secondary @click="onDeleteButtonClick">删除分享</n-button>
+          <n-button type="success" secondary @click="onShareButtonClick">分享到其他应用</n-button>
         </n-flex>
       </div>
       <div v-else>
