@@ -51,7 +51,6 @@ const menuOptions = ref([
     key: "recent",
     icon: renderIcon(TimeOutline),
     disabled: true,
-    show: false,
   },
   {
     label: "我的分享",
@@ -64,35 +63,30 @@ const menuOptions = ref([
     key: "album",
     icon: renderIcon(ImagesOutline),
     disabled: true,
-    show: false,
   },
   {
     label: "文档",
     key: "document",
     icon: renderIcon(DocumentTextOutline),
     disabled: true,
-    show: false,
   },
   {
     label: "收藏夹",
     key: "like",
     icon: renderIcon(HeartOutline),
     disabled: true,
-    show: false,
   },
   {
     label: "密码箱",
     key: "vault",
     icon: renderIcon(LockClosedOutline),
     disabled: true,
-    show: false,
   },
   {
     label: "回收站",
     key: "recycle",
     icon: renderIcon(TrashOutline),
     disabled: true,
-    show: false,
   },
   {
     label: "设置",
@@ -109,7 +103,6 @@ const menuOptions = ref([
         label: "系统状态",
         key: "system-status",
         icon: renderIcon(SpeedometerOutline),
-        show: false,
         children: [
           {
             label: "运行信息",
@@ -127,13 +120,11 @@ const menuOptions = ref([
             label: "文件分析",
             key: "file-analysis",
             disabled: true,
-            show: false,
           },
           {
             label: "用户分析",
             key: "user-analysis",
             disabled: true,
-            show: false,
           },
         ],
       },
@@ -160,7 +151,6 @@ const menuOptions = ref([
         key: "share-manage",
         icon: renderIcon(PaperPlaneOutline),
         disabled: true,
-        show: false,
       },
       {
         label: "公告管理",
