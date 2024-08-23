@@ -101,3 +101,12 @@ app.config.globalProperties.$geetest = createGeetest()
 app.config.globalProperties.$bus = mitt()
 
 app.mount("#app")
+
+const observer = new PerformanceObserver((list) => {
+  for (const entry of list.getEntries()) {
+    console.log(entry)
+  }
+})
+
+observer.observe({ entryTypes: ["longtask"] })
+

@@ -117,6 +117,8 @@ pnpm type-check && pnpm lint && pnpm format
 - [哔哩哔哩: 在vite中手动分包【渡一教育】](https://www.bilibili.com/video/av1403644928)
 - [哔哩哔哩: 阿里云的文件上传【渡一教育】](https://www.bilibili.com/video/av1903215359)
 - [哔哩哔哩: 拖拽API【渡一教育】](https://www.bilibili.com/video/av323652523)
+- [哔哩哔哩: 监控页面卡顿【渡一教育】](https://www.bilibili.com/video/av1105642281)
+- [哔哩哔哩: web share技术](https://www.bilibili.com/video/av1906491613)
 - [CSDN: Pinia使用方法及持久化存储](https://blog.csdn.net/m0_53808238/article/details/129751966)
 - [CSDN: 去掉router-link文字的下划线](https://blog.csdn.net/weixin_52418790/article/details/117361939)
 - [CSDN: vue3+vite如何引入本地静态图片](https://blog.csdn.net/weixin_57399180/article/details/128191707)
