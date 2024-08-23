@@ -25,7 +25,7 @@ const config = {
     proxy: {
       "/api": {
         target: "http://localhost:6677",
-        changeOrigin: true,
+        changeOrigin: false, // true表示使用前端访问的地址
         rewrite: (path: string) => path.replace(/^\/api/, ""),
       },
     },
