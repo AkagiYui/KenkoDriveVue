@@ -1,5 +1,5 @@
 import { fetchEventSource } from "@microsoft/fetch-event-source"
-import { default as Request, config } from "../request"
+import { default as Request, baseConfig as config } from "../request"
 import { useUserInfo } from "@/stores/user-info"
 
 /** 获取后端版本号 */
@@ -22,11 +22,9 @@ export async function getConfig(): Promise<object> {
 export async function updateSetting(key: string, value: string | number | boolean): Promise<void> {
   await Request.put(
     `/system/setting/${key}`,
-    { value },
     {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      data: { value },
+      dataType: "form",
     },
   )
 }

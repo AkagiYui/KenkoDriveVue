@@ -1,4 +1,4 @@
-import Request, { config } from "../request"
+import Request, { baseConfig as config } from "../request"
 
 /**
  * 获取文件临时token
@@ -49,7 +49,7 @@ export async function deleteRealFile(id: string): Promise<void> {
  * @param folderId 目标文件夹ID
  */
 export async function moveFile(id: string, folderId?: string | undefined): Promise<void> {
-  await Request.put(`/file/${id}/move`, undefined, {
+  await Request.put(`/file/${id}/move`, {
     params: {
       folder: folderId,
     },
@@ -64,11 +64,9 @@ export async function moveFile(id: string, folderId?: string | undefined): Promi
 export async function renameUserFile(id: string, name: string): Promise<void> {
   await Request.put(
     `/file/${id}/name`,
-    { name },
     {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      data: { name },
+      dataType: "url",
     },
   )
 }
@@ -115,14 +113,12 @@ export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
  * @param id 文件ID
  * @param lock 是否锁定
  */
-export function lockFile(id: string, lock: boolean): Promise<void> {
-  return Request.put(
+export async function lockFile(id: string, lock: boolean): Promise<void> {
+  Request.put(
     `/file/${id}/lock`,
-    { locked: lock },
     {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+      data: { locked: lock },
+      dataType: "url",
     },
   )
 }

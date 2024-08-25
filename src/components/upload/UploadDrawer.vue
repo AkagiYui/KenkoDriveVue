@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { config as requestConfig } from "@/api/request"
+import { baseConfig as requestConfig } from "@/api/request"
 import { emitBusEvent, useBusEvent, useEventListener } from "@/hooks"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"

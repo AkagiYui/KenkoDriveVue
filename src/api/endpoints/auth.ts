@@ -6,7 +6,10 @@ import Request from "../request"
  * @param password 密码
  */
 export async function getTokenByPassword(username: string, password: string): Promise<string> {
-  const res = await Request.post<TokenResponse>("/auth/token/password", { username, password })
+  const res = await Request.post<TokenResponse>("/auth/token/password", {
+    data: { username, password },
+    auth: false,
+  })
   return res.data.token
 }
 export const getToken = getTokenByPassword
@@ -15,7 +18,7 @@ export const getToken = getTokenByPassword
  * 使用短信验证码获取token
  */
 export async function getTokenBySms(phone: string, otp: string): Promise<string> {
-  const res = await Request.post<TokenResponse>("/auth/token/sms", { phone, otp })
+  const res = await Request.post<TokenResponse>("/auth/token/sms", { data: { phone, otp } })
   return res.data.token
 }
 
@@ -30,13 +33,7 @@ export async function sendEmailRegisterOtp(
   email: string,
   captcha: GeetestSuccessInfo,
 ): Promise<void> {
-  await Request.post(
-    "/auth/otp/email",
-    { password, email },
-    {
-      params: { ...captcha },
-    },
-  )
+  await Request.post("/auth/otp/email", { data: { password, email }, params: { ...captcha } })
 }
 
 /**
@@ -45,13 +42,7 @@ export async function sendEmailRegisterOtp(
  * @param captcha 极验验证信息
  */
 export async function sendSmsOtp(phone: string, captcha: GeetestSuccessInfo): Promise<void> {
-  await Request.post(
-    "/auth/otp/sms",
-    { phone },
-    {
-      params: { ...captcha },
-    },
-  )
+  await Request.post("/auth/otp/sms", { data: { phone }, params: { ...captcha } })
 }
 
 /**
@@ -60,7 +51,7 @@ export async function sendSmsOtp(phone: string, captcha: GeetestSuccessInfo): Pr
  * @param otp 验证码
  */
 export async function confirmEmailRegisterOtp(email: string, otp: string): Promise<void> {
-  await Request.post("/auth/register/email", { email, otp })
+  await Request.post("/auth/register/email", { data: { email, otp } })
 }
 
 /**
@@ -95,14 +86,9 @@ export async function claimQrToken(token: string): Promise<ClaimTokenResponse> {
  * @param takenToken 认领token
  */
 export async function confirmQrLogin(token: string, takenToken: string): Promise<void> {
-  await Request.post<string>(
-    `/auth/token/temporary/${token}/confirm`,
-    {},
-    {
-      headers: { ContentType: "x-www-form-urlencoded" },
-      params: { token: takenToken },
-    },
-  )
+  await Request.post<string>(`/auth/token/temporary/${token}/confirm`, {
+    params: { token: takenToken },
+  })
 }
 
 /**
@@ -111,12 +97,7 @@ export async function confirmQrLogin(token: string, takenToken: string): Promise
  * @param takenToken 认领token
  */
 export async function cancelQrLogin(token: string, takenToken: string): Promise<void> {
-  await Request.post<string>(
-    `/auth/token/temporary/${token}/cancel`,
-    {},
-    {
-      headers: { ContentType: "x-www-form-urlencoded" },
-      params: { token: takenToken },
-    },
-  )
+  await Request.post<string>(`/auth/token/temporary/${token}/cancel`, {
+    params: { token: takenToken },
+  })
 }

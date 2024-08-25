@@ -115,7 +115,7 @@ export async function getUserInfo(): Promise<UserInfoResponse> {
 
 /** 获取用户头像*/
 export async function getUserAvatar(): Promise<ArrayBuffer> {
-  const res = await Request.get("/user/avatar", { responseType: "blob" })
+  const res = await Request.get<ArrayBuffer>("/user/avatar", { responseType: "blob" })
   return res.data
 }
 
@@ -132,13 +132,11 @@ export async function uploadUserAvatar(file: File): Promise<void> {
   if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
     throw new Error("文件类型必须是图片")
   }
-
   const formData = new FormData()
   formData.append("avatar", file)
-  await Request.post("/user/avatar", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+  await Request.post("/user/avatar", {
+    data: formData,
+    dataType: "form",
   })
 }
 
@@ -148,17 +146,10 @@ export async function uploadUserAvatar(file: File): Promise<void> {
  * @param disabled 是否禁用
  */
 export async function updateUserDisabled(id: string, disabled: boolean): Promise<void> {
-  await Request.put(
-    `/user/${id}/disable`,
-    {
-      disabled: disabled,
-    },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    },
-  )
+  await Request.put(`/user/${id}/disable`, {
+    data: { disabled },
+    dataType: "url",
+  })
 }
 
 /**
@@ -168,7 +159,7 @@ export async function updateUserDisabled(id: string, disabled: boolean): Promise
  */
 export async function updateUserPassword(id: string, newPassword: string): Promise<void> {
   await Request.put(`/user/${id}/password`, {
-    newPassword: newPassword,
+    data: { newPassword },
   })
 }
 
@@ -187,7 +178,7 @@ export async function getUserRoles(id: string): Promise<string[]> {
  * @param roles 角色列表
  */
 export async function assignRoles(id: string, roles: string[]): Promise<void> {
-  await Request.put(`/user/${id}/role`, roles)
+  await Request.put(`/user/${id}/role`, { data: roles })
 }
 
 /**

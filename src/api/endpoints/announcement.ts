@@ -68,15 +68,10 @@ export async function getAnnouncements(
  * @param disabled 是否禁用
  */
 export async function updateAnnouncementStatus(id: string, disabled: boolean): Promise<void> {
-  await Request.put(
-    `/announcement/${id}/status`,
-    { disabled },
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    },
-  )
+  await Request.put(`/announcement/${id}/status`, {
+    data: { disabled },
+    dataType: "url",
+  })
 }
 
 /**
@@ -101,7 +96,7 @@ export async function updateAnnouncement(id: string, title?: string, content?: s
   if (hasText(content)) {
     requestData.content = content
   }
-  await Request.put(`/announcement/${id}`, requestData)
+  await Request.put(`/announcement/${id}`, { data: requestData})
 }
 
 /**
@@ -111,6 +106,6 @@ export async function updateAnnouncement(id: string, title?: string, content?: s
  * @returns 公告ID
  */
 export async function addAnnouncement(data: { title: string; content: string }): Promise<string> {
-  const res = await Request.post("/announcement", data)
+  const res = await Request.post<string>("/announcement", {data})
   return res.data
 }
