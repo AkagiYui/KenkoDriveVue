@@ -1,6 +1,8 @@
 auto-imports.d.ts
 components.d.ts
 
+certs/
+
 # Logs
 logs
 *.log

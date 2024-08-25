@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router/auto"
 import { storeToRefs } from "pinia"
-import { ArrowUpOutline, LogOutOutline, MoonOutline, PersonCircleOutline, SunnyOutline } from "@vicons/ionicons5"
+import { ArrowUpOutline, LogOutOutline, MoonOutline, PersonCircleOutline, SunnyOutline, ScanOutline } from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import { renderIcon } from "@/utils"
@@ -28,6 +28,11 @@ const options = ref([
     icon: renderIcon(PersonCircleOutline),
   },
   {
+    label: "扫一扫",
+    key: "scan",
+    icon: renderIcon(ScanOutline),
+  },
+  {
     label: "退出登录",
     key: "logout",
     icon: renderIcon(LogOutOutline),
@@ -37,6 +42,9 @@ const onSelect = (key: string) => {
   switch (key) {
     case "info":
       router.replace("/settings")
+      break
+    case "scan":
+      router.replace("/scanner")
       break
     case "logout":
       removeInfo()

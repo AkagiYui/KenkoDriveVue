@@ -97,9 +97,10 @@ export async function claimQrToken(token: string): Promise<ClaimTokenResponse> {
 export async function confirmQrLogin(token: string, takenToken: string): Promise<void> {
   await Request.post<string>(
     `/auth/token/temporary/${token}/confirm`,
-    { token: takenToken },
+    {},
     {
       headers: { ContentType: "x-www-form-urlencoded" },
+      params: { token: takenToken },
     },
   )
 }
@@ -112,9 +113,10 @@ export async function confirmQrLogin(token: string, takenToken: string): Promise
 export async function cancelQrLogin(token: string, takenToken: string): Promise<void> {
   await Request.post<string>(
     `/auth/token/temporary/${token}/cancel`,
-    { token: takenToken },
+    {},
     {
       headers: { ContentType: "x-www-form-urlencoded" },
+      params: { token: takenToken },
     },
   )
 }

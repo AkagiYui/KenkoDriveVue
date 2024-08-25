@@ -35,7 +35,7 @@ renewUserInfo().catch(() => {
     <n-scrollbar :class="{ 'block-scrollbar': false }">
       <n-back-top :right="50" />
       <router-view v-slot="{ Component }">
-        <KeepAlive>
+        <KeepAlive :exclude="['scanner']">
           <component :is="Component" :key="$route.fullPath" />
         </KeepAlive>
       </router-view>

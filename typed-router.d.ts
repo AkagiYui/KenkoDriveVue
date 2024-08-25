@@ -28,6 +28,8 @@ declare module 'vue-router/auto-routes' {
     'runtime-info': RouteRecordInfo<'runtime-info', '/admin/system/status', Record<never, never>, Record<never, never>>,
     'user-manage': RouteRecordInfo<'user-manage', '/admin/users', Record<never, never>, Record<never, never>>,
     'files': RouteRecordInfo<'files', '/files', Record<never, never>, Record<never, never>>,
+    'qrlogin': RouteRecordInfo<'qrlogin', '/qrlogin', Record<never, never>, Record<never, never>>,
+    'scanner': RouteRecordInfo<'scanner', '/scanner', Record<never, never>, Record<never, never>>,
     'settings': RouteRecordInfo<'settings', '/settings', Record<never, never>, Record<never, never>>,
     'sharing': RouteRecordInfo<'sharing', '/sharing', Record<never, never>, Record<never, never>>,
     'playground': RouteRecordInfo<'playground', '/test', Record<never, never>, Record<never, never>>,

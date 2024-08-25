@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios"
 import { NIcon } from "naive-ui"
 import { BugReportOutlined } from "@vicons/material"
 import { useUserInfo } from "@/stores/user-info"
@@ -15,12 +15,13 @@ const request = axios.create(config)
 const loginUrl = "/auth/token"
 
 request.interceptors.request.use(
-  (config) => {
-    window.$loadingbar.start() // 显示加载条
+  (config: InternalAxiosRequestConfig & ExtraConfig) => {
+    if (config.showLoading !== false) {
+      window.$loadingbar.start() // 显示加载条
+    }
     const token = useUserInfo().requestToken // 获取token
-    if (!config.url!.startsWith(loginUrl) && hasText(token)) {
-      // 如果token存在
-      config.headers["Authorization"] = `Bearer ${token}` // 设置请求头
+    if (hasText(token) && config.auth !== false) {
+      config.headers["Authorization"] = `Bearer ${token}`
     }
     return config
   },
@@ -32,7 +33,9 @@ request.interceptors.request.use(
 
 function responseSuccess(response) {
   // 2xx 范围内的状态码都会触发该函数。
-  window.$loadingbar.finish()
+  if (response.config.showLoading !== false) {
+    window.$loadingbar.finish()
+  }
   const contentType = response.headers["content-type"]
   if (contentType && contentType.indexOf("application/json") !== -1) {
     const data = response.data
@@ -47,7 +50,9 @@ function responseSuccess(response) {
 
 // 超出 2xx 范围的状态码都会触发该函数。
 function responseFailed(error) {
-  window.$loadingbar.error()
+  if (error.config.showLoading !== false) {
+    window.$loadingbar.error()
+  }
 
   // 请求超时
   if (error.code === "ECONNABORTED") {
@@ -108,4 +113,19 @@ function responseFailed(error) {
 
 request.interceptors.response.use(responseSuccess, responseFailed)
 
-export default request
+type ExtraConfig = {
+  auth?: boolean
+  showLoading?: boolean
+}
+
+const ex = {
+  get: <T>(url: string, config?: AxiosRequestConfig & ExtraConfig) => request.get<T>(url, config),
+  delete: <T>(url: string, config?: AxiosRequestConfig & ExtraConfig) => request.delete<T>(url, config),
+  head: <T>(url: string, config?: AxiosRequestConfig & ExtraConfig) => request.head<T>(url, config),
+  options: <T>(url: string, config?: AxiosRequestConfig & ExtraConfig) => request.options<T>(url, config),
+  post: <T>(url: string, data?: any, config?: AxiosRequestConfig & ExtraConfig) => request.post<T>(url, data, config),
+  put: <T>(url: string, data?: any, config?: AxiosRequestConfig & ExtraConfig) => request.put<T>(url, data, config),
+  patch: <T>(url: string, data?: any, config?: AxiosRequestConfig & ExtraConfig) => request.patch<T>(url, data, config),
+}
+
+export default ex

@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from "node:url"
-
 import { defineConfig } from "vite"
+import basicSsl from "@vitejs/plugin-basic-ssl"
 import vue from "@vitejs/plugin-vue"
 import vueJsx from "@vitejs/plugin-vue-jsx"
 import AutoImport from "unplugin-auto-import/vite"
@@ -8,10 +8,7 @@ import Components from "unplugin-vue-components/vite"
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
 import MsClarity from "vite-plugin-ms-clarity"
 import VueRouter from "unplugin-vue-router/vite"
-import {
-  getFileBasedRouteName,
-  VueRouterAutoImports,
-} from "unplugin-vue-router"
+import { getFileBasedRouteName, VueRouterAutoImports } from "unplugin-vue-router"
 import { nodePolyfills } from "vite-plugin-node-polyfills"
 
 // eslint-disable-next-line no-undef
@@ -29,6 +26,7 @@ const config = {
         rewrite: (path: string) => path.replace(/^\/api/, ""),
       },
     },
+    https: true,
   },
   preview: {
     host: "0.0.0.0",
@@ -44,12 +42,7 @@ const config = {
           exclude: (excluded) => {
             // 排除任何大写字母开头的文件与文件夹，因为它们通常是组件
             // 返回["**/A*", "**/B*", ...]
-            return excluded.concat(
-              Array.from(
-                { length: 26 },
-                (_, i) => `**/${String.fromCharCode(65 + i)}*`,
-              ),
-            )
+            return excluded.concat(Array.from({ length: 26 }, (_, i) => `**/${String.fromCharCode(65 + i)}*`))
           },
           filePatterns: (filePatterns) => filePatterns,
           extensions: (extensions) => extensions,
@@ -106,18 +99,14 @@ const config = {
         "vue",
         VueRouterAutoImports,
         {
-          "naive-ui": [
-            "useDialog",
-            "useMessage",
-            "useNotification",
-            "useLoadingBar",
-          ],
+          "naive-ui": ["useDialog", "useMessage", "useNotification", "useLoadingBar"],
         },
       ],
     }),
     Components({
       resolvers: [NaiveUiResolver()],
     }),
+    basicSsl(),
   ],
   resolve: {
     alias: {
@@ -160,15 +149,7 @@ const config = {
           if (chunkInfo.name.endsWith(".js")) {
             return "js/[name]-[hash][extname]"
           }
-          const imgExts = [
-            ".png",
-            ".jpg",
-            ".jpeg",
-            ".gif",
-            ".svg",
-            ".webp",
-            ".ico",
-          ]
+          const imgExts = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico"]
           if (imgExts.some((ext) => chunkInfo.name.endsWith(ext))) {
             return "img/[name]-[hash][extname]"
           }
@@ -193,9 +174,7 @@ if (isProd) {
   if (!env.VITE_CLARITY_ID) {
     console.warn("Clarity ID is not set, Clarity will be disabled.")
   } else {
-    config.plugins.push(
-      MsClarity({ id: env.VITE_CLARITY_ID as string, enableInDevMode: false }),
-    )
+    config.plugins.push(MsClarity({ id: env.VITE_CLARITY_ID as string, enableInDevMode: false }))
   }
 }
 
