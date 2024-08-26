@@ -39,7 +39,9 @@ async function updateVideoInputDevices() {
         return
       }
       // selectedDeviceId.value = backDevice?.deviceId || videoInputDevices.value[0].deviceId
-      const nvidiaBroadcast = videoInputDevices.value.find((device) => device.label.toLowerCase().includes("nvidia broadcast"))
+      const nvidiaBroadcast = videoInputDevices.value.find((device) =>
+        device.label.toLowerCase().includes("nvidia broadcast"),
+      )
       if (nvidiaBroadcast) {
         selectedDeviceId.value = nvidiaBroadcast.deviceId
         return

@@ -96,7 +96,7 @@ export async function updateAnnouncement(id: string, title?: string, content?: s
   if (hasText(content)) {
     requestData.content = content
   }
-  await Request.put(`/announcement/${id}`, { data: requestData})
+  await Request.put(`/announcement/${id}`, { data: requestData })
 }
 
 /**
@@ -106,6 +106,6 @@ export async function updateAnnouncement(id: string, title?: string, content?: s
  * @returns 公告ID
  */
 export async function addAnnouncement(data: { title: string; content: string }): Promise<string> {
-  const res = await Request.post<string>("/announcement", {data})
+  const res = await Request.post<string>("/announcement", { data })
   return res.data
 }

@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router/auto"
 import { storeToRefs } from "pinia"
-import { ArrowUpOutline, LogOutOutline, MoonOutline, PersonCircleOutline, SunnyOutline, ScanOutline } from "@vicons/ionicons5"
+import {
+  ArrowUpOutline,
+  LogOutOutline,
+  MoonOutline,
+  PersonCircleOutline,
+  SunnyOutline,
+  ScanOutline,
+} from "@vicons/ionicons5"
 import { useAppConfig } from "@/stores/app-config"
 import { useUserInfo } from "@/stores/user-info"
 import { renderIcon } from "@/utils"

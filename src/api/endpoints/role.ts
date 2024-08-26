@@ -30,7 +30,7 @@ export async function getPermissions(): Promise<PermissionResponse[]> {
  * @param data 新增角色数据
  */
 export async function addRole(data: AddRoleRequest): Promise<string> {
-  const res = await Request.post<string>("/role", {data})
+  const res = await Request.post<string>("/role", { data })
   return res.data
 }
 
@@ -48,7 +48,7 @@ export async function deleteRole(id: string): Promise<void> {
  * @param data 更新角色数据
  */
 export async function updateRole(id: string, data: UpdateRoleRequest): Promise<void> {
-  await Request.put(`/role/${id}`, {data})
+  await Request.put(`/role/${id}`, { data })
 }
 
 /**
@@ -82,7 +82,7 @@ export async function getRoleUsers(id: string): Promise<string[]> {
  * @param userIds 用户ID列表
  */
 export async function assignRoleUsers(id: string, userIds: string[]): Promise<void> {
-  await Request.put(`/role/${id}/users`, {data: userIds})
+  await Request.put(`/role/${id}/users`, { data: userIds })
 }
 
 /**

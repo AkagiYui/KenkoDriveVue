@@ -109,4 +109,3 @@ const observer = new PerformanceObserver((list) => {
 })
 
 observer.observe({ entryTypes: ["longtask"] })
-

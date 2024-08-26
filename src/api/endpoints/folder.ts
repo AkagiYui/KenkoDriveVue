@@ -30,9 +30,11 @@ export async function getFolderContent(
   }
   const url = id ? `/folder/${id}` : "/folder"
   const res = await Request.get<Response>(url, {
-    params: filter ? {
-      expression: filter,
-    } : {},
+    params: filter
+      ? {
+          expression: filter,
+        }
+      : {},
   })
   const data = res.data
   return {
@@ -98,11 +100,8 @@ export async function deleteFolder(id: string): Promise<void> {
  * @param name 新文件夹名
  */
 export async function renameFolder(id: string, name: string): Promise<void> {
-  await Request.put(
-    `/folder/${id}/name`,
-    {
-      data: { name },
-      dataType: "url",
-    },
-  )
+  await Request.put(`/folder/${id}/name`, {
+    data: { name },
+    dataType: "url",
+  })
 }

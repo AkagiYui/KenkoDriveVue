@@ -59,7 +59,7 @@ export function buildUrl(
   } else if (useLocation) {
     // 如果 baseURL 是相对路径，且 useLocation 为 true，则使用当前页面的 origin 加上 baseURL
     fullBaseUrl = window.location.origin + (baseURL || "")
-  } else { 
+  } else {
     // 否则使用 baseURL
     fullBaseUrl = baseURL || ""
   }
