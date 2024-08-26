@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "check": "run-s format type-check lint",
-    "build": "run-p type-check build-only",
+    "check": "run-s format type-check lint test-once",
+    "build": "run-s type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .eslintignore",
     "format": "prettier --write src/",
-    "test": "vitest"
+    "test": "vitest",
+    "test-once": "vitest run"
   },
   "dependencies": {
     "@microsoft/fetch-event-source": "^2.0.1",
