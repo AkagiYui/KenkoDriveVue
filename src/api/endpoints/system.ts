@@ -1,6 +1,4 @@
-import { fetchEventSource } from "@microsoft/fetch-event-source"
-import { default as Request, baseConfig as config } from "../request"
-import { useUserInfo } from "@/stores/user-info"
+import Request from "../request"
 
 /** 获取后端版本号 */
 export async function getBackendVersion(): Promise<string> {
@@ -20,27 +18,16 @@ export async function getConfig(): Promise<object> {
  * @param value 设置值
  */
 export async function updateSetting(key: string, value: string | number | boolean): Promise<void> {
-  await Request.put(
-    `/system/setting/${key}`,
-    {
-      data: { value },
-      dataType: "form",
-    },
-  )
+  await Request.put(`/system/setting/${key}`, {
+    data: { value },
+    dataType: "form",
+  })
 }
 
 /** 获取 是否开放注册 */
 export async function getRegisterEnabled(): Promise<boolean> {
   const res = await Request.get<boolean>("/system/setting/register")
   return res.data
-}
-
-export function receiveSystemMemorySse(callback: (data: any) => void) {
-  const source = new EventSource(config.baseURL + "/system/memory/sse")
-  source.onmessage = (event) => {
-    callback(JSON.parse(event.data))
-  }
-  return source
 }
 
 /**
@@ -59,9 +46,7 @@ export function useSystemMemory(
 ): {
   close: () => void
 } {
-  const { requestToken } = useUserInfo()
-  const ctrl = new AbortController()
-  fetchEventSource(`${config.baseURL}/system/memory/sse`, {
+  return Request.sse("/system/memory/sse", {
     onmessage(ev) {
       const data = JSON.parse(ev.data)
       // 如果是数组
@@ -74,13 +59,5 @@ export function useSystemMemory(
         receiveData(data)
       }
     },
-    headers: {
-      Authorization: `Bearer ${requestToken}`,
-    },
-    signal: ctrl.signal,
   })
-
-  return {
-    close: () => ctrl.abort(),
-  }
 }

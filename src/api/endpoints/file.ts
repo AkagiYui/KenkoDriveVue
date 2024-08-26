@@ -1,4 +1,4 @@
-import Request, { baseConfig as config } from "../request"
+import Request from "../request"
 
 /**
  * 获取文件临时token
@@ -17,7 +17,7 @@ export async function getFileTemporaryToken(id: string): Promise<string> {
  */
 export async function getFileTemporaryUrl(id: string, single: boolean = false, name?: string): Promise<string> {
   const token = await getFileTemporaryToken(id)
-  let url = `${config.baseURL}/file/${token}/download`
+  let url = Request.buildUrl(`/file/${token}/download`)
   if (name) {
     url += `/${name}`
   }
@@ -62,13 +62,10 @@ export async function moveFile(id: string, folderId?: string | undefined): Promi
  * @param name 新文件名
  */
 export async function renameUserFile(id: string, name: string): Promise<void> {
-  await Request.put(
-    `/file/${id}/name`,
-    {
-      data: { name },
-      dataType: "url",
-    },
-  )
+  await Request.put(`/file/${id}/name`, {
+    data: { name },
+    dataType: "url",
+  })
 }
 
 /**
@@ -114,13 +111,10 @@ export function useFileList(pageIndex: number = 0, pageSize: number = 10) {
  * @param lock 是否锁定
  */
 export async function lockFile(id: string, lock: boolean): Promise<void> {
-  Request.put(
-    `/file/${id}/lock`,
-    {
-      data: { locked: lock },
-      dataType: "url",
-    },
-  )
+  Request.put(`/file/${id}/lock`, {
+    data: { locked: lock },
+    dataType: "url",
+  })
 }
 
 /**

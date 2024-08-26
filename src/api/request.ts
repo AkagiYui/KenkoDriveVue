@@ -1,11 +1,12 @@
 import { NIcon } from "naive-ui"
 import { BugReportOutlined } from "@vicons/material"
 import { useUserInfo } from "@/stores/user-info"
-import { hasText } from "@/utils"
+import { buildUrl, hasText } from "@/utils"
+import { fetchEventSource, type EventSourceMessage } from "@microsoft/fetch-event-source"
 import EMD from "./ResponseMessages"
 
 const isDev = import.meta.env.DEV
-export const baseConfig = {
+const baseConfig = {
   baseURL: isDev ? "/api" : import.meta.env.VITE_BACKEND_BASE_URL,
   timeout: 10000,
   withCredentials: false,
@@ -103,17 +104,7 @@ function request<T>(config: RequestConfig): Promise<KResponse<T>> {
   }
 
   // 构造URL
-  const baseURL = baseConfig.baseURL
-  const urlObject = new URL(
-    baseURL.startsWith("/") ? `${baseURL}${config.url}` : config.url || "",
-    baseURL.startsWith("/") ? window.location.origin : baseConfig.baseURL,
-  )
-  if (config.params) {
-    Object.keys(config.params).forEach((key) => {
-      urlObject.searchParams.append(key, config.params![key])
-    })
-  }
-  const url = urlObject.toString()
+  const url = buildUrl(config.url || "", config.params, baseConfig.baseURL, true)
 
   // 构造请求体
   let body: any = config.data
@@ -190,6 +181,7 @@ function request<T>(config: RequestConfig): Promise<KResponse<T>> {
       resolve(response)
     }
     xhr.onerror = (ev) => {
+      console.log("xhr.onerror", ev)
       onErrorResponse(config)
       reject(xhr.statusText)
     }
@@ -200,9 +192,47 @@ function request<T>(config: RequestConfig): Promise<KResponse<T>> {
   })
 }
 
+interface ServerEventSourceConfig {
+  url: string
+  auth?: boolean
+  onmessage?: (ev: EventSourceMessage) => void
+  onclose?: () => void
+  onerror?: (err: any) => number | null | undefined | void
+  onopen?: (response: Response) => Promise<void>
+  headers?: Record<string, string>
+  params?: Record<string, any>
+}
+
+function sse(config: ServerEventSourceConfig) {
+  const headers = config.headers || {}
+  if (config.auth !== false && hasText(getToken())) {
+    headers["Authorization"] = `Bearer ${getToken()}`
+  }
+
+  const url = buildUrl(config.url, config.params, baseConfig.baseURL, true)
+  const ctrl = new AbortController()
+  fetchEventSource(url, {
+    headers,
+    signal: ctrl.signal,
+    onmessage: config.onmessage,
+    onclose: config.onclose,
+    onerror: config.onerror,
+    onopen: config.onopen,
+  })
+  return {
+    close: ctrl.abort.bind(ctrl),
+  }
+}
+
 export default {
   get: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "GET" }),
   post: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "POST" }),
   put: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "PUT" }),
   delete: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "DELETE" }),
+  patch: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "PATCH" }),
+  head: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "HEAD" }),
+  options: <T = void>(url: string, config?: RequestConfig) => request<T>({ ...config, url, method: "OPTIONS" }),
+  sse: (url, config) => sse({ ...config, url }),
+  buildUrl: (url: string, params?: Record<string, any>) => buildUrl(url, params, baseConfig.baseURL, true),
+  config: baseConfig,
 }
