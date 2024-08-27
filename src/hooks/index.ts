@@ -33,7 +33,7 @@ export function useInterval(callback: () => void, delay: number) {
  * @param delay 延迟(ms)
  */
 export function useDebounce(callback: () => void, delay: number) {
-  let timer: number | NodeJS.Timeout
+  let timer: ReturnType<typeof setTimeout>
   return () => {
     clearTimeout(timer)
     timer = setTimeout(callback, delay)

@@ -39,7 +39,7 @@ const icon = computed(() => {
 // 确认删除
 const isConfirming = ref(false)
 const onRemoveButtonClick = (() => {
-  let timer: NodeJS.Timeout | number = 0
+  let timer: ReturnType<typeof setTimeout>
   return () => {
     if (isConfirming.value) {
       clearTimeout(timer)

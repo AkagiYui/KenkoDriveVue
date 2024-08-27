@@ -11,7 +11,7 @@ const isQrCodeValid = ref(true)
 const isTaken = ref(false)
 const isCanceled = ref(false)
 const nickname = ref("")
-let timer: NodeJS.Timeout
+let timer: ReturnType<typeof setInterval>
 
 onMounted(refreshQrCode)
 onBeforeUnmount(() => {
