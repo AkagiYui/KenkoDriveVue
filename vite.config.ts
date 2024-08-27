@@ -9,7 +9,6 @@ import { NaiveUiResolver } from "unplugin-vue-components/resolvers"
 import MsClarity from "vite-plugin-ms-clarity"
 import VueRouter from "unplugin-vue-router/vite"
 import { getFileBasedRouteName, VueRouterAutoImports } from "unplugin-vue-router"
-import { nodePolyfills } from "vite-plugin-node-polyfills"
 
 // eslint-disable-next-line no-undef
 const env = process.env
@@ -26,7 +25,6 @@ const config = {
         rewrite: (path: string) => path.replace(/^\/api/, ""),
       },
     },
-    https: true,
   },
   preview: {
     host: "0.0.0.0",
@@ -91,7 +89,6 @@ const config = {
         // ...
       },
     }),
-    nodePolyfills(),
     vue(),
     vueJsx(),
     AutoImport({

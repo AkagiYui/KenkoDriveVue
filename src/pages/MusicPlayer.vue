@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import "aplayer/dist/APlayer.min.css"
 import APlayer from "aplayer"
-import * as musicMetadata from "music-metadata-browser"
+import { parseBlob as getMusicMetadata } from "music-metadata"
 import { useBusEvent } from "@/hooks"
 import { BusEvent } from "@/types"
 
@@ -34,7 +34,7 @@ useBusEvent(BusEvent.PLAY_MUSIC, async (url) => {
   const musicBlob = await music.blob()
   musicUrl = URL.createObjectURL(musicBlob)
 
-  const metadata = await musicMetadata.parseBlob(musicBlob)
+  const metadata = await getMusicMetadata(musicBlob)
   console.debug("music metadata", metadata)
   const title = metadata.common.title
   const artist = metadata.common.artist
