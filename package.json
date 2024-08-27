@@ -18,7 +18,7 @@
   "dependencies": {
     "@microsoft/fetch-event-source": "^2.0.1",
     "@shikijs/monaco": "^1.5.2",
-    "@tato30/vue-pdf": "^1.9.7",
+    "@tato30/vue-pdf": "^1.11.0",
     "@undecaf/zbar-wasm": "^0.11.0",
     "@vue-office/docx": "^1.6.1",
     "@vue-office/excel": "^1.7.8",
@@ -84,5 +84,8 @@
     "vscode-loc.git": "github:microsoft/vscode-loc",
     "vue-dompurify-html": "^5.0.1",
     "vue-tsc": "^1.8.27"
+  },
+  "pnpm": {
+    "ignoredOptionalDependencies": ["fsevents", "canvas"]
   }
 }
