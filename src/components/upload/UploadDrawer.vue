@@ -127,7 +127,7 @@ function addFileList(files: FileList, folderId?: string | null) {
 }
 
 // 非安全上下文环境下无法使用crypto.randomUUID
-const uuid = crypto.randomUUID || (() => Math.random().toString(36).slice(2))
+const uuid = crypto.randomUUID.bind(crypto) || (() => Math.random().toString(36).slice(2))
 function addFile(file: File, folderId?: string | null) {
   const id = uuid()
   const info: UploadDisplayInfo = {
