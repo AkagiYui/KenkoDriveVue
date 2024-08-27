@@ -66,6 +66,7 @@
 - vite-plugin-ms-clarity: Clarity统计
 - [aplayer](https://aplayer.js.org/): 音频播放器
 - [Fetch Event Source](https://github.com/Azure/fetch-event-source) 更好的SSE支持
+- [zbar-wasm](https://github.com/undecaf/zbar-wasm): 二维码识别
 
 ## TODO
 

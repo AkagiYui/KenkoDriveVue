@@ -166,6 +166,7 @@ const config = {
       "monaco-editor/esm/vs/language/typescript/ts.worker",
       "monaco-editor/esm/vs/editor/editor.worker",
     ],
+    exclude: ["@undecaf/zbar-wasm"],
   },
 }
 

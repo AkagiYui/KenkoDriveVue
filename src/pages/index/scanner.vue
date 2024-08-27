@@ -8,21 +8,25 @@
 </route>
 
 <script setup lang="ts">
-import { BrowserQRCodeReader, NotFoundException } from "@zxing/library"
+import { ref, onMounted, onUnmounted, watch } from "vue"
+import { createCanvas } from "canvas"
+import { scanImageData } from "@undecaf/zbar-wasm"
 import { useRouter } from "vue-router"
-import { useAssetUrl } from "@/utils"
+import { isOffscreenCanvasWorking, useAssetUrl } from "@/utils"
 
 const router = useRouter()
 const selectedDeviceId = ref("")
 const videoInputDevices = ref<InputDeviceInfo[]>([])
 const errorMessage = ref("")
 const qrCodeValue = ref("")
-const codeReader = new BrowserQRCodeReader()
-const isUnmounted = ref(false)
+const isScanning = ref(false)
 
 const videoRef = ref<HTMLVideoElement>()
 const beepRef = ref<HTMLAudioElement>()
+
 let stream: MediaStream | null = null
+let animationFrameId: number | null = null
+const usingOffscreenCanvas = isOffscreenCanvasWorking()
 
 async function updateVideoInputDevices() {
   try {
@@ -38,7 +42,6 @@ async function updateVideoInputDevices() {
         selectedDeviceId.value = backDevice.deviceId
         return
       }
-      // selectedDeviceId.value = backDevice?.deviceId || videoInputDevices.value[0].deviceId
       const nvidiaBroadcast = videoInputDevices.value.find((device) =>
         device.label.toLowerCase().includes("nvidia broadcast"),
       )
@@ -58,6 +61,9 @@ async function openCamera() {
   if (!selectedDeviceId.value) return
 
   try {
+    // 停止之前的扫描和流
+    stopScanningAndStream()
+
     stream = await navigator.mediaDevices.getUserMedia({
       video: { deviceId: { exact: selectedDeviceId.value } },
       audio: false,
@@ -67,7 +73,7 @@ async function openCamera() {
       videoRef.value.srcObject = stream
       videoRef.value.onloadedmetadata = () => {
         videoRef.value!.play()
-        startScan(videoRef.value!, stream!)
+        startScan()
       }
     }
     errorMessage.value = ""
@@ -77,70 +83,104 @@ async function openCamera() {
   }
 }
 
-async function startScan(video: HTMLVideoElement, stream: MediaStream) {
-  if (isUnmounted.value) {
-    stream.getTracks().forEach((track) => track.stop())
-    return
+function stopScanningAndStream() {
+  isScanning.value = false
+  if (animationFrameId !== null) {
+    cancelAnimationFrame(animationFrameId)
+    animationFrameId = null
   }
-  console.log("startScan")
-  // 提取帧
-  const image = extractFrameToDataURL(video)
-  // 扫描
-  try {
-    const result = await codeReader.decodeFromImageUrl(image)
-    qrCodeValue.value = result.getText()
-    console.log("扫描结果:", result.getText())
-  } catch (error) {
-    if (error instanceof NotFoundException) {
-      console.log("未找到二维码")
-      setTimeout(() => startScan(video, stream), 500)
-    } else {
-      console.log("扫描失败:", error)
+  if (stream) {
+    stream.getTracks().forEach((track) => track.stop())
+    stream = null
+  }
+}
+
+function startScan() {
+  if (!videoRef.value || !stream || isScanning.value) return
+
+  isScanning.value = true
+  scanFrame(0)
+}
+
+let lastScanTime = 0
+const SCAN_INTERVAL = 1000 // 1秒的扫描间隔
+
+async function scanFrame(timestamp: number) {
+  if (!isScanning.value) return
+
+  if (timestamp - lastScanTime >= SCAN_INTERVAL) {
+    lastScanTime = timestamp
+    await performScan()
+  }
+
+  animationFrameId = requestAnimationFrame(scanFrame)
+}
+
+let offCanvas
+
+async function performScan() {
+  if (!videoRef.value) return
+  console.debug("扫描中...")
+
+  const canvas = createCanvas()
+  canvas.width = videoRef.value.videoWidth
+  canvas.height = videoRef.value.videoHeight
+  const ctx = canvas.getContext("2d")
+
+  function getOffCtx2d(width, height) {
+    if (usingOffscreenCanvas) {
+      if (!offCanvas || offCanvas.width !== width || offCanvas.height !== height) {
+        offCanvas = new OffscreenCanvas(width, height)
+        offCanvas.willReadFrequently = true
+      }
+      return offCanvas.getContext("2d")
+    }
+  }
+  const offCtx = getOffCtx2d(canvas.width, canvas.height) || ctx
+
+  offCtx.drawImage(videoRef.value, 0, 0)
+
+  const imageData = offCtx.getImageData(0, 0, canvas.width, canvas.height)
+  const symbols = await scanImageData(imageData)
+  const results = symbols
+    .filter((symbol) => symbol.typeName.toLowerCase().includes("qrcode"))
+    .map((symbol) => symbol.decode())
+
+  if (results.length) {
+    qrCodeValue.value = results.join(" | ")
+    for (const symbol of results) {
+      console.debug("扫描结果:", symbol)
+      const shouldContinue = await handleScanResult(symbol)
+      if (!shouldContinue) {
+        stopScanningAndStream()
+        break
+      }
     }
   }
 }
 
-function extractFrameToDataURL(videoElement: HTMLVideoElement): string {
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d")
-
-  // 设置canvas尺寸与视频帧匹配
-  canvas.width = videoElement.videoWidth
-  canvas.height = videoElement.videoHeight
-
-  // 将当前视频帧绘制到canvas上
-  ctx?.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
-
-  // 将canvas内容转换为Data URL
-  const url = canvas.toDataURL("image/png")
-  canvas.remove()
-  return url
-}
-
 onMounted(async () => {
-  ;(await navigator.mediaDevices.getUserMedia({ video: true })).getTracks().forEach((track) => track.stop())
+  const initialStream = await navigator.mediaDevices.getUserMedia({ video: true })
+  initialStream.getTracks().forEach((track) => track.stop())
+
   await updateVideoInputDevices()
-  navigator.mediaDevices.addEventListener("devicechange", updateVideoInputDevices) // 监听设备变化
+  navigator.mediaDevices.addEventListener("devicechange", updateVideoInputDevices)
 })
 
 onUnmounted(() => {
-  isUnmounted.value = true
+  stopScanningAndStream()
   navigator.mediaDevices.removeEventListener("devicechange", updateVideoInputDevices)
   console.debug("Scanner unmounted")
 })
 
 watch(selectedDeviceId, openCamera)
 watch(qrCodeValue, (value) => {
-  if (!value) return
-  beepRef.value?.play()
-  handleScanResult(value).then((shouldContinue) => {
-    if (shouldContinue) {
-      setTimeout(() => startScan(videoRef.value!, stream!), 1000)
-    }
-  })
+  if (value) {
+    beepRef.value?.play()
+  }
 })
 
-async function handleScanResult(result: string): Promise<Boolean> {
+async function handleScanResult(result: string): Promise<boolean> {
   if (!result.startsWith("kd://")) {
     return true
   }
