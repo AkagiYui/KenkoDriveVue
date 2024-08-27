@@ -9,17 +9,29 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue"
-import { createCanvas } from "canvas"
 import { scanImageData } from "@undecaf/zbar-wasm"
 import { useRouter } from "vue-router"
 import { isOffscreenCanvasWorking, useAssetUrl } from "@/utils"
 
 const router = useRouter()
+
 const selectedDeviceId = ref("")
 const videoInputDevices = ref<InputDeviceInfo[]>([])
+const hasCamera = computed(() => {
+  if (videoInputDevices.value.length === 1 && videoInputDevices.value[0].deviceId === "") {
+    return false
+  }
+  return videoInputDevices.value.length > 0
+})
+watch(selectedDeviceId, openCamera) // 切换设备时重新打开摄像头
+
 const errorMessage = ref("")
 const qrCodeValue = ref("")
 const isScanning = ref(false)
+watch(qrCodeValue, (value) => {
+  // 播放提示音
+  value && beepRef.value?.play()
+})
 
 const videoRef = ref<HTMLVideoElement>()
 const beepRef = ref<HTMLAudioElement>()
@@ -28,20 +40,34 @@ let stream: MediaStream | null = null
 let animationFrameId: number | null = null
 const usingOffscreenCanvas = isOffscreenCanvasWorking()
 
+onMounted(async () => {
+  await updateVideoInputDevices()
+  navigator.mediaDevices.addEventListener("devicechange", updateVideoInputDevices)
+})
+onUnmounted(() => {
+  stopScanningAndStream()
+  navigator.mediaDevices.removeEventListener("devicechange", updateVideoInputDevices)
+  console.debug("Scanner unmounted")
+})
+
 async function updateVideoInputDevices() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices()
     videoInputDevices.value = devices.filter((device) => device.kind === "videoinput") as InputDeviceInfo[]
-    if (!videoInputDevices.value.length) {
+    if (!hasCamera.value) {
       errorMessage.value = "未检测到摄像头"
+      return
     }
-    if (!selectedDeviceId.value && videoInputDevices.value.length) {
+
+    // 如果没有选择设备（首次加载），自动选择设备
+    if (!selectedDeviceId.value && hasCamera.value) {
       // 如果有 facing back 的设备，优先选择
       const backDevice = videoInputDevices.value.find((device) => device.label.toLowerCase().includes("back"))
       if (backDevice) {
         selectedDeviceId.value = backDevice.deviceId
         return
       }
+      // 如果有 nvidia broadcast 设备，优先选择
       const nvidiaBroadcast = videoInputDevices.value.find((device) =>
         device.label.toLowerCase().includes("nvidia broadcast"),
       )
@@ -84,7 +110,6 @@ async function openCamera() {
 }
 
 function stopScanningAndStream() {
-  isScanning.value = false
   if (animationFrameId !== null) {
     cancelAnimationFrame(animationFrameId)
     animationFrameId = null
@@ -93,13 +118,14 @@ function stopScanningAndStream() {
     stream.getTracks().forEach((track) => track.stop())
     stream = null
   }
+  isScanning.value = false
 }
 
 function startScan() {
   if (!videoRef.value || !stream || isScanning.value) return
 
   isScanning.value = true
-  scanFrame(0)
+  scanFrame(Math.floor(performance.now()))
 }
 
 let lastScanTime = 0
@@ -116,33 +142,23 @@ async function scanFrame(timestamp: number) {
   animationFrameId = requestAnimationFrame(scanFrame)
 }
 
-let offCanvas
+let canvas: HTMLCanvasElement | OffscreenCanvas
+function getCanvasCtx(width: number, height: number) {
+  if (!canvas || canvas.width !== width || canvas.height !== height) {
+    canvas = usingOffscreenCanvas ? new OffscreenCanvas(width, height) : document.createElement("canvas")
+  }
+  return canvas.getContext("2d", { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D
+}
 
 async function performScan() {
   if (!videoRef.value) return
   console.debug("扫描中...")
 
-  const canvas = createCanvas()
-  canvas.width = videoRef.value.videoWidth
-  canvas.height = videoRef.value.videoHeight
-  const ctx = canvas.getContext("2d")
+  const ctx = getCanvasCtx(videoRef.value.videoWidth, videoRef.value.videoHeight)
+  ctx.drawImage(videoRef.value, 0, 0)
 
-  function getOffCtx2d(width, height) {
-    if (usingOffscreenCanvas) {
-      if (!offCanvas || offCanvas.width !== width || offCanvas.height !== height) {
-        offCanvas = new OffscreenCanvas(width, height)
-        offCanvas.willReadFrequently = true
-      }
-      return offCanvas.getContext("2d")
-    }
-  }
-  const offCtx = getOffCtx2d(canvas.width, canvas.height) || ctx
-
-  offCtx.drawImage(videoRef.value, 0, 0)
-
-  const imageData = offCtx.getImageData(0, 0, canvas.width, canvas.height)
-  const symbols = await scanImageData(imageData)
-  const results = symbols
+  const imageData = ctx.getImageData(0, 0, videoRef.value.videoWidth, videoRef.value.videoHeight)
+  const results = (await scanImageData(imageData))
     .filter((symbol) => symbol.typeName.toLowerCase().includes("qrcode"))
     .map((symbol) => symbol.decode())
 
@@ -159,27 +175,11 @@ async function performScan() {
   }
 }
 
-onMounted(async () => {
-  const initialStream = await navigator.mediaDevices.getUserMedia({ video: true })
-  initialStream.getTracks().forEach((track) => track.stop())
-
-  await updateVideoInputDevices()
-  navigator.mediaDevices.addEventListener("devicechange", updateVideoInputDevices)
-})
-
-onUnmounted(() => {
-  stopScanningAndStream()
-  navigator.mediaDevices.removeEventListener("devicechange", updateVideoInputDevices)
-  console.debug("Scanner unmounted")
-})
-
-watch(selectedDeviceId, openCamera)
-watch(qrCodeValue, (value) => {
-  if (value) {
-    beepRef.value?.play()
-  }
-})
-
+/**
+ * 处理扫描结果
+ * @param result 扫描结果
+ * @returns 是否继续扫描
+ */
 async function handleScanResult(result: string): Promise<boolean> {
   if (!result.startsWith("kd://")) {
     return true
@@ -196,10 +196,27 @@ async function handleScanResult(result: string): Promise<boolean> {
   }
   return true
 }
+
+async function requestPermission() {
+  try {
+    await navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      stream.getTracks().forEach((track) => track.stop())
+    })
+    updateVideoInputDevices()
+  } catch (_) {
+    errorMessage.value = "请求摄像头权限失败，请检查权限设置。"
+  }
+}
 </script>
 
 <template>
-  <n-flex vertical>
+  <audio ref="beepRef" :src="useAssetUrl('qrcode.mp3')" preload="auto" />
+  <h1>扫一扫</h1>
+  <n-flex v-if="!hasCamera" vertical>
+    <h2>未检测到摄像头，请检查摄像头是否连接设备或是否授权使用摄像头。</h2>
+    <n-button type="primary" @click="requestPermission">申请权限</n-button>
+  </n-flex>
+  <n-flex v-else vertical>
     <n-radio-group v-model:value="selectedDeviceId">
       <n-radio-button
         v-for="device in videoInputDevices"
@@ -213,6 +230,5 @@ async function handleScanResult(result: string): Promise<boolean> {
     <video ref="videoRef" style="width: 100%; max-width: 400px" />
     <span v-if="errorMessage" style="color: red">{{ errorMessage }}</span>
     <span>扫描结果：{{ qrCodeValue }}</span>
-    <audio ref="beepRef" :src="useAssetUrl('qrcode.mp3')" preload="auto" />
   </n-flex>
 </template>
