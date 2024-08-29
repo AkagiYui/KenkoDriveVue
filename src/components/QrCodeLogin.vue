@@ -11,11 +11,11 @@ const isQrCodeValid = ref(true)
 const isTaken = ref(false)
 const isCanceled = ref(false)
 const nickname = ref("")
-let timer: ReturnType<typeof setInterval>
+let timer: ReturnType<typeof setTimeout> | null = null
 
 onMounted(refreshQrCode)
 onBeforeUnmount(() => {
-  timer && clearInterval(timer)
+  timer && clearTimeout(timer)
 })
 
 async function refreshQrCode() {
@@ -23,29 +23,27 @@ async function refreshQrCode() {
   isQrCodeValid.value = true
   isTaken.value = false
   isCanceled.value = false
-  timer && clearInterval(timer)
-  timer = setInterval(refreshQrCodeStatus, 2000)
+  refreshQrCodeStatus()
 }
 
 async function refreshQrCodeStatus() {
+  timer = null
   try {
     const result = await getQrStatus(temporaryToken.value)
     isTaken.value = result.taken
     nickname.value = result.nickname as string
     isQrCodeValid.value = true
     isCanceled.value = result.canceled
-    if (isCanceled.value) {
-      timer && clearInterval(timer)
-    }
     if (result.confirmed) {
       timer && clearInterval(timer)
       setToken(result.token!.token)
       router.push("/")
+    } else if (!result.canceled) { // 既没有确认也没有取消
+      timer = setTimeout(refreshQrCodeStatus, 2000)
     }
   } catch (error) {
     isQrCodeValid.value = false
     isTaken.value = false
-    timer && clearInterval(timer)
   }
 }
 </script>
