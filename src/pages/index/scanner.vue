@@ -30,11 +30,10 @@ const qrCodeValue = ref("")
 const isScanning = ref(false)
 watch(qrCodeValue, (value) => {
   // 播放提示音
-  value && beepRef.value?.play()
+  value && playAudio()
 })
 
 const videoRef = ref<HTMLVideoElement>()
-const beepRef = ref<HTMLAudioElement>()
 
 let stream: MediaStream | null = null
 let animationFrameId: number | null = null
@@ -207,10 +206,31 @@ async function requestPermission() {
     errorMessage.value = "请求摄像头权限失败，请检查权限设置。"
   }
 }
+
+const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+let audioContent: AudioBuffer | null
+onMounted(() => {
+  // 预加载音频
+  fetch(useAssetUrl("qrcode.webm"))
+    .then((response) => response.arrayBuffer())
+    .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
+    .then((audioBuffer) => {
+      audioContent = audioBuffer
+    })
+    .catch((e) => console.error("Error with decoding audio data", e))
+})
+
+function playAudio() {
+  if (audioContent) {
+    const source = audioContext.createBufferSource()
+    source.buffer = audioContent
+    source.connect(audioContext.destination)
+    source.start()
+  }
+}
 </script>
 
 <template>
-  <audio ref="beepRef" :src="useAssetUrl('qrcode.mp3')" preload="auto" />
   <h1>扫一扫</h1>
   <n-flex v-if="!hasCamera" vertical>
     <h2>未检测到摄像头，请检查摄像头是否连接设备或是否授权使用摄像头。</h2>

@@ -6,7 +6,8 @@ export {}
 
 declare global {
   export interface Window {
-    $message: MessageApiInjection
+    webkitAudioContext: typeof AudioContext
+    $message: MessageApiInjection 
     $dialog: DialogApiInjection
     $loadingbar: LoadingBarInst
     $notify: NotificationApiInjection
