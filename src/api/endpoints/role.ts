@@ -8,12 +8,10 @@ import Request from "../request"
  */
 export async function getRoles(index: number = 0, size: number = 10, expression?: string): Promise<Page<RoleResponse>> {
   type Response = Page<RoleResponse>
+  const baseParams = { index, size }
+  const params = expression ? { ...baseParams, expression } : baseParams
   const res = await Request.get<Response>("/role", {
-    params: {
-      index: index,
-      size: size,
-      expression: expression,
-    },
+    params,
   })
   return res.data
 }

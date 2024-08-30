@@ -5,9 +5,9 @@ import Request from "../request"
  * 获取用户分页
  * @param index 页码
  * @param size 每页数量
- * @param filter 搜索表达式
+ * @param expression 搜索表达式
  */
-export async function getUsers(index: number, size: number, filter?: string): Promise<Page<UserInfoResponse>> {
+export async function getUsers(index: number, size: number, expression?: string): Promise<Page<UserInfoResponse>> {
   type Response = Page<{
     id: string
     username: string
@@ -19,12 +19,10 @@ export async function getUsers(index: number, size: number, filter?: string): Pr
     registerTime: number
     permissions: string[]
   }>
+  const baseParams = { index, size }
+  const params = expression ? { ...baseParams, expression } : baseParams
   const res = await Request.get<Response>("/user", {
-    params: {
-      index: index,
-      size: size,
-      expression: filter,
-    },
+    params,
   })
   return {
     ...res.data,
