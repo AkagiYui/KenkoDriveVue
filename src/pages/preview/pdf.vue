@@ -9,10 +9,19 @@
 </route>
 
 <script lang="ts" setup>
-import { useRoute } from "vue-router"
-
-const route = useRoute()
+const { url } = useRoute().query as { url: string }
 const blobUrl = ref("")
+
+onMounted(() => {
+  if (url) {
+    fetch(url)
+      .then((res) => res.blob())
+      .then((res) => {
+        const blob = new Blob([res], { type: "application/pdf" })
+        blobUrl.value = URL.createObjectURL(blob)
+      })
+  }
+})
 
 onBeforeUnmount(() => {
   if (blobUrl.value !== "") {
@@ -22,15 +31,6 @@ onBeforeUnmount(() => {
 
 function onOpenButtonClick() {
   window.open(blobUrl.value)
-}
-
-if (route.query.url) {
-  fetch(route.query.url as string)
-    .then((res) => res.blob())
-    .then((res) => {
-      const blob = new Blob([res], { type: "application/pdf" })
-      blobUrl.value = URL.createObjectURL(blob)
-    })
 }
 </script>
 

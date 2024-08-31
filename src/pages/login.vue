@@ -8,10 +8,6 @@
 </route>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router/auto"
-import { storeToRefs } from "pinia"
-import { NIcon } from "naive-ui"
-import type { FormInst, FormItemRule } from "naive-ui"
 import {
   CheckmarkOutline,
   KeyOutline,
@@ -20,18 +16,6 @@ import {
   PhonePortraitOutline,
   SendSharp,
 } from "@vicons/ionicons5"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
-import {
-  confirmEmailRegisterOtp,
-  getTokenBySms,
-  getToken,
-  sendEmailRegisterOtp,
-  sendSmsOtp,
-  getRegisterEnabled,
-} from "@/api"
-import { hasText } from "@/utils"
-import { useGlobal } from "@/hooks"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const { setToken } = useUserInfo()

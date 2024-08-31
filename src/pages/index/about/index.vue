@@ -9,8 +9,6 @@
 
 <script lang="ts" setup>
 import { useAssetUrl } from "@/utils"
-import QrCode from "@/components/QrCode.vue"
-import { getBackendVersion } from "@/api"
 
 const isDev = import.meta.env.DEV as boolean
 const frontendVersion = ref<string>(__APP_VERSION__)

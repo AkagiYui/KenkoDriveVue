@@ -2,8 +2,6 @@
 import "aplayer/dist/APlayer.min.css"
 import APlayer from "aplayer"
 import { parseBlob as getMusicMetadata } from "music-metadata"
-import { useBusEvent } from "@/hooks"
-import { BusEvent } from "@/types"
 
 const playerRef = ref<HTMLDivElement | null>(null)
 const showPlayer = ref(false)

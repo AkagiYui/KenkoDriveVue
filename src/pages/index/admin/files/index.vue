@@ -9,12 +9,8 @@
 
 <script setup lang="ts">
 import { filesize } from "filesize"
-import { NButton, NFlex } from "naive-ui"
 import { RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import { deleteRealFile, lockFile, useFileList } from "@/api"
-import PagingTable from "@/components/table/PagingTable.vue"
 import OwnerTable from "./OwnerTable.vue"
-import { useConfirmModal } from "@/hooks"
 
 const tableColumns = [
   {

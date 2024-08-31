@@ -1,14 +1,7 @@
 <script lang="ts" setup>
-import Request from "@/api/request"
-import { emitBusEvent, useBusEvent, useEventListener } from "@/hooks"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
-import { BusEvent } from "@/types"
 import { DocumentOutline, FolderOutline } from "@vicons/ionicons5"
-import { storeToRefs } from "pinia"
-import UploadItem from "./UploadItem.vue"
 
-const { config: requestConfig } = Request
+const { config: requestConfig } = request
 const { requestToken } = useUserInfo()
 const { isUploadDrawerShow, uploadItemCount } = storeToRefs(useAppConfig())
 

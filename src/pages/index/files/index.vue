@@ -8,11 +8,6 @@
 </route>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router/auto"
-import { storeToRefs } from "pinia"
-import type { HTMLAttributes } from "vue"
-import { NButton, NDropdown, NFlex, NIcon, NImage, useThemeVars } from "naive-ui"
-import type { DataTableColumns } from "naive-ui"
 import { ArrowUp, Folder } from "@vicons/carbon"
 import {
   AddOutline,
@@ -33,23 +28,9 @@ import {
   DocumentLock24Regular,
 } from "@vicons/fluent"
 import { filesize } from "filesize"
-import {
-  deleteFile as deleteFileEndpoint,
-  deleteFolder as deleteFolderEndpoint,
-  getFileTemporaryUrl,
-  getFolderContent,
-  moveFile,
-  moveFolder,
-  renameUserFile,
-  renameFolder,
-} from "@/api"
 import CreateFolderModal from "./CreateFolderModal.vue"
 import SharingModal from "./SharingModal.vue"
-import { renderIcon, type2Icon } from "@/utils"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
-import { emitBusEvent, useBusEvent, useConfirmModal, useRenameModal } from "@/hooks"
-import { BusEvent } from "@/types"
+
 const { isDarkMode, lastFolderIds } = storeToRefs(useAppConfig())
 const { userId } = storeToRefs(useUserInfo())
 const router = useRouter()
@@ -276,7 +257,7 @@ function shareFile(row: TableData) {
 const { openConfirmModal } = useConfirmModal()
 function deleteItem(row: TableData) {
   openConfirmModal(async () => {
-    const endpoint = row.type === "folder" ? deleteFolderEndpoint : deleteFileEndpoint
+    const endpoint = row.type === "folder" ? deleteFolder : deleteFile
     await endpoint(row.id)
     window.$message.success("删除成功")
     loadFolder(currentFolderId.value)

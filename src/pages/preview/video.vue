@@ -9,13 +9,11 @@
 </route>
 
 <script lang="ts" setup>
-import { useRoute } from "vue-router"
-
-const route = useRoute()
+const { url } = useRoute().query as { url: string }
 </script>
 
 <template>
-  <VideoPlayer id="player" :url="route.query.url as string"></VideoPlayer>
+  <VideoPlayer id="player" :url="url"></VideoPlayer>
 </template>
 
 <style scoped>

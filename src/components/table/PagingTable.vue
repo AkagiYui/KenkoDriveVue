@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { PaginationProps } from "naive-ui"
-
 const props = withDefaults(
   defineProps<{
     columns: any[]

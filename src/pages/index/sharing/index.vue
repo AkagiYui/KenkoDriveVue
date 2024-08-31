@@ -8,10 +8,6 @@
 </route>
 
 <script setup lang="ts">
-import { NButton, NFlex } from "naive-ui"
-import { deleteSharing, useSharingList } from "@/api"
-import { useConfirmModal } from "@/hooks"
-
 const { data, refresh, isLoading } = useSharingList()
 const columns = [
   {

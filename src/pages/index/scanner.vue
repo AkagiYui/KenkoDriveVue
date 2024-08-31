@@ -8,10 +8,7 @@
 </route>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from "vue"
 import { scanImageData } from "@undecaf/zbar-wasm"
-import { useRouter } from "vue-router"
-import { isOffscreenCanvasWorking, useAssetUrl } from "@/utils"
 
 const router = useRouter()
 

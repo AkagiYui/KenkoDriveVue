@@ -8,11 +8,7 @@
 </route>
 
 <script lang="ts" setup>
-import { useRouter } from "vue-router/auto"
-import SideMenu from "@/components/SideMenu.vue"
 import MusicPlayer from "./MusicPlayer.vue"
-import UploadDrawer from "@/components/upload/UploadDrawer.vue"
-import { useUserInfo } from "@/stores/user-info"
 
 const { renewUserInfo, isLoggedIn } = useUserInfo()
 const router = useRouter()

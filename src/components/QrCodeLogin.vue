@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { getQrStatus, getQrToken } from "@/api"
-import { useUserInfo } from "@/stores/user-info"
-import { useRouter } from "vue-router/auto"
-
 const router = useRouter()
 const { setToken } = useUserInfo()
 const temporaryToken = ref<string>("")
@@ -38,7 +34,8 @@ async function refreshQrCodeStatus() {
       timer && clearInterval(timer)
       setToken(result.token!.token)
       router.push("/")
-    } else if (!result.canceled) { // 既没有确认也没有取消
+    } else if (!result.canceled) {
+      // 既没有确认也没有取消
       timer = setTimeout(refreshQrCodeStatus, 2000)
     }
   } catch (error) {

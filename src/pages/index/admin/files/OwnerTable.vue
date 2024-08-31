@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useFileOwner } from "@/api"
-
 const show = defineModel<boolean>("show", { default: false })
 const props = withDefaults(
   defineProps<{
@@ -15,7 +13,7 @@ watch(props, (newProps) => {
   }
 })
 
-const { id, owner, fetchData, isLoading } = useFileOwner()
+const { id, owner, isLoading } = useFileOwner()
 const columns = [
   {
     title: "用户名",

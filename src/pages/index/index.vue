@@ -8,12 +8,7 @@
 </route>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia"
 import { MdSave } from "@vicons/ionicons4"
-import { getDisplayAnnouncements } from "@/api"
-import { useUserInfo } from "@/stores/user-info"
-import { useAppConfig } from "@/stores/app-config"
-import { useInterval } from "@/hooks"
 
 const { nickname } = storeToRefs(useUserInfo())
 const { isDebugMode } = storeToRefs(useAppConfig())

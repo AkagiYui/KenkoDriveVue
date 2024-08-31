@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from "vue-router/auto"
-import type { MenuOption } from "naive-ui"
-import { storeToRefs } from "pinia"
 import {
   BulbOutline,
   CaretDownOutline,
@@ -27,11 +24,10 @@ import {
   TrashOutline,
   CogOutline,
 } from "@vicons/ionicons5"
-import { useAppConfig } from "@/stores/app-config"
-import { renderIcon } from "@/utils"
 
 const { expandedMenuKeys, isMenuCollapsed, isDebugMode } = storeToRefs(useAppConfig())
 const route = useRoute()
+const expandIcon = renderIcon(CaretDownOutline)
 
 const menuOptions = ref([
   {
@@ -242,7 +238,7 @@ const renderMenuLabel = (option: MenuOption) => {
           :indent="22"
           :options="menuOptions"
           :render-label="renderMenuLabel"
-          :expand-icon="renderIcon(CaretDownOutline)"
+          :expand-icon="expandIcon"
           :value="route.name"
         />
       </n-scrollbar>

@@ -8,9 +8,7 @@
 </route>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router"
-const params = useRoute().params
-const id = params.id
+const { id } = useRoute().params as { id: string }
 </script>
 
 <template>

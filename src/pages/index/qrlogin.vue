@@ -8,9 +8,6 @@
 </route>
 
 <script setup lang="ts">
-import { cancelQrLogin, claimQrToken, confirmQrLogin } from "@/api"
-import { useRouter } from "vue-router"
-
 const router = useRouter()
 
 // 提取参数

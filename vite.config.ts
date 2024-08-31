@@ -94,14 +94,51 @@ const config = {
     AutoImport({
       imports: [
         "vue",
+        "pinia",
         VueRouterAutoImports,
         {
-          "naive-ui": ["useDialog", "useMessage", "useNotification", "useLoadingBar"],
+          "naive-ui": [
+            "useDialog",
+            "useMessage",
+            "useNotification",
+            "useLoadingBar",
+            "useThemeVars",
+            "NButton",
+            "NCheckbox",
+            "NDropdown",
+            "NFlex",
+            "NProgress",
+            "NSpace",
+            "NSwitch",
+            "NText",
+            "NTooltip",
+            "NInput",
+            "NIcon",
+            "NImage"
+          ],
+          "vue-router": ["RouterLink"],
+        },
+        {
+          from: "naive-ui",
+          imports: ["MenuOption", "PaginationProps", "FormInst", "FormItemRule", "UploadFileInfo", "DataTableColumns"],
+          type: true,
+        },
+        {
+          from: "naive-ui/es/data-table/src/interface",
+          imports: ["TableColumn"],
+          type: true,
+        },
+        {
+          from: "vue",
+          imports: ["HTMLAttributes", "WatchStopHandle"],
+          type: true,
         },
       ],
+      dirs: ["./src/api", "./src/hooks", "./src/utils", "./src/stores", "./src/types"],
     }),
     Components({
       resolvers: [NaiveUiResolver()],
+      globs: ["./src/components/**/*.vue"],
     }),
     basicSsl(),
   ],

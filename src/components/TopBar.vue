@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router/auto"
-import { storeToRefs } from "pinia"
 import {
   ArrowUpOutline,
   LogOutOutline,
@@ -9,10 +7,6 @@ import {
   SunnyOutline,
   ScanOutline,
 } from "@vicons/ionicons5"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
-import { renderIcon } from "@/utils"
-import QrCode from "@/components/QrCode.vue"
 
 const { isDarkMode, isUploadDrawerShow, isDebugMode, uploadItemCount } = storeToRefs(useAppConfig())
 const { nickname, isLoggedIn, avatarUrl } = storeToRefs(useUserInfo())

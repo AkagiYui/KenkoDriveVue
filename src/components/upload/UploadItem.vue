@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { type2Icon } from "@/utils"
 import { CheckmarkOutline, CloseOutline, HelpOutline, PauseOutline, PlayOutline } from "@vicons/ionicons5"
-import { useThemeVars } from "naive-ui"
 
 const props = defineProps<{
   data: UploadDisplayInfo

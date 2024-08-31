@@ -8,10 +8,6 @@
 </route>
 
 <script setup lang="ts">
-import { getConfig, updateSetting } from "@/api"
-import type { WatchStopHandle } from "vue"
-import { useDebounce } from "@/hooks"
-
 // 全局变量
 const isLoading = ref(false)
 let stopper: WatchStopHandle | undefined = undefined

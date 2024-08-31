@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <n-loading-bar-provider>
     <n-message-provider>

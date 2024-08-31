@@ -9,17 +9,6 @@
 
 <script setup lang="ts">
 import { AddOutline, RefreshOutline, SearchOutline } from "@vicons/ionicons5"
-import type { PaginationProps } from "naive-ui"
-import { type FormInst, NButton, NInput, NSpace, NText, NTooltip } from "naive-ui"
-import {
-  addAnnouncement,
-  deleteAnnouncement,
-  getAnnouncements,
-  updateAnnouncement,
-  updateAnnouncementStatus,
-} from "@/api"
-import ConfirmModal from "@/components/ConfirmModal.vue"
-import { renderTooltip } from "@/utils"
 
 /** 表格加载中 */
 const isLoading = ref(false)

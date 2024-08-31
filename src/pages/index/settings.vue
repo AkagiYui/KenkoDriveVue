@@ -8,14 +8,8 @@
 </route>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia"
 import { WeatherMoon16Regular, WeatherSunny16Regular } from "@vicons/fluent"
-import type { UploadFileInfo } from "naive-ui"
-import { useAppConfig } from "@/stores/app-config"
-import { useUserInfo } from "@/stores/user-info"
-import { uploadUserAvatar } from "@/api"
 import { Permission } from "@/types"
-import { useDebounce } from "@/hooks"
 
 const { isDarkMode, isDebugMode } = storeToRefs(useAppConfig())
 const { toggleDarkMode, reset: resetConfig } = useAppConfig()

@@ -9,13 +9,11 @@
 </route>
 
 <script lang="ts" setup>
-import { useRoute } from "vue-router"
-
-const route = useRoute()
+const { url } = useRoute().query as { url: string }
 </script>
 
 <template>
-  <XlsxPreview id="player" :url="route.query.url as string"></XlsxPreview>
+  <XlsxPreview id="player" :url="url"></XlsxPreview>
 </template>
 
 <style scoped>

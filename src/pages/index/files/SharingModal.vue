@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { getSharingInfoByFileId, deleteSharing, createSharing } from "@/api"
-
 const show = defineModel<boolean>("show", { default: false })
 const props = withDefaults(
   defineProps<{
