@@ -23,9 +23,10 @@ export async function getDisplayAnnouncements(): Promise<DisplayAnnouncementResp
 
 /**
  * 分页获取公告
- * @param index 页码
- * @param size 每页数量
- * @param expression 搜索表达式
+ * @param {number} index 页码
+ * @param {number} size 每页数量
+ * @param {string} expression 搜索表达式
+ * @return {Promise<Page<AnnouncementResponse>>} 公告分页
  */
 export async function getAnnouncements(
   index: number = 0,
