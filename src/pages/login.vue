@@ -110,26 +110,21 @@ const formRules = {
     trigger: ["input"],
   },
 }
-const formData = ref({
+const [formData, resetFormData] = useResettableRefFn(() => ({
   username: "",
   password: "",
   repeatPassword: "",
   email: "",
   phone: "",
   otp: "",
-})
+}))
 
 async function onLoginButtonClick() {
   await loginFormRef.value?.validate()
   const token = await getToken(formData.value.username, formData.value.password)
   setToken(token)
   router.replace("/") // 跳转到首页，使用replace以避免产生历史记录
-  formData.value.username = ""
-  formData.value.password = ""
-  formData.value.repeatPassword = ""
-  formData.value.email = ""
-  formData.value.phone = ""
-  formData.value.otp = ""
+  resetFormData()
 }
 
 async function onRegisterButtonClick() {
@@ -137,9 +132,9 @@ async function onRegisterButtonClick() {
   await confirmEmailRegisterOtp(formData.value.email, formData.value.otp)
   window.$message.success("注册成功")
   formData.value.repeatPassword = ""
-  formData.value.username = formData.value.email
   formData.value.email = ""
   formData.value.otp = ""
+  formData.value.username = formData.value.email
   selectedTab.value = "signin"
 }
 

@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance } from "vue"
+import { computed, getCurrentInstance, ref } from "vue"
 import type { ComputedRef } from "vue"
 
 /**
@@ -42,4 +42,34 @@ export function useComputedFn<T>(fn: (...args: unknown[]) => T): (...args: unkno
     cache.set(cacheKey, result)
     return result
   }
+}
+
+/**
+ * 可重置的ref
+ * 
+ * https://www.bilibili.com/video/av113470167064388
+ * @param fn 生成响应式对象的函数
+ * @returns [state, reset] 返回状态和重置函数
+ */
+export function useResettableRefFn<T>(fn: () => T) {
+  const state = ref<T>(fn())
+  const reset = () => {
+    state.value = fn()
+  }
+  return [state, reset] as const
+}
+
+/**
+ * 可重置的reactive
+ * 
+ * @param fn 生成响应式对象的函数
+ * @returns [state, reset] 返回状态和重置函数
+ */
+export function useResettableReactiveFn<T extends object>(fn: () => T) {
+  const state = reactive<T>(fn())
+  const reset = () => {
+    Object.keys(state).forEach(key => delete state[key])
+    Object.assign(state, fn())
+  }
+  return [state, reset] as const
 }
