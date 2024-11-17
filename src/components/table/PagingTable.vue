@@ -1,22 +1,22 @@
 <script setup lang="ts">
-const props = withDefaults(
-  defineProps<{
-    columns: any[]
-    data: any[]
-    loading?: boolean
-    count: number
-  }>(),
-  {
-    loading: false,
-  },
-)
+const {
+  columns,
+  data,
+  loading = false,
+  count,
+} = defineProps<{
+  columns: any[]
+  data: any[]
+  loading?: boolean
+  count: number
+}>()
 const emits = defineEmits<{
   (e: "update:index", i: number, s: number): void
 }>()
 watch(
-  () => props.count,
+  () => count,
   () => {
-    pagination.itemCount = props.count
+    pagination.itemCount = count
   },
 )
 
@@ -33,7 +33,7 @@ const pagination = reactive({
     value: i,
   })),
   /** 总记录数 */
-  itemCount: props.count,
+  itemCount: count,
   /** 总记录数显示文本 */
   prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
@@ -55,9 +55,9 @@ const onSizeChange = (size: number) => {
     remote
     striped
     :bordered="true"
-    :columns="props.columns"
-    :data="props.data"
-    :loading="props.loading"
+    :columns="columns"
+    :data="data"
+    :loading="loading"
     @update:page="onIndexChange"
     @update:page-size="onSizeChange"
   />

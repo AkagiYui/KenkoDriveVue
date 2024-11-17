@@ -2,12 +2,9 @@
 /** 是否显示模态框 */
 const show = defineModel<boolean>("show", { default: false })
 /** 组件参数 */
-const props = withDefaults(
-  defineProps<{
-    user: UserInfoResponse
-  }>(),
-  {},
-)
+const props = defineProps<{
+  user: UserInfoResponse
+}>()
 
 /** 组件挂载前发起获取用户信息请求 */
 onBeforeMount(() => {

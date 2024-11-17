@@ -1,17 +1,17 @@
 <script setup lang="ts">
 const show = defineModel<boolean>("show", { default: false })
-const props = withDefaults(
-  defineProps<{
-    file: FileInfoResponse | null
-  }>(),
-  {},
-)
+const { file = undefined } = defineProps<{
+  file?: FileInfoResponse
+}>()
 
-watch(props, (newProps) => {
-  if (newProps.file) {
-    id.value = newProps.file.id
-  }
-})
+watch(
+  () => file,
+  (newFile) => {
+    if (newFile) {
+      id.value = newFile.id
+    }
+  },
+)
 
 const { id, owner, isLoading } = useFileOwner()
 const columns = [
@@ -32,7 +32,7 @@ const columns = [
     preset="card"
     :mask-closable="true"
     :bordered="false"
-    :title="`拥有者(${props.file?.name})`"
+    :title="`拥有者(${file?.name})`"
     style="width: 600px"
   >
     <n-data-table remote :columns="columns" :data="owner" :loading="isLoading" />

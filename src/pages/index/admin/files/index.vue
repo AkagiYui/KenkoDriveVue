@@ -117,7 +117,7 @@ function onShowFileOwnerButtonClick(row: FileInfoResponse) {
 
 <template>
   <div class="view">
-    <OwnerTable v-model:show="isOwnerTableShow" :file="currentFile" />
+    <OwnerTable v-model:show="isOwnerTableShow" :file="currentFile!!" />
     <n-flex vertical>
       <n-space>
         <n-button tertiary type="info" :disabled="isLoading" @click="fetchData">

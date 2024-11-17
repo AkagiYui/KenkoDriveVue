@@ -9,39 +9,39 @@ import { getHighlighter } from "shiki"
 import { shikiToMonaco } from "@shikijs/monaco"
 
 const content = defineModel<string>("content", { default: "" })
-const props = withDefaults(
-  defineProps<{
-    language?: string
-    readOnly?: boolean
-    minimap?: boolean
-    dark?: boolean
-    options?: any
-  }>(),
-  {
-    language: "plaintext",
-    readOnly: true,
-    minimap: false,
-    options: {},
-  },
-)
+
+const {
+  language = "plaintext",
+  readOnly = true,
+  minimap = false,
+  dark = false,
+  options = {},
+} = defineProps<{
+  language?: string
+  readOnly?: boolean
+  minimap?: boolean
+  dark?: boolean
+  options?: any
+}>()
+
 const emits = defineEmits<{
   (e: "change", value: string): void
   (e: "editor-mounted", editor: monaco.editor.IStandaloneCodeEditor): void
 }>()
 
 const theme = computed(() => {
-  return props.dark ? "vitesse-dark" : "vitesse-light"
+  return dark ? "vitesse-dark" : "vitesse-light"
 })
 watch(theme, () => monaco.editor.setTheme(theme.value))
 
-const language = computed(() => {
-  switch (props.language) {
+const textLanguage = computed(() => {
+  switch (language) {
     case "ts":
       return "typescript"
     case "js":
       return "javascript"
     default:
-      return props.language
+      return language
   }
 })
 
@@ -75,23 +75,23 @@ watch(content, (newValue) => {
   }
 })
 watch(
-  () => props.options,
+  () => options,
   (newValue) => {
     editor.updateOptions(newValue)
   },
   { deep: true },
 )
-watch(language, (newValue) => {
+watch(textLanguage, (newValue) => {
   monaco.editor.setModelLanguage(editor.getModel()!, newValue)
 })
 watch(
-  () => props.readOnly,
+  () => readOnly,
   (newValue) => {
     editor.updateOptions({ readOnly: newValue })
   },
 )
 watch(
-  () => props.minimap,
+  () => minimap,
   (newValue) => {
     editor.updateOptions({ minimap: { enabled: newValue } })
   },
@@ -129,13 +129,13 @@ onMounted(async () => {
 
   editor = monaco.editor.create(codeEditBox.value, {
     value: content.value,
-    language: language.value,
+    language: textLanguage.value,
     theme: theme.value,
-    readOnly: props.readOnly,
+    readOnly: readOnly,
     minimap: {
-      enabled: props.minimap,
+      enabled: minimap,
     },
-    ...props.options,
+    ...options,
   })
   editor.onDidChangeModelContent(() => {
     const value = editor.getValue()

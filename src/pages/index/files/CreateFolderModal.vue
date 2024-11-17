@@ -1,13 +1,8 @@
 <script setup lang="ts">
 /** 组件参数 */
-const props = withDefaults(
-  defineProps<{
-    parent?: string | null
-  }>(),
-  {
-    parent: null,
-  },
-)
+const { parent } = defineProps<{
+  parent?: string | null
+}>()
 const show = defineModel<boolean>("show", { default: false })
 const emit = defineEmits<{
   (e: "success"): void
@@ -17,7 +12,7 @@ const isLoading = ref(false)
 const folderName = ref("新建文件夹")
 const create = async () => {
   isLoading.value = true
-  await createFolder(hasText(folderName.value) ? folderName.value : undefined, props.parent)
+  await createFolder(hasText(folderName.value) ? folderName.value : undefined, parent)
   emit("success")
   show.value = false
   isLoading.value = false

@@ -1,12 +1,9 @@
 <script setup lang="ts">
 const show = defineModel<boolean>("show", { default: false })
-const props = withDefaults(
-  defineProps<{
-    filename: string
-    id: string
-  }>(),
-  {},
-)
+const { filename, id } = defineProps<{
+  filename: string
+  id: string
+}>()
 const loading = ref(false)
 const displayData = ref<null | SharingResponse>(null)
 const host = window.location.origin
@@ -19,12 +16,12 @@ const url = computed(() => {
 
 async function getSharingInfo() {
   loading.value = true
-  if (!props.id) {
+  if (!id) {
     loading.value = false
     return
   }
   try {
-    displayData.value = await getSharingInfoByFileId(props.id)
+    displayData.value = await getSharingInfoByFileId(id)
   } finally {
     loading.value = false
   }
@@ -53,7 +50,7 @@ function onUrlClick() {
 }
 
 function onCreateButtonClick() {
-  createSharing(props.id).then(() => {
+  createSharing(id).then(() => {
     getSharingInfo()
   })
 }
@@ -90,7 +87,7 @@ function onShareButtonClick() {
     preset="card"
     :mask-closable="true"
     :bordered="false"
-    :title="`分享(${props.filename})`"
+    :title="`分享(${filename})`"
     style="width: 600px"
   >
     <n-spin :show="loading">
