@@ -85,8 +85,8 @@ useEventListener(window, "beforeunload", (e) => {
 })
 
 // 设置文件选择器事件
-const fileInputRef = ref<HTMLInputElement | null>(null)
-const folderInputRef = ref<HTMLInputElement | null>(null)
+const fileInputRef = useTemplateRef<HTMLInputElement>("fileInputRef")
+const folderInputRef = useTemplateRef<HTMLInputElement>("folderInputRef")
 onMounted(() => {
   fileInputRef.value?.addEventListener("change", (event: any) => {
     addFileList(event.target.files)

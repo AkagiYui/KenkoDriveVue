@@ -60,7 +60,7 @@ function captchaHandler(captchaObj: any) {
   console.log(captchaObj)
 }
 
-const captchaRef = ref<typeof GeetestCaptcha | null>(null)
+const captchaRef = useTemplateRef<typeof GeetestCaptcha>("captchaRef")
 const { $geetest: geetest } = useGlobal()
 const testText = ref(`# KenkoDrive 我的云盘
 

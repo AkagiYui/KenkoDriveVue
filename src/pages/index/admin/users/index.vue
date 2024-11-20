@@ -35,7 +35,7 @@ const pagination = reactive({
   prefix: (p: PaginationProps) => `共 ${p.itemCount} 项`,
 })
 
-const modalFormRef = ref<FormInst | null>(null)
+const modalFormRef = useTemplateRef<FormInst>("modalFormRef")
 /** 模态框信息 */
 const modalData = ref({
   username: "",

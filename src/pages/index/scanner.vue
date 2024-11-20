@@ -30,7 +30,7 @@ watch(qrCodeValue, (value) => {
   value && playAudio()
 })
 
-const videoRef = ref<HTMLVideoElement>()
+const videoRef = useTemplateRef<HTMLVideoElement>("videoRef")
 
 let stream: MediaStream | null = null
 let animationFrameId: number | null = null

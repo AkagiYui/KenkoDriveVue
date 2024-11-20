@@ -32,7 +32,7 @@ const pagination = reactive({
 })
 /** 显示删除确认模态框 */
 const showDeleteConfirmModal = ref(false)
-const modalFormRef = ref<FormInst | null>(null)
+const modalFormRef = useTemplateRef<FormInst>("modalFormRef")
 /** 模态框信息 */
 const modalData = ref({ title: "", content: "" })
 /** 模态框表单校验规则 */

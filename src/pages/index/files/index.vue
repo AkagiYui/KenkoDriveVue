@@ -529,7 +529,7 @@ async function loadFolder(id?: string | null, filter?: string) {
 }
 
 const showCreateFolderModal = ref(false)
-const imageRef = ref<typeof NImage | null>(null)
+const imageRef = useTemplateRef<typeof NImage>("imageRef")
 const showMarkdownPreview = ref(false)
 const markdownPreviewValue = ref("")
 
@@ -545,7 +545,7 @@ function onDrop(file: FileSystemFileEntry[]) {
   emitBusEvent(BusEvent.ADD_ENTRIES, { file, folderId })
 }
 
-const fileInputRef = ref<HTMLInputElement | null>(null)
+const fileInputRef = useTemplateRef<HTMLInputElement>("fileInputRef")
 function onUploadFileButtonClick() {
   fileInputRef.value?.click()
 }

@@ -146,7 +146,7 @@ const rules = {
   },
 }
 /** 模态框表单引用 */
-const modalFormRef = ref<FormInst | null>(null)
+const modalFormRef = useTemplateRef<FormInst>("modalFormRef")
 /** 权限列表 */
 const permissions = ref<PermissionResponse[]>([])
 /** 权限转移选项 */

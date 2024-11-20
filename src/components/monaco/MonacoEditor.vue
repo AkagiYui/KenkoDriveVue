@@ -64,7 +64,7 @@ self.MonacoEnvironment = {
 }
 
 let editor: monaco.editor.IStandaloneCodeEditor
-const codeEditBox = ref()
+const codeEditBox = useTemplateRef<HTMLElement>("codeEditBox")
 
 watch(content, (newValue) => {
   if (editor) {
@@ -127,7 +127,7 @@ onMounted(async () => {
   // 注册 Shiki 主题，并为 Monaco 提供语法高亮
   shikiToMonaco(highlighter, monaco)
 
-  editor = monaco.editor.create(codeEditBox.value, {
+  editor = monaco.editor.create(codeEditBox.value!, {
     value: content.value,
     language: textLanguage.value,
     theme: theme.value,

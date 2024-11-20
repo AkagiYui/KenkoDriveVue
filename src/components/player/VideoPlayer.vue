@@ -6,7 +6,7 @@ const props = defineProps<{
 }>()
 
 let instance: ArtPlayer | undefined = undefined
-const artRef = ref<HTMLDivElement | null>(null)
+const artRef = useTemplateRef<HTMLDivElement>("artRef")
 onMounted(() => {
   instance = new ArtPlayer({
     url: props.url,

@@ -3,7 +3,7 @@ import "aplayer/dist/APlayer.min.css"
 import APlayer from "aplayer"
 import { parseBlob as getMusicMetadata } from "music-metadata"
 
-const playerRef = ref<HTMLDivElement | null>(null)
+const playerRef = useTemplateRef<HTMLDivElement>("playerRef")
 const showPlayer = ref(false)
 
 let ap
