@@ -1,14 +1,15 @@
 {
-  "files": [],
+  "files": ["api/hello.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"
     },
     {
       "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.api.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node"
+  }
 }
