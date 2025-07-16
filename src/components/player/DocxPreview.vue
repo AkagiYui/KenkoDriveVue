@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import VueOfficeDocx from "@vue-office/docx"
-import "@vue-office/docx/lib/index.css"
+import VueOfficeDocx from "@vue-office/docx/lib/v3/vue-office-docx.mjs"
+import "@vue-office/docx/lib/v3/index.css"
 
 const props = defineProps<{
   url: string
