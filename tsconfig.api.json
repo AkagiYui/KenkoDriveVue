@@ -1,0 +1,9 @@
+{
+  "include": [
+    "api/**/*"
+  ],
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node"
+  }
+}
