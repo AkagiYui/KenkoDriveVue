@@ -10,7 +10,6 @@ import MsClarity from "vite-plugin-ms-clarity"
 import VueRouter from "unplugin-vue-router/vite"
 import { getFileBasedRouteName, VueRouterAutoImports } from "unplugin-vue-router"
 
-// eslint-disable-next-line no-undef
 const env = process.env
 const isProd = env.NODE_ENV === "production"
 
@@ -78,13 +77,11 @@ const config = {
       },
 
       // modify routes individually
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       extendRoute: async (route) => {
         // ...
       },
 
       // modify routes before writing
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       beforeWriteFiles: async (rootRoute) => {
         // ...
       },
@@ -114,7 +111,7 @@ const config = {
             "NTooltip",
             "NInput",
             "NIcon",
-            "NImage"
+            "NImage",
           ],
           "vue-router": ["RouterLink"],
         },
