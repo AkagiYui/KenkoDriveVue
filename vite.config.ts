@@ -174,19 +174,25 @@ const config = {
             return "module-" + name.split("@")[0]
           }
         },
-        entryFileNames: "js/[name]-[hash].js",
-        chunkFileNames: "js/[name]-[hash].js",
-        assetFileNames: (chunkInfo: any) => {
-          if (chunkInfo.name.endsWith(".css")) {
-            return "css/[name]-[hash][extname]"
+        entryFileNames: "js/entry-[name]-[hash].js",
+        chunkFileNames: "js/chunk-[name]-[hash].js",
+        assetFileNames: (chunkInfo) => {
+          const name: string = chunkInfo.names?.[0]
+          const extnamesForPrefix = {
+            "css/": [".css"],
+            "js/": [".js"],
+            "img/": [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico"],
+            "font/": [".woff", ".woff2", ".ttf", ".eot", ".otf"],
+            "media/": [".mp3", ".mp4", ".webm", ".ogg", ".wav", ".flac"],
+            "assets/": [".wasm"],
           }
-          if (chunkInfo.name.endsWith(".js")) {
-            return "js/[name]-[hash][extname]"
+
+          for (const [prefix, extnames] of Object.entries(extnamesForPrefix)) {
+            if (extnames.some((ext) => name.endsWith(ext))) {
+              return `${prefix}[name]-[hash][extname]`
+            }
           }
-          const imgExts = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico"]
-          if (imgExts.some((ext) => chunkInfo.name.endsWith(ext))) {
-            return "img/[name]-[hash][extname]"
-          }
+          console.warn(`Unknown asset type: ${name}`, JSON.stringify(chunkInfo).slice(0, 100))
           return "assets/[name]-[hash][extname]"
         },
       },
