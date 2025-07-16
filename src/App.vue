@@ -2,6 +2,7 @@
 import { storeToRefs } from "pinia"
 import { createLocale, darkTheme, dateZhCN, zhCN, type GlobalThemeOverrides } from "naive-ui"
 import { useAppConfig } from "@/stores/app-config"
+import { Analytics } from "@vercel/analytics/vue"
 
 const { isDarkMode } = storeToRefs(useAppConfig())
 const customizedLocale = createLocale(
@@ -49,6 +50,7 @@ const themeOverrides: GlobalThemeOverrides = {
 </script>
 
 <template>
+  <Analytics />
   <n-config-provider
     :locale="customizedLocale"
     :date-locale="dateZhCN"
