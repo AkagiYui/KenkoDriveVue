@@ -2,7 +2,7 @@
  * 入口文件，创建Vue实例并挂载到DOM上
  */
 
-import { createApp } from "vue"
+import { createApp, vaporInteropPlugin } from "vue"
 import { createPinia } from "pinia"
 import mitt from "mitt"
 import piniaPersist from "pinia-plugin-persistedstate"
@@ -19,6 +19,7 @@ const app = createApp(App)
 app.use(pinia)
 app.use(router)
 app.use(VueDOMPurifyHTML)
+app.use(vaporInteropPlugin)
 
 // Catch unhandled errors.
 app.config.errorHandler = (err) => {

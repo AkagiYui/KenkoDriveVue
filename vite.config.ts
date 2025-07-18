@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { fileURLToPath, URL } from "node:url"
 import { defineConfig } from "vite"
 import basicSsl from "@vitejs/plugin-basic-ssl"
@@ -158,22 +159,21 @@ const config = {
     },
     rollupOptions: {
       output: {
-        manualChunks: (id: string): string | undefined => {
+        manualChunks: (id: string): string | void => {
           // 从 node_modules 中引入的模块，按模块名称拆分
           if (id.includes("node_modules")) {
             const packagePath = id.split("node_modules/")[1].split("/")
-            const first = packagePath[0]
-            let name = first === ".pnpm" ? packagePath[1] : first
+            let name = packagePath[0] === ".pnpm" ? packagePath[1] : packagePath[0]
             if (name.startsWith("@")) {
               name = name.substring(1)
             }
             name = name.replace(".", "_")
-            return "module-" + name.split("@")[0]
+            return `module-${name.split("@")[0]}`
           }
         },
         entryFileNames: "js/entry-[name]-[hash].js",
         chunkFileNames: "js/chunk-[name]-[hash].js",
-        assetFileNames: (chunkInfo) => {
+        assetFileNames: (chunkInfo: { names: string[] }) => {
           const name: string = chunkInfo.names?.[0]
           const extnamesForPrefix = {
             "css/": [".css"],

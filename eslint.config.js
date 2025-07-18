@@ -61,6 +61,10 @@ export default defineConfig([
           varsIgnorePattern: "required", // 忽略 required(vee-validate)
         },
       ], // 未使用的变量。已禁用，使用 TypeScript 检查
+      "prefer-const": ["warn", {
+        destructuring: "any",
+        ignoreReadBeforeAssign: false
+      }], // 优先使用 const
 
       // 代码风格规则
       "@stylistic/max-len": ["warn", {

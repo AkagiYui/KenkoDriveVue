@@ -76,7 +76,7 @@
     "vite-plugin-ms-clarity": "^1.0.0",
     "vitest": "^2.0.5",
     "vscode-loc.git": "github:microsoft/vscode-loc",
-    "vue": "^3.5.13",
+    "vue": "^3.6.0-alpha.1",
     "vue-chartjs": "^5.3.0",
     "vue-cropper": "^1.1.1",
     "vue-demi": "^0.14.7",
